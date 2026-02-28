@@ -48,12 +48,17 @@ If you prefer running Vite natively for faster local feedback:
 
 ## 3. Database & Prisma Workflow
 We use Prisma (v6) for our ORM. The schema is located at `frontend/prisma/schema.prisma`.
-- Whenever you pull code with new database schema changes, apply them to your local database:
-  ```bash
-  cd frontend
-  pnpm prisma db push
-  ```
-- *Note:* Running `pnpm dev` or `pnpm build` automatically triggers `prisma generate` to keep your local client typed correctly!
+
+### Automatic Generation
+We have configured `prisma generate` as a `postinstall` script in the `frontend` directory. 
+Whenever you pull new code and run `pnpm install`, your local Prisma client will *automatically* regenerate to match any new schema changes. You never have to worry about out-of-sync types!
+
+### Applying Schema Changes
+If a teammate adds a new table/column to the schema, apply those changes to your local database by running:
+```bash
+cd frontend
+pnpm prisma db push
+```
 
 ## 4. Code Quality
 We enforce ESLint and Prettier to keep our code clean. Our CI pipeline checks this automatically on Pull Requests.

@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+
+# Get the current branch name
+BRANCH_NAME=$(git branch --show-current)
+
+# If the branch is main, abort the push
+if [ "$BRANCH_NAME" = "main" ]; then
+  echo ""
+  echo "❌ STOP! You cannot push directly to main."
+  echo "✅ Please create a feature branch and open a Pull Request:"
+  echo "   git checkout -b feat/your-feature-name"
+  echo "   git push -u origin feat/your-feature-name"
+  echo ""
+  exit 1
+fi
+
+# Validate the build before pushing
+echo "🔨 [Frontend] Validating build..."
+cd frontend
+pnpm run build
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ STOP! The frontend build failed. Please fix before pushing."
+  echo ""
+  exit 1
+fi
+echo "✅ [Frontend] Build passed!"

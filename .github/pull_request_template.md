@@ -1,11 +1,14 @@
 ## What changed?
-<!-- What program/feature changed? -->
+<!-- Please provide a quick bulleted list of the technical changes made. -->
+- 
+- 
+- 
 
 ## Why?
-<!-- Why did it change? -->
+<!-- A brief explanation of why these changes were needed. -->
 
 ## How did you test it? *(Optional)*
-<!-- Tested locally, screenshots, etc. -->
+<!-- e.g. Tested locally, UI looks correct, API returns 200 OK. -->
 
-## What is left for someone else? *(Optional, for co-op work)*
-<!-- What does the next person need to do? -->
+## Screenshots *(Optional)*
+<!-- If this PR changes the UI, please attach a screenshot/GIF showing the new look. -->
