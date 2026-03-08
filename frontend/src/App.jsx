@@ -2,20 +2,30 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import MainLayout from './layouts/MainLayout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import DashboardPage from './pages/DashboardPage'
 import { ProtectedRoute } from './components/ProtectedRoute'
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
 
         <Route
-          path="/home"
+          path="/"
+          element={
+            <MainLayout>
+              <HomePage />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/dashboard"
           element={
             <ProtectedRoute>
               <MainLayout>
-                <HomePage />
+                <DashboardPage />
               </MainLayout>
             </ProtectedRoute>
           }

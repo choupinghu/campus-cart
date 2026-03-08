@@ -61,7 +61,7 @@ export default function LoginPage() {
             password,
           },
           {
-            onSuccess: () => navigate('/home'),
+            onSuccess: () => navigate('/dashboard'),
             onError: (ctx) => setError(ctx.error.message || 'Failed to login'),
           },
         )
@@ -78,7 +78,7 @@ export default function LoginPage() {
             name,
           },
           {
-            onSuccess: () => navigate('/home'),
+            onSuccess: () => navigate('/dashboard'),
             onError: (ctx) =>
               setError(ctx.error.message || 'Failed to sign up. Email might already be in use.'),
           },

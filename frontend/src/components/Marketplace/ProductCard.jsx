@@ -25,13 +25,13 @@ export default function ProductCard({ product }) {
           {product.source}
         </span>
 
-        <h3 className="font-bold text-[#003b73] text-lg leading-tight mb-2 line-clamp-2 min-h-[3rem]">
+        <h3 className="font-bold text-nus-blue text-lg leading-tight mb-2 line-clamp-2 min-h-[3rem]">
           {product.title}
         </h3>
 
         <div className="flex items-baseline gap-1 mb-4 mt-auto">
-          <span className="text-sm font-bold text-[#003b73]">S$</span>
-          <span className="text-2xl font-black text-[#003b73]">{product.price.toFixed(2)}</span>
+          <span className="text-sm font-bold text-nus-blue">S$</span>
+          <span className="text-2xl font-black text-nus-blue">{product.price.toFixed(2)}</span>
         </div>
 
         {/* Footer info: Location & Verified */}
@@ -44,7 +44,7 @@ export default function ProductCard({ product }) {
           </div>
 
           {product.verified && (
-            <div className="flex items-center gap-1 bg-blue-50 text-blue-600 px-2 py-1 rounded-full flex-shrink-0">
+            <div className="flex items-center gap-1 bg-nus-blue/10 text-nus-blue px-2 py-1 rounded-full flex-shrink-0">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span className="text-[10px] font-bold uppercase tracking-wider">Verified</span>
             </div>

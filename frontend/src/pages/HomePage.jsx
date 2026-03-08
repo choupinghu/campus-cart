@@ -53,7 +53,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <div className="flex flex-col items-center justify-center text-center mb-16 relative w-full pt-12 pb-8">
         <div className="flex items-center gap-2 mb-6">
-          <span className="bg-[#003b73] text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase">
+          <span className="bg-nus-blue text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-widest uppercase">
             For Sale
           </span>
           <span className="text-gray-400 font-bold uppercase tracking-widest text-xs px-2">
@@ -62,7 +62,7 @@ export default function HomePage() {
         </div>
 
         <h2 className="text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-          The Marketplace for <span className="text-[#003b73]">NUS Students</span>
+          The Marketplace for <span className="text-nus-blue">NUS Students</span>
         </h2>
         <p className="text-xl text-gray-500 mb-12 max-w-2xl font-light">
           Find textbooks, furniture, electronics, and more &mdash; sourced from trusted Singapore
@@ -71,7 +71,7 @@ export default function HomePage() {
 
         {/* Search Bar Container */}
         <div className="w-full max-w-2xl relative mb-8">
-          <div className="absolute inset-0 bg-[#003b73]/5 blur-[24px] rounded-[32px] transform translate-y-2"></div>
+          <div className="absolute inset-0 bg-nus-blue/5 blur-[24px] rounded-[32px] transform translate-y-2"></div>
           <div className="relative bg-white rounded-full shadow-[0_4px_24px_-8px_rgba(0,0,0,0.1)] p-2 pr-2.5 flex items-center border border-gray-100">
             <div className="pl-6 pr-4">
               <Search className="w-5 h-5 text-gray-300" />
@@ -83,7 +83,7 @@ export default function HomePage() {
               value={filters.search}
               onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
             />
-            <button className="bg-[#003b73] text-white px-8 py-3.5 rounded-full font-bold ml-2 hover:bg-[#002f5c] transition-colors whitespace-nowrap">
+            <button className="bg-nus-blue text-white px-8 py-3.5 rounded-full font-bold ml-2 hover:bg-nus-blue-hover transition-colors whitespace-nowrap">
               Search
             </button>
           </div>
@@ -98,7 +98,7 @@ export default function HomePage() {
 
         {loading ? (
           <div className="flex-1 flex items-center justify-center min-h-[400px]">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#003b73]"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nus-blue"></div>
           </div>
         ) : (
           <ProductGrid products={filteredProducts} />
