@@ -23,7 +23,10 @@ A centralized marketplace featuring:
 - **Infrastructure:** Docker Compose
 
 ## 🤝 For Developers
-If you are a maintainer or team member looking to contribute, please read the [onboarding guide](./resources/onboard.md) and [git rules](./resources/git-rules.md) for detailed local setup instructions, branching strategies, and our PR workflow.
+If you are a maintainer or team member looking to contribute, please refer to the following documentation:
+- 🚀 **[Onboarding Guide](resources/onboard.md)**: Local setup instructions and dependency management
+- 📄 **[Code Collaboration](resources/git-rules.md)**: Branching strategies, PR workflow, and Git hook validation
+- ⚡️ **[Prisma DB Protocol](resources/prisma-workflow.md)**: Managing robust local PostgreSQL data prototyping
 
 ---
 *Developed by IT5007 Finals — Group 14*
