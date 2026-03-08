@@ -1,4 +1,3 @@
-import { XCircle } from 'lucide-react'
 import { useSession, signOut } from '../lib/auth'
 import { useNavigate } from 'react-router-dom'
 
