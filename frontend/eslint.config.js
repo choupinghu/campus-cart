@@ -38,5 +38,13 @@ export default defineConfig([
       'react/prop-types': 'off', 
     },
   },
+  {
+    files: ['server/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
   eslintConfigPrettier,
 ])

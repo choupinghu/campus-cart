@@ -1,16 +1,39 @@
 import { XCircle } from 'lucide-react'
+import { useSession, signOut } from '../lib/auth'
+import { useNavigate } from 'react-router-dom'
 
 export default function MainLayout({ children }) {
+  const { data: session } = useSession()
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    await signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          navigate('/')
+        },
+      },
+    })
+  }
+
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
-      <header className="flex items-center justify-between px-8 py-4 bg-white sticky top-0 z-50">
-        <div className="flex items-center gap-2">
-          <XCircle className="w-8 h-8 text-[#003b73] fill-[#003b73] text-white" />
-          <h1 className="text-2xl font-bold text-[#003b73] tracking-tight">CampusCart</h1>
-        </div>
-        <button className="bg-[#003b73] hover:bg-[#002f5c] text-white px-6 py-2 rounded-full font-medium transition-colors">
-          Sign In
-        </button>
+    <div className="min-h-screen bg-gray-50 text-gray-900">
+      <header className="flex justify-between border-b border-gray-200 bg-white px-6 py-4">
+        <h1 className="text-xl font-bold text-indigo-600">NUS Marketplace</h1>
+
+        {session ? (
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-gray-700">
+              Welcome, {session.user.name} ({session.user.email})
+            </span>
+            <button
+              onClick={handleLogout}
+              className="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200"
+            >
+              Sign out
+            </button>
+          </div>
+        ) : null}
       </header>
 
       <main className="w-full">{children}</main>
