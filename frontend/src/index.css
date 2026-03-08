@@ -1,1 +1,8 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+@theme {
+  --color-nus-blue: #003D7C;
+  --color-nus-blue-hover: #002b5e;
+  --color-nus-orange: #EF7C00;
+  --color-nus-orange-hover: #cc6a00;
+}

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signIn, signUp } from '../lib/auth';
-import { Check, X, Info, Eye, EyeOff } from 'lucide-react';
+import { Check, X, Info, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
+  const [emailPrefix, setEmailPrefix] = useState('');
+  const [domain, setDomain] = useState('@u.nus.edu');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
@@ -32,9 +33,16 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     
-    // NUS Email Validation
-    if (!email.match(/^[a-zA-Z0-9_.+-]+@u\.nus\.edu$/)) {
-      setError('Please use a valid @u.nus.edu email address (e.g., e1234567@u.nus.edu)');
+    const fullEmail = domain === 'custom' ? emailPrefix : `${emailPrefix}${domain}`;
+
+    // Validation
+    if (domain !== 'custom' && (!emailPrefix || !/^[a-zA-Z0-9_.+-]+$/.test(emailPrefix))) {
+      setError('Please enter a valid NUS Net ID (e.g., e1234567)');
+      return;
+    }
+    
+    if (domain === 'custom' && (!emailPrefix || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailPrefix))) {
+      setError('Please enter a valid email address');
       return;
     }
 
@@ -48,7 +56,7 @@ export default function LoginPage() {
     try {
       if (isLogin) {
         await signIn.email({
-          email,
+          email: fullEmail,
           password,
         }, {
           onSuccess: () => navigate('/home'),
@@ -61,7 +69,7 @@ export default function LoginPage() {
           return;
         }
         await signUp.email({
-          email,
+          email: fullEmail,
           password,
           name,
         }, {
@@ -93,7 +101,7 @@ export default function LoginPage() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             {isLogin ? 'Welcome back! ' : 'Create your account today. '}
-            Only available for NUS students using an <span className="font-semibold text-indigo-600">@u.nus.edu</span> email.
+            Only available for NUS students and verified members.
           </p>
         </div>
         
@@ -106,7 +114,7 @@ export default function LoginPage() {
                   id="name"
                   type="text"
                   required
-                  className="mt-1 relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:z-10 focus:border-nus-blue focus:outline-none focus:ring-nus-blue sm:text-sm"
                   placeholder="e.g. John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -115,17 +123,70 @@ export default function LoginPage() {
             )}
             
             <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="email-address">NUS Email Address</label>
-              <input
-                id="email-address"
-                type="email"
-                autoComplete="email"
-                required
-                className="mt-1 relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                placeholder="e.g. e1234567@u.nus.edu"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <label className="block text-sm font-medium text-gray-700" htmlFor="nus-id">
+                {domain === 'custom' ? 'Full Email Address' : 'NUS Net ID'}
+              </label>
+              <div className="mt-1 flex rounded-md shadow-sm">
+                <input
+                  id="nus-id"
+                  type={domain === 'custom' ? 'email' : 'text'}
+                  required
+                  className={`relative flex-1 block w-full appearance-none rounded-none rounded-l-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:z-10 focus:border-nus-blue focus:outline-none focus:ring-nus-blue sm:text-sm ${domain === 'custom' ? 'rounded-md' : ''}`}
+                  placeholder={domain === 'custom' ? "e.g. name@example.com" : "e.g. e1234567"}
+                  value={emailPrefix}
+                  onChange={(e) => {
+                    let val = e.target.value;
+                    if (domain !== 'custom' && val.includes('@')) {
+                      const parts = val.split('@');
+                      val = parts[0];
+                      if (parts[1] === 'u.nus.edu' || parts[1] === 'comp.nus.edu.sg') {
+                        setDomain('@' + parts[1]);
+                      } else {
+                        setDomain('custom');
+                        setEmailPrefix(e.target.value);
+                        return;
+                      }
+                    }
+                    setEmailPrefix(val);
+                  }}
+                />
+                
+                {domain !== 'custom' && (
+                  <select
+                    className="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm focus:outline-none focus:ring-nus-blue focus:border-nus-blue cursor-pointer"
+                    value={domain}
+                    onChange={(e) => {
+                      if (e.target.value === 'custom') {
+                        setEmailPrefix(emailPrefix ? `${emailPrefix}${domain}` : '');
+                      }
+                      setDomain(e.target.value);
+                    }}
+                  >
+                    <option value="@u.nus.edu">@u.nus.edu</option>
+                    <option value="@comp.nus.edu.sg">@comp.nus.edu.sg</option>
+                    <option value="custom">Other...</option>
+                  </select>
+                )}
+              </div>
+              
+              {domain === 'custom' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDomain('@u.nus.edu');
+                    setEmailPrefix(emailPrefix.split('@')[0]);
+                  }}
+                  className="mt-2 text-xs text-nus-blue hover:text-nus-blue-hover font-medium transition-colors"
+                >
+                  Switch back to NUS Net ID
+                </button>
+              )}
+              
+              {!isLogin && (
+                <p className="mt-1.5 text-xs text-gray-500">
+                  <span className="font-semibold">Note:</span> We recommend using your official NUS email to join the exclusive campus network without requiring manual verification.
+                </p>
+              )}
             </div>
             
             <div>
@@ -138,14 +199,14 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   autoComplete={isLogin ? "current-password" : "new-password"}
                   required
-                  className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 pr-10 text-gray-900 placeholder-gray-400 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 pr-10 text-gray-900 placeholder-gray-400 focus:z-10 focus:border-nus-blue focus:outline-none focus:ring-nus-blue sm:text-sm"
                   placeholder={isLogin ? 'Enter your password' : 'Create a strong password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-500 focus:outline-none"
+                  className="absolute z-20 inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-500 focus:outline-none"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex="-1"
                 >
@@ -162,7 +223,7 @@ export default function LoginPage() {
             {!isLogin && password.length > 0 && (
               <div className="rounded-md bg-gray-50 p-4 border border-gray-200">
                 <div className="flex items-center gap-2 mb-2">
-                  <Info className="h-4 w-4 text-indigo-500" />
+                  <Info className="h-4 w-4 text-nus-blue" />
                   <p className="text-sm font-medium text-gray-700">Password requirements:</p>
                 </div>
                 <div className="space-y-1.5 ml-1">
@@ -185,9 +246,12 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || (!isLogin && !isValidPassword && password.length > 0)}
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="group relative flex w-full items-center justify-center gap-2 rounded-md border border-transparent bg-nus-orange px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nus-orange-hover focus:outline-none focus:ring-2 focus:ring-nus-orange focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
-              {loading ? 'Processing...' : isLogin ? 'Sign in securely' : 'Create account'}
+              <span>{loading ? 'Processing...' : isLogin ? 'Sign in securely' : 'Create account'}</span>
+              {!loading && (
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              )}
             </button>
           </div>
           
@@ -203,7 +267,7 @@ export default function LoginPage() {
             
             <button
               type="button"
-              className="mt-4 font-semibold text-indigo-600 hover:text-indigo-500 transition-colors"
+              className="mt-4 font-semibold text-nus-blue hover:text-nus-blue-hover transition-colors"
               onClick={() => {
                 setIsLogin(!isLogin);
                 setError('');
