@@ -1,3 +1,5 @@
+import { Package, MessageCircle, Settings } from 'lucide-react'
+
 export default function DashboardPage() {
   return (
     <div className="flex flex-col items-center flex-1 py-12 px-6 w-full max-w-[1400px] mx-auto">
@@ -11,21 +13,21 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-12">
           {/* Dummy Widget 1 */}
           <div className="p-6 bg-gray-50 rounded-xl border border-gray-100 flex flex-col items-center justify-center min-h-[160px]">
-            <span className="text-4xl mb-3">📦</span>
+            <Package className="w-10 h-10 text-nus-blue mb-3" strokeWidth={1.5} />
             <h3 className="font-semibold text-gray-800">My Listings</h3>
             <p className="text-sm text-gray-500 mt-1">Manage items you are selling</p>
           </div>
 
           {/* Dummy Widget 2 */}
           <div className="p-6 bg-gray-50 rounded-xl border border-gray-100 flex flex-col items-center justify-center min-h-[160px]">
-            <span className="text-4xl mb-3">💬</span>
+            <MessageCircle className="w-10 h-10 text-nus-blue mb-3" strokeWidth={1.5} />
             <h3 className="font-semibold text-gray-800">Active Offers</h3>
             <p className="text-sm text-gray-500 mt-1">Review offers on your items</p>
           </div>
 
           {/* Dummy Widget 3 */}
           <div className="p-6 bg-gray-50 rounded-xl border border-gray-100 flex flex-col items-center justify-center min-h-[160px]">
-            <span className="text-4xl mb-3">⚙️</span>
+            <Settings className="w-10 h-10 text-nus-blue mb-3" strokeWidth={1.5} />
             <h3 className="font-semibold text-gray-800">Account Settings</h3>
             <p className="text-sm text-gray-500 mt-1">Update your profile details</p>
           </div>
