@@ -6,3 +6,15 @@
   --color-nus-orange: #ef7c00;
   --color-nus-orange-hover: #cc6a00;
 }
+
+@layer base {
+
+  button:not(:disabled),
+  a {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
