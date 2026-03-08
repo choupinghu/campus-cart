@@ -18,7 +18,7 @@ export default function MainLayout({ children }) {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
       <header className="flex justify-between border-b border-gray-200 bg-white px-6 py-4">
-        <h1 className="text-xl font-bold text-indigo-600">NUS Marketplace</h1>
+        <h1 className="text-xl font-bold text-nus-blue">NUS Marketplace</h1>
 
         {session ? (
           <div className="flex items-center gap-4">
@@ -32,7 +32,16 @@ export default function MainLayout({ children }) {
               Sign out
             </button>
           </div>
-        ) : null}
+        ) : (
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate('/login')}
+              className="rounded-md bg-nus-blue px-4 py-2 text-sm font-semibold text-white hover:bg-nus-blue-hover"
+            >
+              Log in
+            </button>
+          </div>
+        )}
       </header>
 
       <main className="w-full">{children}</main>

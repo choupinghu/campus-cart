@@ -20,7 +20,7 @@ export default function FilterSidebar({ filters, setFilters }) {
             <div className="relative flex items-center justify-center">
               <input
                 type="checkbox"
-                className="peer appearance-none w-5 h-5 border-[1.5px] border-gray-300 rounded focus:ring-0 checked:bg-indigo-600 checked:border-indigo-600 transition-all"
+                className="peer appearance-none w-5 h-5 border-[1.5px] border-gray-300 rounded focus:ring-0 checked:bg-nus-blue checked:border-nus-blue transition-all"
                 checked={(filters[category] || []).includes(option)}
                 onChange={() => handleCheckboxChange(category, option)}
               />
