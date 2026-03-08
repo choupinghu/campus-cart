@@ -17,13 +17,25 @@ A centralized marketplace featuring:
 
 ## 🛠 Tech Stack Overview
 - **Frontend:** React (Vite) + Tailwind CSS v4
-- **Backend:** FastAPI (Python) *(Coming Soon)*
+- **Backend:** Node.js (Express) + GraphQL
 - **Database:** PostgreSQL (with pgvector for smart search)
 - **ORM:** Prisma
 - **Infrastructure:** Docker Compose
 
 ## 🤝 For Developers
-If you are a maintainer or team member looking to contribute, please read the [onboard.md](./onboard.md) guide for detailed local setup instructions, branching strategies, and our PR workflow.
+If you are a maintainer or team member looking to contribute, please read the [onboarding guide](./resources/onboard.md) and [git rules](./resources/git-rules.md) for detailed local setup instructions, branching strategies, and our PR workflow.
 
 ---
 *Developed by IT5007 Finals — Group 14*
+
+## AI Usage Disclosure
+
+Parts of this project were developed with assistance from AI tools.
+
+Specific areas where AI was used:
+- Component scaffolding and boilerplate
+- Auth library integration
+- Dockerfile and Docker Compose configuration
+- Headless PDF generation architectures
+
+All AI-generated suggestions were reviewed, understood, and modified to fit the project requirements.

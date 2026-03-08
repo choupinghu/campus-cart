@@ -1,39 +1,56 @@
 # IT5007 Final Project Report
 
-**Course:** IT5007 Software Engineering on Application Architecture
-**Project:** CampusCart (NUS Campus Marketplace)
-**Group:** 14
+**Course:** IT5007 Software Engineering on Application Architecture  
+**Project:** CampusCart (NUS Campus Marketplace)  
+**Group:** 14  
+
+Group number on Canvas: 14
+
+Student ID (AxxxxxxxZ) | NUSNet ID (exxxxxxx) | Name (as it appears on Canvas)
+-----------------------|----------------------|-------------------------------
+A0183438X | e0310233 | Ang Lee Chuan
+A0183378R | e0310173 | Chou Han Xian, Aaron
+A0329448R | e1553775 | Liaw Jian Wei
 
 ---
 
-## 1. Project Overview
-CampusCart is a centralized, student-exclusive marketplace web application designed for NUS students to buy and sell items (e.g., textbooks, electronics, hall furniture) in a trustworthy and structured environment. The platform aims to resolve common pain points such as lack of trust, poor discovery in ad-hoc Telegram groups, and inefficient coordination.
+## 1. Problem Statement & Project Overview
+Currently, students buy and sell items such as textbooks, electronics, and hall furniture via unorganized Telegram groups or generic Carousell listings. This leads to significant pain points:
+- **Lack of Trust:** It is difficult to verify if a buyer or seller is actually an NUS student, leading to safety and reliability concerns.
+- **Poor Discovery:** Telegram chats are linear and unsearchable, causing listings to get buried quickly.
+- **Inefficient Coordination:** The common "PM me" culture results in wasted time negotiating availability, pricing, and meetup locations.
 
-## 2. Core Features Implemented
-
-### 2.1 Verified Authentication
-To ensure trust and exclusivity, the platform implements a robust authentication system. 
-- **NUS Email Exclusivity:** Users can only register using `@u.nus.edu` email address, verified strictly on the frontend and backend.
-- **Robust Security:** Implemented over an Express.js backend. Passwords enforce strict security policies (minimum 8 characters, capital letters, numbers, and special characters) with a real-time feedback UI to ensure smooth user onboarding.
-- **Protected Routing:** React router wrappers enforce session checks to ensure unauthenticated users cannot access core marketplace functionality.
-
-### 2.2 Marketplace Capabilities (In Progress)
-*(To be updated as the team implements Structured Listings, Smart Search, and Direct Offers)*
+**CampusCart** aims to resolve these issues by acting as a centralized, student-exclusive marketplace web application designed specifically for the NUS community.
 
 ---
 
-## 3. Developer Experience (DX) & Collaboration Workflows
-As a team of 3 developers, maintaining code quality and continuous synchronization across different local environments is a primary focus. We established the following DevOps and collaboration practices:
+## 2. Core Features & Capabilities
+
+### 2.1 Verified Authentication (Implemented)
+To ensure trust and exclusivity, the platform utilizes a secure authentication system.
+- **NUS Email Exclusivity:** Registration is strictly restricted to `@u.nus.edu` email domains.
+- **Robust Security:** Powered by an Express.js backend and a Better Auth integration. Passwords enforce strict security policies (minimum 8 characters, capital letters, numbers, and special characters) with real-time feedback UI during onboarding.
+- **Protected Routing:** React router wrappers enforce session checks, preventing unauthenticated users from accessing core marketplace capabilities.
+
+### 2.2 Marketplace Architecture (In Progress)
+- **Structured Listings:** Sellers can categorize items with specific condition tags and clear pricing.
+- **Smart Search:** Buyers can quickly filter items by category, price range, and location.
+- **Direct Offers:** A simplified "Make Offer" workflow to standardize and accelerate negotiations.
+
+---
+
+## 3. Developer Experience & Collaboration Workflows
+As a team of 3 developers, maintaining high code quality and continuous synchronization across different local environments is critical to the project's success.
 
 ### 3.1 Code Quality Assurance
-- **Husky Git Hooks:** We implemented client-side git hooks using Husky. Pre-commit hooks automatically check for staging errors and enforce our branch protection rules to prevent direct pushes to the `main` branch.
-- **Linting and Formatting:** The project utilizes ESLint with a flat configuration alongside Prettier. This catches syntactic errors early and enforces a uniform, readable code style across all components authored by different team members.
-- **CI/CD Pipeline:** GitHub Actions automatically run our linting and formatting pipelines on every Pull Request, ensuring no flawed code reaches the primary branch.
+- **Husky Git Hooks:** Client-side git hooks are enforced using Husky. Pre-commit hooks automatically check for staging errors, while branch protection rules prevent direct pushes to the main branch.
+- **Linting and Formatting:** ESLint (flat config) and Prettier catch syntactic errors early and enforce a uniform, readable code style across all components.
+- **CI/CD Pipeline:** GitHub Actions automatically run linting and formatting pipelines on every Pull Request.
 
 ### 3.2 Developer Synchronization & Repository Organization
-- **Containerized Infrastructure:** The entire application stack (Frontend, API, and PostgreSQL database) is orchestrated using Docker Compose. This provides a completely device-agnostic development environment, eliminating "it works on my machine" issues for team members.
-- **Automated Database Synchronization:** Using Prisma as our ORM, we've automated schema generation via package manager `postinstall` scripts. Developers effortlessly sync local DB states using `pnpm prisma db push`.
-- **Structured Context Documentation:** To ensure all team members remain closely synchronized on architectural requirements and current project states, we maintain a comprehensive set of markdown documentation. This includes detailed `onboard.md` instructions, established Git collaboration protocols in `git-rules.md`, and centralized documentation references. These files serve as a consistent "single source of truth" that easily syncs context across multiple developers and our local tooling workflows.
+- **Containerized Infrastructure:** The entire application stack (Frontend, API, and PostgreSQL database) is orchestrated using Docker Compose. This provides a completely device-agnostic development environment.
+- **Automated Database Synchronization:** Using Prisma as our ORM, schema generation is automated via package manager postinstall scripts. DB states are synced seamlessly via `pnpm prisma db push`.
+- **Structured Context Documentation:** To ensure developers remain synchronized on architectural requirements and project states, a comprehensive set of markdown documentation resides in the `resources/` directory. This includes detailed developer onboarding instructions and established Git collaboration protocols, serving as a strict "single source of truth" to minimize communication friction.
 
 ---
 
@@ -41,17 +58,20 @@ As a team of 3 developers, maintaining code quality and continuous synchronizati
 
 ### 4.1 Frontend Layer
 - **Framework:** React powered by Vite for rapid compilation and Hot Module Replacement.
-- **Styling:** Tailwind CSS v4, utilizing the modern `@theme` directive and zero-configuration setup.
+- **Styling:** Tailwind CSS v4, utilizing the modern `@theme` directive for zero-configuration, robust modular styling.
 
 ### 4.2 Backend Layer
-- **API Server:** Node.js/Express providing the authentication layer, engineered to easily scale into serving our upcoming GraphQL endpoints.
-- **Database:** PostgreSQL 16 provisioned seamlessly via Docker.
-- **ORM:** Prisma v6 providing highly type-safe database queries intuitively linked to the UI.
+- **API Server:** Node.js Express providing the authentication layer, engineered to scale and serve our upcoming GraphQL endpoints (shifting away from the initially proposed Python FastAPI for stronger full-stack JavaScript integration).
+- **Database:** PostgreSQL 16 provisioned seamlessly via Docker, with pgvector planned for advanced search capabilities.
+- **ORM:** Prisma v6 providing highly type-safe database queries natively linked to the application layer.
 
 ---
 
 ## 5. Future Implementation Roadmap
-- Integration of GraphQL APIs as the primary conduit for marketplace data exchange.
-- Creation of detailed item categorization pages with smart search, pricing filters, and location tags.
-- Development of the "Make an Offer" system and expansion into Want-To-Buy (WTB) listings.
-- Implementation of scalable external image storage for listing photos.
+As the marketplace scales, we are planning the following architectural and functional expansions to enhance user discovery and platform utility:
+
+- **GraphQL API Integration:** Transitioning to a strict GraphQL API layer backed by Prisma to optimize complex, relational market queries.
+- **AI-Powered Item Auto-Fill:** Implementing an external Vision API to identify and auto-categorize item listings based solely on user photo uploads, drastically reducing friction during the listing process.
+- **Database Seeding and Mock Data:** Fetching products from external free APIs (e.g., mock Shopify data) to automatically seed the database and simulate an active marketplace ecosystem.
+- **Omni-Channel & Mobile Integration:** Enhancing the frontend as a mobile-first experience to leverage native device mechanisms, such as immediate camera access for photo uploads.
+- **Authentication Expansions:** Supplementing our current email validation framework with scalable OAuth 2.0 pipelines (e.g. Sign in with Google / GitHub).
