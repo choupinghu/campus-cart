@@ -1,0 +1,17 @@
+{
+  "name": "grp8-report",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:pdf": "md-to-pdf IT5007_Grp8_Report.md",
+    "watch:pdf": "md-to-pdf -w IT5007_Grp8_Report.md"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.1",
+  "devDependencies": {
+    "md-to-pdf": "^5.2.5"
+  }
+}

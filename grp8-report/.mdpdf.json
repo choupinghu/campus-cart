@@ -1,0 +1,18 @@
+{
+  "stylesheet": [
+    "https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.min.css",
+    "custom.css"
+  ],
+  "pdf_options": {
+    "format": "A4",
+    "margin": {
+      "top": "20mm",
+      "right": "20mm",
+      "bottom": "20mm",
+      "left": "20mm"
+    },
+    "displayHeaderFooter": true,
+    "headerTemplate": " ",
+    "footerTemplate": "<div style=\"width: 100%; text-align: center; font-size: 10px; font-family: sans-serif; color: #666;\"><span class=\"title\"></span> - Page <span class=\"pageNumber\"></span> of <span class=\"totalPages\"></span></div>"
+  }
+}
