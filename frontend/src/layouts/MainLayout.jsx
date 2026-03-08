@@ -26,6 +26,12 @@ export default function MainLayout({ children }) {
               Welcome, {session.user.name} ({session.user.email})
             </span>
             <button
+              onClick={() => navigate('/create-listing')}
+              className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 transition"
+            >
+              Sell an Item
+            </button>
+            <button
               onClick={handleLogout}
               className="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200"
             >

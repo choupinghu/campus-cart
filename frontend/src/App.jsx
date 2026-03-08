@@ -3,6 +3,7 @@ import MainLayout from './layouts/MainLayout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
+import CreateListingPage from './pages/CreateListingPage'
 import { ProtectedRoute } from './components/ProtectedRoute'
 
 function App() {
@@ -26,6 +27,17 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <DashboardPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/create-listing"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <CreateListingPage />
               </MainLayout>
             </ProtectedRoute>
           }

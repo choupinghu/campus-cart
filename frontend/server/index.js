@@ -3,6 +3,7 @@ import cors from 'cors';
 import { toNodeHandler } from 'better-auth/node';
 import { auth } from './auth.js';
 import 'dotenv/config';
+import uploadRoutes from './routes/upload.js';
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -21,6 +22,9 @@ process.env.BETTER_AUTH_URL = process.env.VITE_API_URL || 'http://localhost:8000
 // Mount better-auth routes (express v5 routing)
 app.all("/api/auth/*route", toNodeHandler(auth));
 app.use("/api/auth", toNodeHandler(auth));
+
+app.use('/uploads', express.static('uploads'));
+app.use('/api/upload', uploadRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running' });
