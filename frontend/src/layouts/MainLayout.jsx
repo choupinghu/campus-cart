@@ -35,11 +35,7 @@ export default function MainLayout({ children }) {
         ) : null}
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8">{children}</main>
-
-      <footer className="border-t border-gray-200 bg-white px-6 py-4 text-center text-sm text-gray-500">
-        &copy; {new Date().getFullYear()} NUS Campus Marketplace
-      </footer>
+      <main className="w-full">{children}</main>
     </div>
   )
 }
