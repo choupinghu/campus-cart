@@ -4,6 +4,7 @@ import { toNodeHandler } from 'better-auth/node';
 import { auth } from './auth.js';
 import 'dotenv/config';
 import uploadRoutes from './routes/upload.js';
+import listingsRoutes from './routes/listings.js';
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -25,6 +26,7 @@ app.use("/api/auth", toNodeHandler(auth));
 
 app.use('/uploads', express.static('uploads'));
 app.use('/api/upload', uploadRoutes);
+app.use('/api/listings', listingsRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Backend is running' });

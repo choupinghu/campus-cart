@@ -4,6 +4,8 @@ import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import CreateListingPage from './pages/CreateListingPage'
+import MyListingsPage from './pages/MyListingsPage'
+import EditListingPage from './pages/EditListingPage'
 import { ProtectedRoute } from './components/ProtectedRoute'
 
 function App() {
@@ -38,6 +40,28 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <CreateListingPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-listings"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <MyListingsPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/edit-listing/:id"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <EditListingPage />
               </MainLayout>
             </ProtectedRoute>
           }

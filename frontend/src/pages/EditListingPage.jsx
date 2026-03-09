@@ -1,11 +1,10 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import ImageUploader from '../components/ui/ImageUploader';
-import { useSession } from '../lib/auth';
 
-export default function CreateListingPage() {
+export default function EditListingPage() {
     const navigate = useNavigate();
-    const { data: session } = useSession();
+    const { id } = useParams();
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -14,7 +13,40 @@ export default function CreateListingPage() {
         category: 'Electronics',
         imageUrl: ''
     });
+    const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Fetch existing listing data
+    useEffect(() => {
+        async function fetchListing() {
+            try {
+                const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+                const res = await fetch(`${baseUrl}/api/listings/${id}`);
+                if (res.ok) {
+                    const listing = await res.json();
+                    setFormData({
+                        title: listing.title || '',
+                        description: listing.description || '',
+                        price: listing.price?.toString() || '',
+                        condition: listing.condition || 'New',
+                        category: listing.category?.name || 'Electronics',
+                        imageUrl: listing.imageUrl || '',
+                    });
+                } else {
+                    alert('Listing not found.');
+                    navigate('/my-listings');
+                }
+            } catch (err) {
+                console.error('Failed to fetch listing:', err);
+                alert('Error loading listing.');
+                navigate('/my-listings');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchListing();
+    }, [id, navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,52 +62,64 @@ export default function CreateListingPage() {
         setIsSubmitting(true);
         try {
             const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-            const response = await fetch(`${baseUrl}/api/listings`, {
-                method: 'POST',
+            const response = await fetch(`${baseUrl}/api/listings/${id}`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...formData,
                     price: parseFloat(formData.price),
-                    sellerId: session?.user?.id,
                 }),
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to create listing');
+                throw new Error(data.error || 'Failed to update listing');
             }
 
-            alert('Listing created successfully!');
-            navigate('/');
+            alert('Listing updated successfully!');
+            navigate('/my-listings');
         } catch (error) {
-            console.error('Failed to create listing:', error);
-            alert(error.message || 'Error creating listing.');
+            console.error('Failed to update listing:', error);
+            alert(error.message || 'Error updating listing.');
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nus-blue"></div>
+            </div>
+        );
+    }
+
     return (
         <div className="max-w-3xl mx-auto py-12 px-6">
             <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Sell an Item</h2>
-                <p className="text-gray-500 mt-2">Upload a photo to get started.</p>
+                <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Edit Listing</h2>
+                <p className="text-gray-500 mt-2">Update your listing details or re-upload a photo.</p>
             </div>
 
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
                 <div className="mb-8 border-b border-gray-100 pb-8">
                     <h3 className="text-lg font-medium text-gray-900 mb-4">1. Photos</h3>
-                    <ImageUploader onUploadComplete={handleUploadComplete} />
 
+                    {/* Show current image */}
                     {formData.imageUrl && (
-                        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800 break-all">
-                            <strong>Uploaded Successfully! URL:</strong>{' '}
-                            <a href={formData.imageUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-green-900">
-                                {formData.imageUrl}
-                            </a>
+                        <div className="mb-4">
+                            <p className="text-sm text-gray-500 mb-2">Current photo:</p>
+                            <img
+                                src={formData.imageUrl}
+                                alt="Current listing"
+                                className="w-40 h-40 object-cover rounded-xl border border-gray-200"
+                            />
                         </div>
                     )}
+
+                    <p className="text-sm text-gray-500 mb-3">Upload a new photo to replace the current one:</p>
+                    <ImageUploader onUploadComplete={handleUploadComplete} />
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -161,17 +205,17 @@ export default function CreateListingPage() {
                     <div className="pt-4 flex justify-end gap-3 border-t border-gray-100">
                         <button
                             type="button"
-                            onClick={() => navigate('/')}
+                            onClick={() => navigate('/my-listings')}
                             className="py-2.5 px-6 rounded-xl font-medium text-gray-700 border border-gray-300 hover:bg-gray-50 transition"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            disabled={isSubmitting || !formData.imageUrl || !formData.title || !formData.price}
+                            disabled={isSubmitting || !formData.title || !formData.price}
                             className="py-2.5 px-8 rounded-xl font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {isSubmitting ? 'Creating...' : 'List Item'}
+                            {isSubmitting ? 'Saving...' : 'Save Changes'}
                         </button>
                     </div>
                 </form>

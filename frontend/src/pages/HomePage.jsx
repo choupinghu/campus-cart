@@ -20,8 +20,35 @@ export default function HomePage() {
   useEffect(() => {
     async function loadProducts() {
       setLoading(true)
-      const data = await fetchProducts()
-      setAllProducts(data)
+
+      // Fetch from Shopify sources
+      const shopifyProducts = await fetchProducts()
+
+      // Fetch user-created listings from our DB
+      let dbListings = []
+      try {
+        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+        const res = await fetch(`${baseUrl}/api/listings`)
+        if (res.ok) {
+          const listings = await res.json()
+          dbListings = listings.map((listing) => ({
+            id: listing.id,
+            title: listing.title,
+            price: listing.price,
+            image: listing.imageUrl || '',
+            source: 'CampusCart',
+            condition: listing.condition || 'Used',
+            location: listing.location || 'NUS Campus',
+            verified: true,
+          }))
+        }
+      } catch (err) {
+        console.error('Failed to fetch DB listings:', err)
+      }
+
+      // Merge and shuffle all products together
+      const merged = [...dbListings, ...shopifyProducts].sort(() => Math.random() - 0.5)
+      setAllProducts(merged)
       setLoading(false)
     }
     loadProducts()

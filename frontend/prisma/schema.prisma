@@ -80,6 +80,7 @@ model Listing {
   description String?
   price       Float
   condition   String?  // e.g. "New", "Like New", "Used"
+  location    String?  // e.g. "Kent Ridge Hall", "UTown Residence"
   imageUrl    String?
   seller      User     @relation(fields: [sellerId], references: [id])
   sellerId    String
