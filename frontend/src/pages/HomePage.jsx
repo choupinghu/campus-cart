@@ -34,32 +34,39 @@ export default function HomePage() {
   useEffect(() => {
     async function loadProducts() {
       setLoading(true)
-
-      // Fetch from Shopify sources
-      const shopifyProducts = await fetchProducts()
-
-      // Fetch user-created listings via GraphQL
-      let dbListings = []
       try {
-        const data = await graphqlRequest(GET_LISTINGS)
-        dbListings = data.listings.map((listing) => ({
-          id: listing.id,
-          title: listing.title,
-          price: listing.price,
-          image: listing.imageUrl || 'https://placehold.co/400x400/e2e8f0/64748b?text=No+Image',
-          source: 'CampusCart',
-          condition: listing.condition || 'Used',
-          location: listing.location || 'NUS Campus',
-          verified: true,
-        }))
-      } catch (err) {
-        console.error('Failed to fetch DB listings:', err)
-      }
+        // Fetch from Shopify sources
+        let shopifyProducts = []
+        try {
+          shopifyProducts = await fetchProducts()
+        } catch (err) {
+          console.error('Failed to fetch Shopify products:', err)
+        }
 
-      // Merge and shuffle all products together
-      const merged = [...dbListings, ...shopifyProducts].sort(() => Math.random() - 0.5)
-      setAllProducts(merged)
-      setLoading(false)
+        // Fetch user-created listings via GraphQL
+        let dbListings = []
+        try {
+          const data = await graphqlRequest(GET_LISTINGS)
+          dbListings = data.listings.map((listing) => ({
+            id: listing.id,
+            title: listing.title,
+            price: listing.price,
+            image: listing.imageUrl || 'https://placehold.co/400x400/e2e8f0/64748b?text=No+Image',
+            source: 'CampusCart',
+            condition: listing.condition || 'Used',
+            location: listing.location || 'NUS Campus',
+            verified: true,
+          }))
+        } catch (err) {
+          console.error('Failed to fetch DB listings:', err)
+        }
+
+        // Merge and shuffle all products together
+        const merged = [...dbListings, ...shopifyProducts].sort(() => Math.random() - 0.5)
+        setAllProducts(merged)
+      } finally {
+        setLoading(false)
+      }
     }
     loadProducts()
   }, [])

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { UploadCloud, Loader2, X } from 'lucide-react'
 
 export default function ImageUploader({ onUploadComplete }) {
@@ -24,6 +24,9 @@ export default function ImageUploader({ onUploadComplete }) {
       setError('File is too large. Please select an image under 5MB.')
       return
     }
+
+    // Revoke previous object URL to prevent memory leak
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
 
     // Prepare preview
     const objectUrl = URL.createObjectURL(file)
@@ -66,10 +69,18 @@ export default function ImageUploader({ onUploadComplete }) {
   }
 
   const reset = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
     setPreviewUrl(null)
     setError('')
     onUploadComplete(null)
   }
+
+  // Cleanup object URL on unmount
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
+    }
+  }, [previewUrl])
 
   return (
     <div className="w-full flex justify-center flex-col gap-4">

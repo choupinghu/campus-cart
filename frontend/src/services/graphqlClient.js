@@ -14,7 +14,18 @@ export async function graphqlRequest(query, variables = {}) {
     body: JSON.stringify({ query, variables }),
   })
 
-  const json = await res.json()
+  // Guard against non-JSON responses (e.g. 502 HTML error pages)
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Server error ${res.status}: ${text.slice(0, 200)}`)
+  }
+
+  let json
+  try {
+    json = await res.json()
+  } catch {
+    throw new Error(`Invalid JSON response from server (status ${res.status})`)
+  }
 
   if (json.errors && json.errors.length > 0) {
     const err = json.errors[0]

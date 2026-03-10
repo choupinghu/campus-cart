@@ -33,10 +33,10 @@ To ensure trust and exclusivity, the platform utilizes a secure authentication s
 - **Protected Routing:** React router wrappers enforce session checks, preventing unauthenticated users from accessing core marketplace capabilities.
 
 ### 2.2.1 Marketplace Architecture (Completed)
-- **Core Listing Lifecycle** The core CRUD operations are functional
-- **New Listing** Sellers fill out a structured form along with photo (5MB limit, image only), persisted on the server filesystem and served via Express static middleware.
-- **My Listings** Management page of seller's active listings with edit/delete functions
-- **Edit Listing** Sellers can update any field on an existing listing
+- **Core Listing Lifecycle:** The core CRUD operations are functional.
+- **New Listing:** Sellers fill out a structured form along with photo (5MB limit, image only), persisted on the server filesystem and served via Express static middleware.
+- **My Listings:** Management page of seller's active listings with edit/delete functions.
+- **Edit Listing:** Sellers can update any field on an existing listing.
 
 ### 2.2.2 Marketplace Architecture (In Progress)
 - **Structured Listings:** Sellers can categorize items with specific condition tags and clear pricing.
@@ -44,8 +44,7 @@ To ensure trust and exclusivity, the platform utilizes a secure authentication s
 - **Direct Offers:** A simplified "Make Offer" workflow to standardize and accelerate negotiations.
 
 ### 2.3 API Security and Authorisation
-Mutating API Endpoints enforce server-side authentication and ownership verification
-
+Mutating API Endpoints enforce server-side authentication and ownership verification.
 - **GraphQL Auth Context:** Session cookies are verified on every GraphQL request via `auth.api.getSession()`, injecting authenticated user in the resolver context to prevent unauthorised access
 - **Cookie Support:** All frontend fetch calls use `credentials: 'include'` to transmit session cookies
 
