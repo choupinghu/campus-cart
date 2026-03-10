@@ -59,7 +59,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     const { title, description, price, condition, category, location, imageUrl, sellerId } = req.body;
 
-    if (!title || !price || !category || !sellerId) {
+    if (!title || price == null || !category || !sellerId) {
         return res.status(400).json({ error: 'Missing required fields: title, price, category, sellerId' });
     }
 
@@ -134,6 +134,9 @@ router.put('/:id', async (req, res) => {
 
         res.json(listing);
     } catch (error) {
+        if (error.code === 'P2025') {
+            return res.status(404).json({ error: 'Listing not found' });
+        }
         console.error('Error updating listing:', error);
         res.status(500).json({ error: 'Failed to update listing' });
     }
@@ -149,6 +152,9 @@ router.delete('/:id', async (req, res) => {
 
         res.json({ message: 'Listing removed', id: listing.id });
     } catch (error) {
+        if (error.code === 'P2025') {
+            return res.status(404).json({ error: 'Listing not found' });
+        }
         console.error('Error deleting listing:', error);
         res.status(500).json({ error: 'Failed to delete listing' });
     }
