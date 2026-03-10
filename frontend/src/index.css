@@ -8,7 +8,6 @@
 }
 
 @layer base {
-
   button:not(:disabled),
   a {
     cursor: pointer;
