@@ -1,6 +1,16 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
+import { graphqlRequest } from '../services/graphqlClient'
+
+const CREATE_LISTING = `
+  mutation CreateListing($input: CreateListingInput!) {
+    createListing(input: $input) {
+      id
+      title
+    }
+  }
+`
 
 export default function CreateListingPage() {
   const navigate = useNavigate()
@@ -27,22 +37,16 @@ export default function CreateListingPage() {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-      const response = await fetch(`${baseUrl}/api/listings`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          ...formData,
+      await graphqlRequest(CREATE_LISTING, {
+        input: {
+          title: formData.title,
+          description: formData.description || null,
           price: parseFloat(formData.price),
-        }),
+          condition: formData.condition,
+          category: formData.category,
+          imageUrl: formData.imageUrl || null,
+        },
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create listing')
-      }
 
       alert('Listing created successfully!')
       navigate('/')

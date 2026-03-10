@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import MainLayout from './layouts/MainLayout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
-import DashboardPage from './pages/DashboardPage'
+
 import CreateListingPage from './pages/CreateListingPage'
 import MyListingsPage from './pages/MyListingsPage'
 import EditListingPage from './pages/EditListingPage'
@@ -20,17 +20,6 @@ function App() {
             <MainLayout>
               <HomePage />
             </MainLayout>
-          }
-        />
-
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <MainLayout>
-                <DashboardPage />
-              </MainLayout>
-            </ProtectedRoute>
           }
         />
 

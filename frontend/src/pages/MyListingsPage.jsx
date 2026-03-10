@@ -1,7 +1,31 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSession } from '../lib/auth'
+import { graphqlRequest } from '../services/graphqlClient'
 import { Pencil, Trash2, Plus } from 'lucide-react'
+
+const GET_MY_LISTINGS = `
+  query GetMyListings($sellerId: String!) {
+    listings(sellerId: $sellerId) {
+      id
+      title
+      description
+      price
+      condition
+      imageUrl
+      category { name }
+    }
+  }
+`
+
+const DELETE_LISTING = `
+  mutation DeleteListing($id: ID!) {
+    deleteListing(id: $id) {
+      message
+      id
+    }
+  }
+`
 
 export default function MyListingsPage() {
   const navigate = useNavigate()
@@ -15,14 +39,10 @@ export default function MyListingsPage() {
     async function fetchMyListings() {
       setLoading(true)
       try {
-        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-        const res = await fetch(`${baseUrl}/api/listings?sellerId=${session.user.id}`, {
-          credentials: 'include',
+        const data = await graphqlRequest(GET_MY_LISTINGS, {
+          sellerId: session.user.id,
         })
-        if (res.ok) {
-          const data = await res.json()
-          setListings(data)
-        }
+        setListings(data.listings)
       } catch (err) {
         console.error('Failed to fetch listings:', err)
       } finally {
@@ -37,20 +57,11 @@ export default function MyListingsPage() {
     if (!confirm('Are you sure you want to remove this listing?')) return
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-      const res = await fetch(`${baseUrl}/api/listings/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      })
-
-      if (res.ok) {
-        setListings((prev) => prev.filter((l) => l.id !== id))
-      } else {
-        alert('Failed to delete listing.')
-      }
+      await graphqlRequest(DELETE_LISTING, { id })
+      setListings((prev) => prev.filter((l) => l.id !== id))
     } catch (err) {
       console.error('Failed to delete listing:', err)
-      alert('Error deleting listing.')
+      alert(err.message || 'Error deleting listing.')
     }
   }
 

@@ -1,6 +1,30 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
+import { graphqlRequest } from '../services/graphqlClient'
+
+const GET_LISTING = `
+  query GetListing($id: ID!) {
+    listing(id: $id) {
+      id
+      title
+      description
+      price
+      condition
+      imageUrl
+      category { name }
+    }
+  }
+`
+
+const UPDATE_LISTING = `
+  mutation UpdateListing($id: ID!, $input: UpdateListingInput!) {
+    updateListing(id: $id, input: $input) {
+      id
+      title
+    }
+  }
+`
 
 export default function EditListingPage() {
   const navigate = useNavigate()
@@ -16,16 +40,13 @@ export default function EditListingPage() {
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Fetch existing listing data
+  // Fetch existing listing data via GraphQL
   useEffect(() => {
     async function fetchListing() {
       try {
-        const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-        const res = await fetch(`${baseUrl}/api/listings/${id}`, {
-          credentials: 'include',
-        })
-        if (res.ok) {
-          const listing = await res.json()
+        const data = await graphqlRequest(GET_LISTING, { id })
+        const listing = data.listing
+        if (listing) {
           setFormData({
             title: listing.title || '',
             description: listing.description || '',
@@ -63,22 +84,17 @@ export default function EditListingPage() {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-      const response = await fetch(`${baseUrl}/api/listings/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          ...formData,
+      await graphqlRequest(UPDATE_LISTING, {
+        id,
+        input: {
+          title: formData.title,
+          description: formData.description || null,
           price: parseFloat(formData.price),
-        }),
+          condition: formData.condition,
+          category: formData.category,
+          imageUrl: formData.imageUrl || null,
+        },
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to update listing')
-      }
 
       alert('Listing updated successfully!')
       navigate('/my-listings')
