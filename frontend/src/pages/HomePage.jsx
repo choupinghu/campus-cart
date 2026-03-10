@@ -35,7 +35,7 @@ export default function HomePage() {
             id: listing.id,
             title: listing.title,
             price: listing.price,
-            image: listing.imageUrl || '',
+            image: listing.imageUrl || 'https://placehold.co/400x400/e2e8f0/64748b?text=No+Image',
             source: 'CampusCart',
             condition: listing.condition || 'Used',
             location: listing.location || 'NUS Campus',

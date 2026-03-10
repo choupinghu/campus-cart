@@ -43,6 +43,7 @@ export default function ImageUploader({ onUploadComplete }) {
       const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
       const uploadRes = await fetch(`${baseUrl}/api/upload`, {
         method: 'POST',
+        credentials: 'include',
         body: formData,
       })
 

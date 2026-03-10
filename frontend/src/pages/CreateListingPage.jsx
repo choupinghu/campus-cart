@@ -1,11 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
-import { useSession } from '../lib/auth'
 
 export default function CreateListingPage() {
   const navigate = useNavigate()
-  const { data: session } = useSession()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -33,10 +31,10 @@ export default function CreateListingPage() {
       const response = await fetch(`${baseUrl}/api/listings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           ...formData,
           price: parseFloat(formData.price),
-          sellerId: session?.user?.id,
         }),
       })
 

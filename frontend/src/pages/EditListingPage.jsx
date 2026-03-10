@@ -21,7 +21,9 @@ export default function EditListingPage() {
     async function fetchListing() {
       try {
         const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-        const res = await fetch(`${baseUrl}/api/listings/${id}`)
+        const res = await fetch(`${baseUrl}/api/listings/${id}`, {
+          credentials: 'include',
+        })
         if (res.ok) {
           const listing = await res.json()
           setFormData({
@@ -65,6 +67,7 @@ export default function EditListingPage() {
       const response = await fetch(`${baseUrl}/api/listings/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           ...formData,
           price: parseFloat(formData.price),

@@ -1,10 +1,15 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { toNodeHandler } from 'better-auth/node';
 import { auth } from './auth.js';
 import 'dotenv/config';
 import uploadRoutes from './routes/upload.js';
 import listingsRoutes from './routes/listings.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadsDir = path.resolve(__dirname, '..', 'uploads');
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -24,7 +29,7 @@ process.env.BETTER_AUTH_URL = process.env.VITE_API_URL || 'http://localhost:8000
 app.all("/api/auth/*route", toNodeHandler(auth));
 app.use("/api/auth", toNodeHandler(auth));
 
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(uploadsDir));
 app.use('/api/upload', uploadRoutes);
 app.use('/api/listings', listingsRoutes);
 

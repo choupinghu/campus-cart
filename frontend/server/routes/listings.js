@@ -1,10 +1,15 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { requireAuth } from '../middleware/requireAuth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// GET /api/listings - Fetch all active listings (optionally filter by sellerId)
+// Public seller fields (no email)
+const publicSellerSelect = { id: true, name: true };
+const categorySelect = { id: true, name: true };
+
+// GET /api/listings - Fetch all active listings (public, optionally filter by sellerId)
 router.get('/', async (req, res) => {
     try {
         const where = { status: 'active' };
@@ -16,12 +21,8 @@ router.get('/', async (req, res) => {
         const listings = await prisma.listing.findMany({
             where,
             include: {
-                seller: {
-                    select: { id: true, name: true, email: true }
-                },
-                category: {
-                    select: { id: true, name: true }
-                }
+                seller: { select: publicSellerSelect },
+                category: { select: categorySelect },
             },
             orderBy: { createdAt: 'desc' }
         });
@@ -33,14 +34,14 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET /api/listings/:id - Fetch a single listing by ID
+// GET /api/listings/:id - Fetch a single listing by ID (public)
 router.get('/:id', async (req, res) => {
     try {
         const listing = await prisma.listing.findUnique({
             where: { id: req.params.id },
             include: {
-                seller: { select: { id: true, name: true, email: true } },
-                category: { select: { id: true, name: true } },
+                seller: { select: publicSellerSelect },
+                category: { select: categorySelect },
             }
         });
 
@@ -55,24 +56,21 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// POST /api/listings - Create a new listing
-router.post('/', async (req, res) => {
-    const { title, description, price, condition, category, location, imageUrl, sellerId } = req.body;
+// POST /api/listings - Create a new listing (authenticated, sellerId derived from session)
+router.post('/', requireAuth, async (req, res) => {
+    const { title, description, price, condition, category, location, imageUrl } = req.body;
 
-    if (!title || price == null || !category || !sellerId) {
-        return res.status(400).json({ error: 'Missing required fields: title, price, category, sellerId' });
+    if (!title || price == null || !category) {
+        return res.status(400).json({ error: 'Missing required fields: title, price, category' });
     }
 
     try {
-        let categoryRecord = await prisma.category.findUnique({
-            where: { name: category }
+        // Use upsert to avoid race conditions on category creation
+        const categoryRecord = await prisma.category.upsert({
+            where: { name: category },
+            update: {},
+            create: { name: category },
         });
-
-        if (!categoryRecord) {
-            categoryRecord = await prisma.category.create({
-                data: { name: category }
-            });
-        }
 
         const listing = await prisma.listing.create({
             data: {
@@ -82,12 +80,12 @@ router.post('/', async (req, res) => {
                 condition: condition || null,
                 location: location || null,
                 imageUrl: imageUrl || null,
-                sellerId,
+                sellerId: req.user.id, // Derived from session, not client
                 categoryId: categoryRecord.id,
             },
             include: {
-                seller: { select: { id: true, name: true, email: true } },
-                category: { select: { id: true, name: true } },
+                seller: { select: publicSellerSelect },
+                category: { select: categorySelect },
             }
         });
 
@@ -98,11 +96,20 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT /api/listings/:id - Update a listing
-router.put('/:id', async (req, res) => {
+// PUT /api/listings/:id - Update a listing (authenticated + ownership check)
+router.put('/:id', requireAuth, async (req, res) => {
     const { title, description, price, condition, category, location, imageUrl } = req.body;
 
     try {
+        // Verify ownership
+        const existing = await prisma.listing.findUnique({ where: { id: req.params.id } });
+        if (!existing) {
+            return res.status(404).json({ error: 'Listing not found' });
+        }
+        if (existing.sellerId !== req.user.id) {
+            return res.status(403).json({ error: 'You can only edit your own listings.' });
+        }
+
         const updateData = {};
         if (title !== undefined) updateData.title = title;
         if (description !== undefined) updateData.description = description;
@@ -112,14 +119,11 @@ router.put('/:id', async (req, res) => {
         if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
 
         if (category !== undefined) {
-            let categoryRecord = await prisma.category.findUnique({
-                where: { name: category }
+            const categoryRecord = await prisma.category.upsert({
+                where: { name: category },
+                update: {},
+                create: { name: category },
             });
-            if (!categoryRecord) {
-                categoryRecord = await prisma.category.create({
-                    data: { name: category }
-                });
-            }
             updateData.categoryId = categoryRecord.id;
         }
 
@@ -127,8 +131,8 @@ router.put('/:id', async (req, res) => {
             where: { id: req.params.id },
             data: updateData,
             include: {
-                seller: { select: { id: true, name: true, email: true } },
-                category: { select: { id: true, name: true } },
+                seller: { select: publicSellerSelect },
+                category: { select: categorySelect },
             }
         });
 
@@ -142,15 +146,24 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE /api/listings/:id - Soft-delete a listing (set status to "removed")
-router.delete('/:id', async (req, res) => {
+// DELETE /api/listings/:id - Soft-delete a listing (authenticated + ownership check)
+router.delete('/:id', requireAuth, async (req, res) => {
     try {
-        const listing = await prisma.listing.update({
+        // Verify ownership
+        const existing = await prisma.listing.findUnique({ where: { id: req.params.id } });
+        if (!existing) {
+            return res.status(404).json({ error: 'Listing not found' });
+        }
+        if (existing.sellerId !== req.user.id) {
+            return res.status(403).json({ error: 'You can only delete your own listings.' });
+        }
+
+        await prisma.listing.update({
             where: { id: req.params.id },
             data: { status: 'removed' },
         });
 
-        res.json({ message: 'Listing removed', id: listing.id });
+        res.json({ message: 'Listing removed', id: existing.id });
     } catch (error) {
         if (error.code === 'P2025') {
             return res.status(404).json({ error: 'Listing not found' });

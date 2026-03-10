@@ -2,9 +2,15 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { requireAuth } from '../middleware/requireAuth.js';
+
+// Use absolute path for uploads directory
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadsDir = path.resolve(__dirname, '..', '..', 'uploads');
 
 // Ensure uploads directory exists
-fs.mkdirSync('uploads/', { recursive: true });
+fs.mkdirSync(uploadsDir, { recursive: true });
 
 const router = express.Router();
 
@@ -14,8 +20,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
 // Configure multer storage
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // Save to the uploads folder in the frontend root
-        cb(null, 'uploads/');
+        cb(null, uploadsDir);
     },
     filename: (req, file, cb) => {
         // Generate a secure, unique filename
@@ -40,9 +45,8 @@ const upload = multer({
     }
 });
 
-// POST /api/upload
-// The 'upload.single' middleware will automatically throw an error if file is > 5MB
-router.post('/', (req, res) => {
+// POST /api/upload (authenticated - only signed-in users can upload)
+router.post('/', requireAuth, (req, res) => {
     upload.single('image')(req, res, (err) => {
         // Handle specific Multer errors (like size limit exceeded)
         if (err instanceof multer.MulterError) {

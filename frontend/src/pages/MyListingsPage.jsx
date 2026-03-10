@@ -16,7 +16,9 @@ export default function MyListingsPage() {
       setLoading(true)
       try {
         const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-        const res = await fetch(`${baseUrl}/api/listings?sellerId=${session.user.id}`)
+        const res = await fetch(`${baseUrl}/api/listings?sellerId=${session.user.id}`, {
+          credentials: 'include',
+        })
         if (res.ok) {
           const data = await res.json()
           setListings(data)
@@ -36,7 +38,10 @@ export default function MyListingsPage() {
 
     try {
       const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-      const res = await fetch(`${baseUrl}/api/listings/${id}`, { method: 'DELETE' })
+      const res = await fetch(`${baseUrl}/api/listings/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      })
 
       if (res.ok) {
         setListings((prev) => prev.filter((l) => l.id !== id))
