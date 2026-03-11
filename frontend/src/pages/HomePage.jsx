@@ -1,8 +1,22 @@
 import { useState, useEffect, useMemo } from 'react'
 import { fetchProducts } from '../services/shopifyService'
+import { graphqlRequest } from '../services/graphqlClient'
 import FilterSidebar from '../components/Marketplace/FilterSidebar'
 import ProductGrid from '../components/Marketplace/ProductGrid'
 import { Search } from 'lucide-react'
+
+const GET_LISTINGS = `
+  query GetListings {
+    listings {
+      id
+      title
+      price
+      imageUrl
+      condition
+      location
+    }
+  }
+`
 
 export default function HomePage() {
   const [allProducts, setAllProducts] = useState([])
@@ -20,9 +34,39 @@ export default function HomePage() {
   useEffect(() => {
     async function loadProducts() {
       setLoading(true)
-      const data = await fetchProducts()
-      setAllProducts(data)
-      setLoading(false)
+      try {
+        // Fetch from Shopify sources
+        let shopifyProducts = []
+        try {
+          shopifyProducts = await fetchProducts()
+        } catch (err) {
+          console.error('Failed to fetch Shopify products:', err)
+        }
+
+        // Fetch user-created listings via GraphQL
+        let dbListings = []
+        try {
+          const data = await graphqlRequest(GET_LISTINGS)
+          dbListings = data.listings.map((listing) => ({
+            id: listing.id,
+            title: listing.title,
+            price: listing.price,
+            image: listing.imageUrl || 'https://placehold.co/400x400/e2e8f0/64748b?text=No+Image',
+            source: 'CampusCart',
+            condition: listing.condition || 'Used',
+            location: listing.location || 'NUS Campus',
+            verified: true,
+          }))
+        } catch (err) {
+          console.error('Failed to fetch DB listings:', err)
+        }
+
+        // Merge and shuffle all products together
+        const merged = [...dbListings, ...shopifyProducts].sort(() => Math.random() - 0.5)
+        setAllProducts(merged)
+      } finally {
+        setLoading(false)
+      }
     }
     loadProducts()
   }, [])

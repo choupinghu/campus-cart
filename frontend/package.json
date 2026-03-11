@@ -17,11 +17,14 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@graphql-tools/schema": "^10.0.31",
     "@prisma/client": "^6.19.2",
     "@tailwindcss/vite": "^4.2.1",
     "axios": "^1.13.6",
     "better-auth": "^1.5.4",
+    "graphql": "^16.13.1",
     "lucide-react": "^0.577.0",
+    "multer": "^2.1.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.1",

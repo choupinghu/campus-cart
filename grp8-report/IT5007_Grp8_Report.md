@@ -32,10 +32,21 @@ To ensure trust and exclusivity, the platform utilizes a secure authentication s
 - **Robust Security:** Powered by an Express.js backend and a Better Auth integration. Passwords enforce strict security policies (minimum 8 characters, capital letters, numbers, and special characters) with real-time feedback UI during onboarding.
 - **Protected Routing:** React router wrappers enforce session checks, preventing unauthenticated users from accessing core marketplace capabilities.
 
-### 2.2 Marketplace Architecture (In Progress)
+### 2.2.1 Marketplace Architecture (Completed)
+- **Core Listing Lifecycle:** The core CRUD operations are functional.
+- **New Listing:** Sellers fill out a structured form along with photo (5MB limit, image only), persisted on the server filesystem and served via Express static middleware.
+- **My Listings:** Management page of seller's active listings with edit/delete functions.
+- **Edit Listing:** Sellers can update any field on an existing listing.
+
+### 2.2.2 Marketplace Architecture (In Progress)
 - **Structured Listings:** Sellers can categorize items with specific condition tags and clear pricing.
 - **Smart Search:** Buyers can quickly filter items by category, price range, and location.
 - **Direct Offers:** A simplified "Make Offer" workflow to standardize and accelerate negotiations.
+
+### 2.3 API Security and Authorisation
+Mutating API Endpoints enforce server-side authentication and ownership verification.
+- **GraphQL Auth Context:** Session cookies are verified on every GraphQL request via `auth.api.getSession()`, injecting authenticated user in the resolver context to prevent unauthorised access
+- **Cookie Support:** All frontend fetch calls use `credentials: 'include'` to transmit session cookies
 
 ---
 
@@ -61,17 +72,18 @@ As a team of 3 developers, maintaining high code quality and continuous synchron
 - **Styling:** Tailwind CSS v4, utilizing the modern `@theme` directive for zero-configuration, robust modular styling.
 
 ### 4.2 Backend Layer
-- **API Server:** Node.js Express providing the authentication layer, engineered to scale and serve our upcoming GraphQL endpoints (shifting away from the initially proposed Python FastAPI for stronger full-stack JavaScript integration).
+- **API Server:** Node.js Express serving a GraphQL API, keeping dependency footprint minimal while maintaining full GraphQL support
 - **Database:** PostgreSQL 16 provisioned seamlessly via Docker, with pgvector planned for advanced search capabilities.
 - **ORM:** Prisma v6 providing highly type-safe database queries natively linked to the application layer.
+- **File Upload Pipeline:** Multer middleware handles image uploads via a dedicated REST endpoint, and stores image file locally and DB stores image URL, decoupling storage from data layer. This uses REST API since it is not well-suited for GraphQL implementations
 
 ---
 
 ## 5. Future Implementation Roadmap
 As the marketplace scales, we are planning the following architectural and functional expansions to enhance user discovery and platform utility:
 
-- **GraphQL API Integration:** Transitioning to a strict GraphQL API layer backed by Prisma to optimize complex, relational market queries.
-- **AI-Powered Item Auto-Fill:** Implementing an external Vision API to identify and auto-categorize item listings based solely on user photo uploads, drastically reducing friction during the listing process.
+- **AI-Powered Item Auto-Fill:** Implementing an external Vision API to identify and auto-categorize item listings based solely on user photo uploads. The image upload infrastructure and listing API are already in place to support this workflow.
 - **Database Seeding and Mock Data:** Fetching products from external free APIs (e.g., mock Shopify data) to automatically seed the database and simulate an active marketplace ecosystem.
 - **Omni-Channel & Mobile Integration:** Enhancing the frontend as a mobile-first experience to leverage native device mechanisms, such as immediate camera access for photo uploads.
 - **Authentication Expansions:** Supplementing our current email validation framework with scalable OAuth 2.0 pipelines (e.g. Sign in with Google / GitHub).
+- **Cloud Storage Migration:** The current architecture stores only image URLs in the database, decoupling storage from data. Scaling to production requires only swapping Multer's local disk destination for an S3-compatible SDK

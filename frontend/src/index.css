@@ -17,3 +17,13 @@
     cursor: not-allowed;
   }
 }
+
+@layer components {
+  .input-field {
+    @apply w-full border-gray-300 rounded-lg shadow-sm focus:border-nus-blue focus:ring-nus-blue py-2 px-3 border outline-none font-medium;
+  }
+
+  .select-field {
+    @apply w-full border-gray-300 rounded-lg shadow-sm focus:border-nus-blue focus:ring-nus-blue py-2 px-3 border outline-none bg-white font-medium;
+  }
+}
