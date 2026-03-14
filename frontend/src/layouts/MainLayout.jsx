@@ -30,31 +30,19 @@ export default function MainLayout({ children }) {
             <span className="text-sm font-medium text-gray-700">
               Welcome, {session.user.name} ({session.user.email})
             </span>
-            <button
-              onClick={() => navigate('/create-listing')}
-              className="btn-primary btn-sm"
-            >
+            <button onClick={() => navigate('/create-listing')} className="btn-primary btn-sm">
               Sell an Item
             </button>
-            <button
-              onClick={() => navigate('/my-listings')}
-              className="btn-secondary btn-sm"
-            >
+            <button onClick={() => navigate('/my-listings')} className="btn-secondary btn-sm">
               My Listings
             </button>
-            <button
-              onClick={handleLogout}
-              className="btn-outline btn-sm"
-            >
+            <button onClick={handleLogout} className="btn-outline btn-sm">
               Sign out
             </button>
           </div>
         ) : (
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/login')}
-              className="btn-primary"
-            >
+            <button onClick={() => navigate('/login')} className="btn-primary">
               Log in
             </button>
           </div>

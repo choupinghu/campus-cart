@@ -224,11 +224,7 @@ export default function EditListingPage() {
           </div>
 
           <div className="pt-4 flex justify-end gap-3 border-t border-gray-100">
-            <button
-              type="button"
-              onClick={() => navigate('/my-listings')}
-              className="btn-outline"
-            >
+            <button type="button" onClick={() => navigate('/my-listings')} className="btn-outline">
               Cancel
             </button>
             <button

@@ -82,10 +82,7 @@ export default function MyListingsPage() {
             {listings.length} active listing{listings.length !== 1 ? 's' : ''}
           </p>
         </div>
-        <button
-          onClick={() => navigate('/create-listing')}
-          className="btn-primary"
-        >
+        <button onClick={() => navigate('/create-listing')} className="btn-primary">
           <Plus className="w-4 h-4" />
           New Listing
         </button>
@@ -129,12 +126,8 @@ export default function MyListingsPage() {
                   <span className="text-lg font-bold text-nus-blue">
                     S${listing.price.toFixed(2)}
                   </span>
-                  <span className="badge-gray">
-                    {listing.condition || 'N/A'}
-                  </span>
-                  <span className="badge-accent">
-                    {listing.category?.name || 'Uncategorized'}
-                  </span>
+                  <span className="badge-gray">{listing.condition || 'N/A'}</span>
+                  <span className="badge-accent">{listing.category?.name || 'Uncategorized'}</span>
                 </div>
               </div>
 
@@ -147,10 +140,7 @@ export default function MyListingsPage() {
                   <Pencil className="w-3.5 h-3.5" />
                   Edit
                 </button>
-                <button
-                  onClick={() => handleDelete(listing.id)}
-                  className="btn-danger"
-                >
+                <button onClick={() => handleDelete(listing.id)} className="btn-danger">
                   <Trash2 className="w-3.5 h-3.5" />
                   Delete
                 </button>
