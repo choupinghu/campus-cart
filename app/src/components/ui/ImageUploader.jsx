@@ -13,13 +13,13 @@ export default function ImageUploader({ onUploadComplete }) {
     const file = e.target.files[0]
     if (!file) return
 
-    // Validate type on frontend
+    // Validate type on client-side
     if (!file.type.startsWith('image/')) {
       setError('Please select an image file (JPEG, PNG, etc).')
       return
     }
 
-    // Validate size on frontend
+    // Validate size on client-side
     if (file.size > MAX_FILE_SIZE) {
       setError('File is too large. Please select an image under 5MB.')
       return
