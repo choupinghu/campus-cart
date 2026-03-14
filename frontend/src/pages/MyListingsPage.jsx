@@ -84,7 +84,7 @@ export default function MyListingsPage() {
         </div>
         <button
           onClick={() => navigate('/create-listing')}
-          className="flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition"
+          className="btn-primary"
         >
           <Plus className="w-4 h-4" />
           New Listing
@@ -129,10 +129,10 @@ export default function MyListingsPage() {
                   <span className="text-lg font-bold text-nus-blue">
                     S${listing.price.toFixed(2)}
                   </span>
-                  <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full uppercase">
+                  <span className="badge-gray">
                     {listing.condition || 'N/A'}
                   </span>
-                  <span className="text-xs font-medium text-purple-600 bg-purple-50 px-2 py-1 rounded-full">
+                  <span className="badge-accent">
                     {listing.category?.name || 'Uncategorized'}
                   </span>
                 </div>
@@ -142,14 +142,14 @@ export default function MyListingsPage() {
               <div className="flex flex-col gap-2 flex-shrink-0">
                 <button
                   onClick={() => navigate(`/edit-listing/${listing.id}`)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition cursor-pointer"
+                  className="btn-ghost"
                 >
                   <Pencil className="w-3.5 h-3.5" />
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(listing.id)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 transition cursor-pointer"
+                  className="btn-danger"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   Delete

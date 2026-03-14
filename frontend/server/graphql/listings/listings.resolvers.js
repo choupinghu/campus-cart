@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import { GraphQLError } from 'graphql';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../prisma.js';
 
 // Shared select objects (no email exposed)
 const publicSellerSelect = { id: true, name: true };
@@ -20,7 +18,7 @@ function requireAuth(context) {
     return context.user;
 }
 
-export const resolvers = {
+export const listingsResolvers = {
     Query: {
         // Fetch all active listings, optionally filtered by sellerId
         listings: async (_parent, { sellerId }) => {

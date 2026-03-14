@@ -19,11 +19,46 @@
 }
 
 @layer components {
+  /* ── Form Fields ── */
   .input-field {
     @apply w-full border-gray-300 rounded-lg shadow-sm focus:border-nus-blue focus:ring-nus-blue py-2 px-3 border outline-none font-medium;
   }
 
   .select-field {
     @apply w-full border-gray-300 rounded-lg shadow-sm focus:border-nus-blue focus:ring-nus-blue py-2 px-3 border outline-none bg-white font-medium;
+  }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-nus-blue text-white px-5 py-2.5 text-sm hover:bg-nus-blue-hover;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-nus-orange text-white px-5 py-2.5 text-sm hover:bg-nus-orange-hover;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300 text-gray-700 bg-transparent px-5 py-2.5 text-sm hover:bg-gray-50;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-red-600 bg-red-50 px-3 py-2 text-sm hover:bg-red-100;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-nus-blue bg-nus-blue/10 px-3 py-2 text-sm hover:bg-nus-blue/20;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+
+  /* ── Badges ── */
+  .badge-gray {
+    @apply text-xs font-medium px-2 py-1 rounded-full text-gray-500 bg-gray-100 uppercase;
+  }
+
+  .badge-accent {
+    @apply text-xs font-medium px-2 py-1 rounded-full text-nus-orange bg-nus-orange/10;
   }
 }

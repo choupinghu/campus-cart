@@ -18,7 +18,7 @@ Before you start, ensure you have the following installed on your machine:
 1. Copy the example environment file:
    ```bash
    cp .env.example .env
-   cp .env.example frontend/.env
+   cp .env.example app/.env
    ```
 
 ### Option A: Full Docker Setup (Recommended)
@@ -35,41 +35,60 @@ If you prefer running Vite natively for faster local feedback:
    ```bash
    docker compose up db -d
    ```
-2. Setup and run the frontend:
+2. Setup and run the app:
    ```bash
    # First, install root dependencies to enable Git hooks (branch protection)
    pnpm install
    
-   # Then setup the frontend
-   cd frontend
+   # Then setup the app
+   cd app
    pnpm install
    pnpm dev
    ```
 
 ## 3. Database & Prisma Workflow
-We use Prisma (v6) for our ORM. The schema is located at `frontend/prisma/schema.prisma`.
+We use Prisma (v6) for our ORM. The schema is located at `app/prisma/schema.prisma`.
 
 ### Automatic Generation
-We have configured `prisma generate` as a `postinstall` script in the `frontend` directory. 
+We have configured `prisma generate` as a `postinstall` script in the `app` directory. 
 Whenever you pull new code and run `pnpm install`, your local Prisma client will *automatically* regenerate to match any new schema changes. You never have to worry about out-of-sync types!
 
 ### Applying Schema Changes
 If a teammate adds a new table/column to the schema, apply those changes to your local database by running:
 ```bash
-cd frontend
-pnpm prisma db push
+cd app
+pnpm db:push
+```
+*Note: This is a shorthand for `pnpm prisma db push`. It strictly alters your local Docker PostgreSQL container and will not create global migration files.*
+
+## 4. GraphQL API Architecture
+The backend uses a **modular, domain-driven** GraphQL structure. Each feature domain has its own schema and resolvers:
+
+```
+app/server/graphql/
+├── index.js                          # Merges all domain modules
+└── listings/
+    ├── listings.schema.js            # Type definitions
+    └── listings.resolvers.js         # Query & Mutation resolvers
 ```
 
-## 4. Code Quality
+**To add a new domain** (e.g. `offers/`):
+1. Create `offers/offers.schema.js` with your type definitions
+2. Create `offers/offers.resolvers.js` with your resolvers
+3. Import and register both in `graphql/index.js`
+
+All resolvers share a single Prisma client instance from `server/prisma.js`.
+
+## 5. Code Quality
 We enforce ESLint and Prettier to keep our code clean. Our CI pipeline checks this automatically on Pull Requests.
 To check your code before pushing:
 ```bash
-cd frontend
+cd app
 pnpm lint        # Highlights code issues
 pnpm format      # Auto-formats all your code
 ```
 
-## 5. Branching & PR Workflow
+## 6. Branching & PR Workflow
 **Main is protected!** You cannot push directly to `main`. 
 
 1. **Pull the latest code:**

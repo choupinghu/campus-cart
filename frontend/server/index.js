@@ -9,8 +9,7 @@ import 'dotenv/config';
 // Lightweight GraphQL imports (no Apollo)
 import { graphql } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { typeDefs } from './graphql/schema.js';
-import { resolvers } from './graphql/resolvers.js';
+import { typeDefs, resolvers } from './graphql/index.js';
 import { fromNodeHeaders } from 'better-auth/node';
 
 import uploadRoutes from './routes/upload.js';

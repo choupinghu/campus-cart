@@ -32,19 +32,19 @@ export default function MainLayout({ children }) {
             </span>
             <button
               onClick={() => navigate('/create-listing')}
-              className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 transition"
+              className="btn-primary btn-sm"
             >
               Sell an Item
             </button>
             <button
               onClick={() => navigate('/my-listings')}
-              className="rounded-md bg-nus-orange px-3 py-1.5 text-sm font-medium text-white hover:bg-nus-orange-hover transition"
+              className="btn-secondary btn-sm"
             >
               My Listings
             </button>
             <button
               onClick={handleLogout}
-              className="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200"
+              className="btn-outline btn-sm"
             >
               Sign out
             </button>
@@ -53,7 +53,7 @@ export default function MainLayout({ children }) {
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/login')}
-              className="rounded-md bg-nus-blue px-4 py-2 text-sm font-semibold text-white hover:bg-nus-blue-hover"
+              className="btn-primary"
             >
               Log in
             </button>

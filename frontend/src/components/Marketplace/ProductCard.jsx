@@ -21,7 +21,7 @@ export default function ProductCard({ product }) {
 
       {/* Content */}
       <div className="flex flex-col flex-grow px-1">
-        <span className="text-[10px] font-bold text-purple-600 tracking-widest uppercase mb-1">
+        <span className="text-[10px] font-bold text-nus-orange tracking-widest uppercase mb-1">
           {product.source}
         </span>
 
