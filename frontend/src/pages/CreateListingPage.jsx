@@ -166,17 +166,13 @@ export default function CreateListingPage() {
           </div>
 
           <div className="pt-4 flex justify-end gap-3 border-t border-gray-100">
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              className="py-2.5 px-6 rounded-xl font-medium text-gray-700 border border-gray-300 hover:bg-gray-50 transition"
-            >
+            <button type="button" onClick={() => navigate('/')} className="btn-outline">
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting || !formData.imageUrl || !formData.title || !formData.price}
-              className="py-2.5 px-8 rounded-xl font-medium text-white bg-nus-blue hover:bg-nus-blue-hover transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary px-8"
             >
               {isSubmitting ? 'Creating...' : 'List Item'}
             </button>

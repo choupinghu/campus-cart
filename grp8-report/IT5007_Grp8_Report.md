@@ -72,10 +72,12 @@ As a team of 3 developers, maintaining high code quality and continuous synchron
 - **Styling:** Tailwind CSS v4, utilizing the modern `@theme` directive for zero-configuration, robust modular styling.
 
 ### 4.2 Backend Layer
-- **API Server:** Node.js Express serving a GraphQL API, keeping dependency footprint minimal while maintaining full GraphQL support
+- **API Server:** Node.js Express serving a GraphQL API using a lightweight, Apollo-free setup (`graphql` + `@graphql-tools/schema`), keeping the dependency footprint minimal.
+- **Modular GraphQL Architecture:** The GraphQL schema follows a domain-driven folder structure. Each feature domain (e.g. `listings/`) contains co-located schema definitions and resolvers. A central merge layer (`graphql/index.js`) aggregates all modules into a unified schema, enabling clean separation of concerns and straightforward horizontal scaling as new domains are added.
+- **Shared Prisma Singleton:** All resolver modules share a single `PrismaClient` instance (`server/prisma.js`), preventing connection pool exhaustion and ensuring consistent database access patterns.
 - **Database:** PostgreSQL 16 provisioned seamlessly via Docker, with pgvector planned for advanced search capabilities.
-- **ORM:** Prisma v6 providing highly type-safe database queries natively linked to the application layer.
-- **File Upload Pipeline:** Multer middleware handles image uploads via a dedicated REST endpoint, and stores image file locally and DB stores image URL, decoupling storage from data layer. This uses REST API since it is not well-suited for GraphQL implementations
+- **ORM:** Prisma v6 providing highly type-safe database queries natively linked to the application layer. Schema changes are applied locally via `pnpm db:push`.
+- **File Upload Pipeline:** Multer middleware handles image uploads via a dedicated REST endpoint, storing image files locally while the DB stores image URLs, decoupling storage from the data layer. This uses REST since binary uploads are not well-suited for GraphQL.
 
 ---
 

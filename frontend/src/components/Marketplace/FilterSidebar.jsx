@@ -63,7 +63,7 @@ export default function FilterSidebar({ filters, setFilters }) {
             <input
               type="number"
               placeholder="Min"
-              className="w-full bg-gray-50 border-none rounded-xl py-2.5 pl-9 pr-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600/20"
+              className="w-full bg-gray-50 border-none rounded-xl py-2.5 pl-9 pr-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-nus-blue/20"
               value={filters.priceMin || ''}
               onChange={(e) => setFilters((prev) => ({ ...prev, priceMin: e.target.value }))}
             />
@@ -75,7 +75,7 @@ export default function FilterSidebar({ filters, setFilters }) {
             <input
               type="number"
               placeholder="Max"
-              className="w-full bg-gray-50 border-none rounded-xl py-2.5 pl-9 pr-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600/20"
+              className="w-full bg-gray-50 border-none rounded-xl py-2.5 pl-9 pr-3 text-sm font-medium text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-nus-blue/20"
               value={filters.priceMax || ''}
               onChange={(e) => setFilters((prev) => ({ ...prev, priceMax: e.target.value }))}
             />

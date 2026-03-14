@@ -1,4 +1,4 @@
-export const typeDefs = `#graphql
+export const listingsTypeDefs = `#graphql
   type Category {
     id: ID!
     name: String!

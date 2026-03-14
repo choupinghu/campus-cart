@@ -90,9 +90,9 @@ export default function ImageUploader({ onUploadComplete }) {
           className={`relative border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center cursor-pointer transition-colors group aspect-video bg-white ${error ? 'border-red-300 bg-red-50 hover:bg-red-50' : 'border-gray-300 hover:bg-gray-50'}`}
         >
           <div
-            className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${error ? 'bg-red-100' : 'bg-indigo-50'}`}
+            className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${error ? 'bg-red-100' : 'bg-nus-blue/10'}`}
           >
-            <UploadCloud className={`w-6 h-6 ${error ? 'text-red-500' : 'text-indigo-600'}`} />
+            <UploadCloud className={`w-6 h-6 ${error ? 'text-red-500' : 'text-nus-blue'}`} />
           </div>
           <p className="text-gray-900 font-medium mb-1">Click to upload</p>
           <p className="text-sm text-gray-500">SVG, PNG, JPG or GIF (max. 5MB)</p>
@@ -121,7 +121,7 @@ export default function ImageUploader({ onUploadComplete }) {
           {isUploading && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="bg-white/90 backdrop-blur px-4 py-2 rounded-full flex items-center gap-2 shadow-sm">
-                <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" />
+                <Loader2 className="w-4 h-4 text-nus-blue animate-spin" />
                 <span className="text-sm font-medium text-gray-700">Uploading...</span>
               </div>
             </div>

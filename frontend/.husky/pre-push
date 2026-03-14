@@ -15,13 +15,13 @@ if [ "$BRANCH_NAME" = "main" ]; then
 fi
 
 # Validate the build before pushing
-echo "🔨 [Frontend] Validating build..."
+echo "🔨 [App] Validating build..."
 cd frontend
 pnpm run build
 if [ $? -ne 0 ]; then
   echo ""
-  echo "❌ STOP! The frontend build failed. Please fix before pushing."
+  echo "❌ STOP! The build failed. Please fix before pushing."
   echo ""
   exit 1
 fi
-echo "✅ [Frontend] Build passed!"
+echo "✅ [App] Build passed!"
