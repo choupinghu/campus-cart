@@ -88,4 +88,3 @@ As the marketplace scales, we are planning the following architectural and funct
 - **Database Seeding and Mock Data:** Fetching products from external free APIs (e.g., mock Shopify data) to automatically seed the database and simulate an active marketplace ecosystem.
 - **Omni-Channel & Mobile Integration:** Enhancing the frontend as a mobile-first experience to leverage native device mechanisms, such as immediate camera access for photo uploads.
 - **Authentication Expansions:** Supplementing our current email validation framework with scalable OAuth 2.0 pipelines (e.g. Sign in with Google / GitHub).
-- **Cloud Storage Migration:** The current architecture stores only image URLs in the database, decoupling storage from data. Scaling to production requires only swapping Multer's local disk destination for an S3-compatible SDK

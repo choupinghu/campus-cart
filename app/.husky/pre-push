@@ -16,7 +16,7 @@ fi
 
 # Validate the build before pushing
 echo "🔨 [App] Validating build..."
-cd frontend
+cd app
 pnpm run build
 if [ $? -ne 0 ]; then
   echo ""

@@ -1,19 +1,19 @@
 {
-  "name": "frontend",
+  "name": "app",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:frontend": "vite --host",
+    "dev:app": "vite --host",
     "dev:backend": "nodemon server/index.js",
-    "dev": "concurrently \"pnpm run dev:frontend\" \"pnpm run dev:backend\"",
+    "dev": "concurrently \"pnpm run dev:app\" \"pnpm run dev:backend\"",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,css,json}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,css,json}\"",
-    "prepare": "cd .. && husky frontend/.husky",
+    "prepare": "cd .. && husky app/.husky",
     "postinstall": "prisma generate",
     "db:push": "prisma db push"
   },
