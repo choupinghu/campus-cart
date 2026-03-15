@@ -29,8 +29,6 @@ function createShape(id) {
   }
 }
 
-
-
 export default function FloatingShapes() {
   const containerRef = useRef(null)
   const shapesRef = useRef(Array.from({ length: SHAPE_COUNT }, (_, i) => createShape(i)))
