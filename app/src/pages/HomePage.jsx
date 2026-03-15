@@ -37,7 +37,7 @@ export default function HomePage() {
       try {
         const [shopifyRes, dbRes] = await Promise.allSettled([
           fetchProducts(),
-          graphqlRequest(GET_LISTINGS)
+          graphqlRequest(GET_LISTINGS),
         ])
 
         let shopifyProducts = []
