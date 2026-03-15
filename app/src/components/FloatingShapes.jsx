@@ -29,40 +29,7 @@ function createShape(id) {
   }
 }
 
-function ShapeSvg({ shape }) {
-  const s = shape.size
-  if (shape.type === 'circle') {
-    return (
-      <svg width={s} height={s} viewBox={`0 0 ${s} ${s}`}>
-        <circle cx={s / 2} cy={s / 2} r={s / 2 - 2} fill={shape.color} />
-      </svg>
-    )
-  }
-  if (shape.type === 'square') {
-    return (
-      <svg width={s} height={s} viewBox={`0 0 ${s} ${s}`}>
-        <rect x={2} y={2} width={s - 4} height={s - 4} rx={s * 0.15} fill={shape.color} />
-      </svg>
-    )
-  }
-  if (shape.type === 'triangle') {
-    const pts = `${s / 2},2 ${s - 2},${s - 2} 2,${s - 2}`
-    return (
-      <svg width={s} height={s} viewBox={`0 0 ${s} ${s}`}>
-        <polygon points={pts} fill={shape.color} />
-      </svg>
-    )
-  }
-  if (shape.type === 'diamond') {
-    const pts = `${s / 2},2 ${s - 2},${s / 2} ${s / 2},${s - 2} 2,${s / 2}`
-    return (
-      <svg width={s} height={s} viewBox={`0 0 ${s} ${s}`}>
-        <polygon points={pts} fill={shape.color} />
-      </svg>
-    )
-  }
-  return null
-}
+
 
 export default function FloatingShapes() {
   const containerRef = useRef(null)
