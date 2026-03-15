@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import MainLayout from './layouts/MainLayout'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import WantToBuyPage from './pages/WantToBuyPage'
+import ListingDetailPage from './pages/ListingDetailPage'
 
 import CreateListingPage from './pages/CreateListingPage'
 import MyListingsPage from './pages/MyListingsPage'
@@ -19,6 +21,24 @@ function App() {
           element={
             <MainLayout>
               <HomePage />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/want-to-buy"
+          element={
+            <MainLayout>
+              <WantToBuyPage />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/listing/:id"
+          element={
+            <MainLayout>
+              <ListingDetailPage />
             </MainLayout>
           }
         />

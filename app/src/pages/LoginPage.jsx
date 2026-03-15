@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { signIn, signUp } from '../lib/auth'
 import { Check, X, Info, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import FloatingShapes from '../components/FloatingShapes'
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true)
@@ -102,8 +103,10 @@ export default function LoginPage() {
   )
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-10 shadow-lg">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#EEF2F7] to-[#DDE6F0] py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Animated floating shapes background */}
+      <FloatingShapes />
+      <div className="relative z-10 w-full max-w-md space-y-8 rounded-3xl bg-white/95 backdrop-blur-sm p-10 shadow-2xl shadow-[#003D7C]/10">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 tracking-tight">
             {isLogin ? 'Sign in to CampusCart' : 'Join CampusCart'}
