@@ -1,78 +1,71 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import ImageUploader from '../components/ui/ImageUploader'
 import { graphqlRequest } from '../services/graphqlClient'
 import { NUS_LOCATIONS } from '../constants/locations'
 
-const GET_LISTING = `
-  query GetListing($id: ID!) {
-    listing(id: $id) {
+const GET_REQUEST = `
+  query GetRequest($id: ID!) {
+    request(id: $id) {
       id
       title
       description
-      price
+      budget
       condition
       location
-      imageUrl
-      category { name }
+      category {
+        name
+      }
     }
   }
 `
 
-const UPDATE_LISTING = `
-  mutation UpdateListing($id: ID!, $input: UpdateListingInput!) {
-    updateListing(id: $id, input: $input) {
+const UPDATE_REQUEST = `
+  mutation UpdateRequest($id: ID!, $input: UpdateRequestInput!) {
+    updateRequest(id: $id, input: $input) {
       id
       title
     }
   }
 `
 
-export default function EditListingPage() {
+export default function EditRequestPage() {
   const navigate = useNavigate()
   const { id } = useParams()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    price: '',
-    condition: 'New',
+    budget: '',
+    condition: 'Any',
     category: 'Electronics',
     location: '',
-    imageUrl: '',
   })
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Fetch existing listing data via GraphQL
   useEffect(() => {
-    async function fetchListing() {
+    async function loadRequest() {
       try {
-        const data = await graphqlRequest(GET_LISTING, { id })
-        const listing = data.listing
-        if (listing) {
+        const data = await graphqlRequest(GET_REQUEST, { id })
+        if (data?.request) {
+          const req = data.request
           setFormData({
-            title: listing.title || '',
-            description: listing.description || '',
-            price: listing.price?.toString() || '',
-            condition: listing.condition || 'New',
-            category: listing.category?.name || 'Electronics',
-            location: listing.location || '',
-            imageUrl: listing.imageUrl || '',
+            title: req.title,
+            description: req.description || '',
+            budget: req.budget.toString(),
+            condition: req.condition || 'Any',
+            category: req.category?.name || 'Electronics',
+            location: req.location || '',
           })
-        } else {
-          alert('Listing not found.')
-          navigate('/my-listings')
         }
-      } catch (err) {
-        console.error('Failed to fetch listing:', err)
-        alert('Error loading listing.')
+      } catch (error) {
+        console.error('Failed to load request:', error)
+        alert('Could not load request details.')
         navigate('/my-listings')
       } finally {
         setLoading(false)
       }
     }
-
-    fetchListing()
+    loadRequest()
   }, [id, navigate])
 
   const handleChange = (e) => {
@@ -80,32 +73,27 @@ export default function EditListingPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleUploadComplete = (url) => {
-    setFormData((prev) => ({ ...prev, imageUrl: url || '' }))
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      await graphqlRequest(UPDATE_LISTING, {
+      await graphqlRequest(UPDATE_REQUEST, {
         id,
         input: {
           title: formData.title,
           description: formData.description || null,
-          price: parseFloat(formData.price),
+          budget: parseFloat(formData.budget),
           condition: formData.condition,
           category: formData.category,
           location: formData.location || null,
-          imageUrl: formData.imageUrl || null,
         },
       })
 
-      alert('Listing updated successfully!')
+      alert('Request updated successfully!')
       navigate('/my-listings')
     } catch (error) {
-      console.error('Failed to update listing:', error)
-      alert(error.message || 'Error updating listing.')
+      console.error('Failed to update request:', error)
+      alert(error.message || 'Error updating request.')
     } finally {
       setIsSubmitting(false)
     }
@@ -122,35 +110,14 @@ export default function EditListingPage() {
   return (
     <div className="max-w-3xl mx-auto py-12 px-6">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Edit Listing</h2>
-        <p className="text-gray-500 mt-2">Update your listing details or re-upload a photo.</p>
+        <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Edit Buying Request</h2>
+        <p className="text-gray-500 mt-2">Update the details of what you are looking for.</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-        <div className="mb-8 border-b border-gray-100 pb-8">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">1. Photos</h3>
-
-          {/* Show current image */}
-          {formData.imageUrl && (
-            <div className="mb-4">
-              <p className="text-sm text-gray-500 mb-2">Current photo:</p>
-              <img
-                src={formData.imageUrl}
-                alt="Current listing"
-                className="w-40 h-40 object-cover rounded-xl border border-gray-200"
-              />
-            </div>
-          )}
-
-          <p className="text-sm text-gray-500 mb-3">
-            Upload a new photo to replace the current one:
-          </p>
-          <ImageUploader onUploadComplete={handleUploadComplete} />
-        </div>
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">2. Details</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Details</h3>
 
             <div className="space-y-4">
               <div>
@@ -162,20 +129,22 @@ export default function EditListingPage() {
                   value={formData.title}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="e.g. iPhone 13 Pro - 128GB"
+                  placeholder="e.g. Calculus: Early Transcendentals 9th Ed"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Max Budget ($)
+                  </label>
                   <input
                     type="number"
-                    name="price"
+                    name="budget"
                     required
                     min="0"
                     step="0.01"
-                    value={formData.price}
+                    value={formData.budget}
                     onChange={handleChange}
                     className="input-field"
                     placeholder="0.00"
@@ -183,14 +152,17 @@ export default function EditListingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Desired Condition
+                  </label>
                   <select
                     name="condition"
                     value={formData.condition}
                     onChange={handleChange}
                     className="select-field"
                   >
-                    <option value="New">New</option>
+                    <option value="Any">Any Condition</option>
+                    <option value="New">Brand New</option>
                     <option value="Like New">Like New</option>
                     <option value="Good">Good</option>
                     <option value="Fair">Fair</option>
@@ -216,7 +188,7 @@ export default function EditListingPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Meetup Location
+                  Preferred Meetup Location
                 </label>
                 <select
                   name="location"
@@ -241,7 +213,7 @@ export default function EditListingPage() {
                   value={formData.description}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="Describe the item, any defaults, why you're selling..."
+                  placeholder="Tell potential sellers what exactly you need..."
                 ></textarea>
               </div>
             </div>
@@ -253,10 +225,10 @@ export default function EditListingPage() {
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || !formData.title || !formData.price}
+              disabled={isSubmitting || !formData.title || !formData.budget}
               className="btn-primary px-8"
             >
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
+              {isSubmitting ? 'Updating...' : 'Save Changes'}
             </button>
           </div>
         </form>

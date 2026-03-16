@@ -7,6 +7,7 @@ export const listingsTypeDefs = `#graphql
   type Seller {
     id: ID!
     name: String!
+    image: String
   }
 
   type Listing {

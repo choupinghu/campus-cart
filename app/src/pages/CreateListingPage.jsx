@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
 import { graphqlRequest } from '../services/graphqlClient'
+import { NUS_LOCATIONS } from '../constants/locations'
 
 const CREATE_LISTING = `
   mutation CreateListing($input: CreateListingInput!) {
@@ -20,6 +21,7 @@ export default function CreateListingPage() {
     price: '',
     condition: 'New',
     category: 'Electronics',
+    location: '',
     imageUrl: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -44,6 +46,7 @@ export default function CreateListingPage() {
           price: parseFloat(formData.price),
           condition: formData.condition,
           category: formData.category,
+          location: formData.location || null,
           imageUrl: formData.imageUrl || null,
         },
       })
@@ -148,6 +151,25 @@ export default function CreateListingPage() {
                   <option value="Furniture">Furniture</option>
                   <option value="Clothing">Clothing</option>
                   <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Meetup Location
+                </label>
+                <select
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  className="select-field"
+                >
+                  <option value="">Select a location</option>
+                  {NUS_LOCATIONS.map((loc) => (
+                    <option key={loc} value={loc}>
+                      {loc}
+                    </option>
+                  ))}
                 </select>
               </div>
 
