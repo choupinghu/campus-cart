@@ -5,6 +5,7 @@ import { requireAuth } from '../auth.js';
 // Shared select objects (no email exposed)
 const publicSellerSelect = { id: true, name: true, image: true };
 const categorySelect = { id: true, name: true };
+const ALLOWED_LISTING_STATUSES = ['active', 'sold', 'removed'];
 
 export const listingsResolvers = {
     Query: {
@@ -100,6 +101,14 @@ export const listingsResolvers = {
             if (condition !== undefined) updateData.condition = condition;
             if (location !== undefined) updateData.location = location;
             if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
+            if (input.status !== undefined) {
+                if (!ALLOWED_LISTING_STATUSES.includes(input.status)) {
+                    throw new GraphQLError('Invalid status value', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+                updateData.status = input.status;
+            }
 
             if (category !== undefined && category !== null) {
                 const categoryRecord = await prisma.category.upsert({

@@ -1,7 +1,6 @@
 import { useSession, signOut } from '../lib/auth'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
-import { graphqlRequest } from '../services/graphqlClient'
 import {
   Plus,
   ChevronDown,
@@ -12,39 +11,13 @@ import {
   LayoutDashboard,
 } from 'lucide-react'
 
-const GET_ME_NAV = `
-  query GetMeNav {
-    me {
-      name
-      email
-    }
-  }
-`
-
 export default function MainLayout({ children }) {
   const { data: session } = useSession()
   const navigate = useNavigate()
-  const [userName, setUserName] = useState('')
   const [postMenuOpen, setPostMenuOpen] = useState(false)
   const menuRef = useRef(null)
 
-  useEffect(() => {
-    if (session?.user) {
-      const fetchFreshData = async () => {
-        try {
-          const data = await graphqlRequest(GET_ME_NAV)
-          if (data?.me) {
-            setUserName(data.me.name)
-          }
-        } catch (err) {
-          console.error('Failed to fetch nav user data:', err)
-        }
-      }
-      fetchFreshData()
-    }
-  }, [session?.user?.id])
-
-  const displayName = userName || session?.user?.name || ''
+  const displayName = session?.user?.name || ''
 
   // Close dropdown when clicking outside
   useEffect(() => {

@@ -85,6 +85,7 @@ export default function ProfilePage() {
       }
     }
     fetchProfile()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.user?.id])
 
   const handleChange = (e) => {

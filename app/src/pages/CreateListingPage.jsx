@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
 import { graphqlRequest } from '../services/graphqlClient'
 import { NUS_LOCATIONS } from '../constants/locations'
+import { CATEGORIES } from '../constants/categories'
 
 const CREATE_LISTING = `
   mutation CreateListing($input: CreateListingInput!) {
@@ -146,11 +147,11 @@ export default function CreateListingPage() {
                   onChange={handleChange}
                   className="select-field"
                 >
-                  <option value="Electronics">Electronics</option>
-                  <option value="Textbooks">Textbooks</option>
-                  <option value="Furniture">Furniture</option>
-                  <option value="Clothing">Clothing</option>
-                  <option value="Other">Other</option>
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
                 </select>
               </div>
 

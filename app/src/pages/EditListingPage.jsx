@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
 import { graphqlRequest } from '../services/graphqlClient'
 import { NUS_LOCATIONS } from '../constants/locations'
+import { CATEGORIES } from '../constants/categories'
 
 const GET_LISTING = `
   query GetListing($id: ID!) {
@@ -206,11 +207,11 @@ export default function EditListingPage() {
                   onChange={handleChange}
                   className="select-field"
                 >
-                  <option value="Electronics">Electronics</option>
-                  <option value="Textbooks">Textbooks</option>
-                  <option value="Furniture">Furniture</option>
-                  <option value="Clothing">Clothing</option>
-                  <option value="Other">Other</option>
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
                 </select>
               </div>
 

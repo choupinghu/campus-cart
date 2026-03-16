@@ -5,6 +5,7 @@ import { useSession } from '../lib/auth'
 import Antigravity from '../components/Antigravity'
 import SpotlightCard from '../components/SpotlightCard'
 import { NUS_LOCATIONS } from '../constants/locations'
+import { CATEGORIES } from '../constants/categories'
 import { graphqlRequest } from '../services/graphqlClient'
 
 const GET_REQUESTS = `
@@ -26,8 +27,6 @@ const GET_REQUESTS = `
     }
   }
 `
-
-const CATEGORIES = ['Electronics', 'Textbooks', 'Furniture', 'Clothing', 'Other']
 
 const SORT_OPTIONS = ['Newest', 'Budget: High to Low', 'Budget: Low to High', 'Urgent First']
 
