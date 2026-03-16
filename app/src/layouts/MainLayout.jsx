@@ -42,7 +42,7 @@ export default function MainLayout({ children }) {
       }
       fetchFreshData()
     }
-  }, [session?.user])
+  }, [session?.user?.id])
 
   const displayName = userName || session?.user?.name || ''
 
@@ -125,6 +125,7 @@ export default function MainLayout({ children }) {
                 onClick={() => navigate('/my-listings')}
                 className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-nus-blue focus:ring-offset-2 transition"
                 title="My Dashboard"
+                aria-label="My Dashboard"
               >
                 <LayoutDashboard className="w-5 h-5" />
               </button>
@@ -132,6 +133,7 @@ export default function MainLayout({ children }) {
                 onClick={() => navigate('/profile')}
                 className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-nus-blue focus:ring-offset-2 transition"
                 title="Profile"
+                aria-label="Profile"
               >
                 <User className="w-5 h-5" />
               </button>
@@ -139,6 +141,7 @@ export default function MainLayout({ children }) {
                 onClick={handleLogout}
                 className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-nus-blue focus:ring-offset-2 transition"
                 title="Sign out"
+                aria-label="Sign out"
               >
                 <LogOut className="w-5 h-5" />
               </button>

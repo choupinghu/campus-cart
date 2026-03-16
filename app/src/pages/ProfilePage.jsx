@@ -85,7 +85,7 @@ export default function ProfilePage() {
       }
     }
     fetchProfile()
-  }, [session?.user])
+  }, [session?.user?.id])
 
   const handleChange = (e) => {
     const { name, value } = e.target
