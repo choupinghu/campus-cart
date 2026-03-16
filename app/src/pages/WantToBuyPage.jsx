@@ -31,6 +31,19 @@ const CATEGORIES = ['Electronics', 'Textbooks', 'Furniture', 'Clothing', 'Other'
 
 const SORT_OPTIONS = ['Newest', 'Budget: High to Low', 'Budget: Low to High', 'Urgent First']
 
+function formatPostedAgo(dateStr) {
+  const now = new Date()
+  const diff = now - new Date(dateStr)
+  const mins = Math.floor(diff / 60000)
+  const hours = Math.floor(mins / 60)
+  const days = Math.floor(hours / 24)
+
+  if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`
+  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`
+  if (mins > 0) return `${mins} min${mins > 1 ? 's' : ''} ago`
+  return 'Just now'
+}
+
 export default function WantToBuyPage() {
   const { data: session } = useSession()
   const isLoggedIn = !!session?.user
@@ -70,19 +83,6 @@ export default function WantToBuyPage() {
     }
     loadRequests()
   }, [])
-
-  function formatPostedAgo(dateStr) {
-    const now = new Date()
-    const diff = now - new Date(dateStr)
-    const mins = Math.floor(diff / 60000)
-    const hours = Math.floor(mins / 60)
-    const days = Math.floor(hours / 24)
-
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`
-    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`
-    if (mins > 0) return `${mins} min${mins > 1 ? 's' : ''} ago`
-    return 'Just now'
-  }
 
   const toggleSave = (id) => {
     setListings((prev) => prev.map((l) => (l.id === id ? { ...l, saved: !l.saved } : l)))

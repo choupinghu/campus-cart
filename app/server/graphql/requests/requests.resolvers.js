@@ -1,17 +1,9 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma.js';
+import { requireAuth } from '../auth.js';
 
 const publicRequesterSelect = { id: true, name: true, image: true };
 const categorySelect = { id: true, name: true };
-
-function requireAuth(context) {
-    if (!context.user) {
-        throw new GraphQLError('You must be signed in.', {
-            extensions: { code: 'UNAUTHENTICATED' },
-        });
-    }
-    return context.user;
-}
 
 export const requestsResolvers = {
     Query: {

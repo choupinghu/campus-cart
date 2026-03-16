@@ -1,22 +1,10 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma.js';
+import { requireAuth } from '../auth.js';
 
 // Shared select objects (no email exposed)
 const publicSellerSelect = { id: true, name: true, image: true };
 const categorySelect = { id: true, name: true };
-
-/**
- * Helper to get the authenticated user from context.
- * Throws an UNAUTHENTICATED GraphQL error if not signed in.
- */
-function requireAuth(context) {
-    if (!context.user) {
-        throw new GraphQLError('You must be signed in.', {
-            extensions: { code: 'UNAUTHENTICATED' },
-        });
-    }
-    return context.user;
-}
 
 export const listingsResolvers = {
     Query: {

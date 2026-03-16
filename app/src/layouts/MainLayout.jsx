@@ -123,15 +123,23 @@ export default function MainLayout({ children }) {
             <nav className="flex items-center gap-2">
               <button
                 onClick={() => navigate('/my-listings')}
-                className="nav-link"
+                className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-nus-blue focus:ring-offset-2 transition"
                 title="My Dashboard"
               >
                 <LayoutDashboard className="w-5 h-5" />
               </button>
-              <button onClick={() => navigate('/profile')} className="nav-link" title="Profile">
+              <button
+                onClick={() => navigate('/profile')}
+                className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-nus-blue focus:ring-offset-2 transition"
+                title="Profile"
+              >
                 <User className="w-5 h-5" />
               </button>
-              <button onClick={handleLogout} className="nav-link" title="Sign out">
+              <button
+                onClick={handleLogout}
+                className="p-2 rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-nus-blue focus:ring-offset-2 transition"
+                title="Sign out"
+              >
                 <LogOut className="w-5 h-5" />
               </button>
             </nav>
