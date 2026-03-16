@@ -4,6 +4,7 @@ import { requireAuth } from '../auth.js';
 
 const publicRequesterSelect = { id: true, name: true, image: true };
 const categorySelect = { id: true, name: true };
+const ALLOWED_REQUEST_STATUSES = ['active', 'fulfilled', 'removed'];
 
 export const requestsResolvers = {
     Query: {
@@ -90,7 +91,14 @@ export const requestsResolvers = {
             if (budget !== undefined) updateData.budget = budget;
             if (condition !== undefined) updateData.condition = condition;
             if (location !== undefined) updateData.location = location;
-            if (status !== undefined) updateData.status = status;
+            if (status !== undefined) {
+                if (!ALLOWED_REQUEST_STATUSES.includes(status)) {
+                    throw new GraphQLError('Invalid status value', {
+                        extensions: { code: 'BAD_USER_INPUT' },
+                    });
+                }
+                updateData.status = status;
+            }
 
             if (category !== undefined && category !== null) {
                 const categoryRecord = await prisma.category.upsert({
