@@ -1,5 +1,5 @@
 import { useSession, signOut } from '../lib/auth'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { graphqlRequest } from '../services/graphqlClient'
 import {
@@ -24,7 +24,6 @@ const GET_ME_NAV = `
 export default function MainLayout({ children }) {
   const { data: session } = useSession()
   const navigate = useNavigate()
-  const location = useLocation()
   const [userName, setUserName] = useState('')
   const [postMenuOpen, setPostMenuOpen] = useState(false)
   const menuRef = useRef(null)
