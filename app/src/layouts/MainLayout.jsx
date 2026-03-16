@@ -43,7 +43,7 @@ export default function MainLayout({ children }) {
       }
       fetchFreshData()
     }
-  }, [session?.user, location.pathname])
+  }, [session?.user])
 
   const displayName = userName || session?.user?.name || ''
 
