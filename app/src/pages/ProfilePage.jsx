@@ -66,7 +66,10 @@ export default function ProfilePage() {
   })
 
   useEffect(() => {
-    if (!session?.user) return
+    if (!session?.user) {
+      setLoading(false)
+      return
+    }
     async function fetchProfile() {
       try {
         const data = await graphqlRequest(GET_PROFILE)
