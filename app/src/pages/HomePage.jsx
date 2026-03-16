@@ -35,19 +35,21 @@ export default function HomePage() {
     async function loadProducts() {
       setLoading(true)
       try {
-        // Fetch from Shopify sources
+        const [shopifyRes, dbRes] = await Promise.allSettled([
+          fetchProducts(),
+          graphqlRequest(GET_LISTINGS),
+        ])
+
         let shopifyProducts = []
-        try {
-          shopifyProducts = await fetchProducts()
-        } catch (err) {
-          console.error('Failed to fetch Shopify products:', err)
+        if (shopifyRes.status === 'fulfilled') {
+          shopifyProducts = shopifyRes.value
+        } else {
+          console.error('Failed to fetch Shopify products:', shopifyRes.reason)
         }
 
-        // Fetch user-created listings via GraphQL
         let dbListings = []
-        try {
-          const data = await graphqlRequest(GET_LISTINGS)
-          dbListings = data.listings.map((listing) => ({
+        if (dbRes.status === 'fulfilled') {
+          dbListings = dbRes.value.listings.map((listing) => ({
             id: listing.id,
             title: listing.title,
             price: listing.price,
@@ -57,8 +59,8 @@ export default function HomePage() {
             location: listing.location || 'NUS Campus',
             verified: true,
           }))
-        } catch (err) {
-          console.error('Failed to fetch DB listings:', err)
+        } else {
+          console.error('Failed to fetch DB listings:', dbRes.reason)
         }
 
         // Merge and shuffle all products together
