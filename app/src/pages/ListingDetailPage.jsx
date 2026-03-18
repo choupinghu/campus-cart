@@ -21,6 +21,10 @@ const GET_LISTING_BY_ID = `
       condition
       location
       description
+      seller {
+        name
+        image
+      }
     }
   }
 `
@@ -163,13 +167,22 @@ export default function ListingDetailPage() {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 bg-gray-100 rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                  <img
-                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=NUSStudent"
-                    alt="Seller"
-                  />
+                  {product.seller?.image ? (
+                    <img
+                      src={product.seller.image}
+                      alt={product.seller.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <Star className="w-6 h-6" />
+                    </div>
+                  )}
                 </div>
                 <div>
-                  <h4 className="font-black text-gray-900">NUS Student</h4>
+                  <h4 className="font-black text-gray-900">
+                    {product.seller?.name || 'NUS Student'}
+                  </h4>
                   <div className="flex items-center gap-1.5 mt-1">
                     <CheckCircle className="w-3.5 h-3.5 text-nus-blue" />
                     <span className="text-[10px] font-black text-nus-blue uppercase">

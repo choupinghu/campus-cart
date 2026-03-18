@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
 import { graphqlRequest } from '../services/graphqlClient'
+import { NUS_LOCATIONS } from '../constants/locations'
+import { CATEGORIES } from '../constants/categories'
 
 const GET_LISTING = `
   query GetListing($id: ID!) {
@@ -11,6 +13,7 @@ const GET_LISTING = `
       description
       price
       condition
+      location
       imageUrl
       category { name }
     }
@@ -35,6 +38,7 @@ export default function EditListingPage() {
     price: '',
     condition: 'New',
     category: 'Electronics',
+    location: '',
     imageUrl: '',
   })
   const [loading, setLoading] = useState(true)
@@ -53,6 +57,7 @@ export default function EditListingPage() {
             price: listing.price?.toString() || '',
             condition: listing.condition || 'New',
             category: listing.category?.name || 'Electronics',
+            location: listing.location || '',
             imageUrl: listing.imageUrl || '',
           })
         } else {
@@ -92,6 +97,7 @@ export default function EditListingPage() {
           price: parseFloat(formData.price),
           condition: formData.condition,
           category: formData.category,
+          location: formData.location || null,
           imageUrl: formData.imageUrl || null,
         },
       })
@@ -201,11 +207,30 @@ export default function EditListingPage() {
                   onChange={handleChange}
                   className="select-field"
                 >
-                  <option value="Electronics">Electronics</option>
-                  <option value="Textbooks">Textbooks</option>
-                  <option value="Furniture">Furniture</option>
-                  <option value="Clothing">Clothing</option>
-                  <option value="Other">Other</option>
+                  {CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Meetup Location
+                </label>
+                <select
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  className="select-field"
+                >
+                  <option value="">Select a location</option>
+                  {NUS_LOCATIONS.map((loc) => (
+                    <option key={loc} value={loc}>
+                      {loc}
+                    </option>
+                  ))}
                 </select>
               </div>
 

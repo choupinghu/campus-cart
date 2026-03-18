@@ -1,29 +1,27 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ImageUploader from '../components/ui/ImageUploader'
 import { graphqlRequest } from '../services/graphqlClient'
 import { NUS_LOCATIONS } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
 
-const CREATE_LISTING = `
-  mutation CreateListing($input: CreateListingInput!) {
-    createListing(input: $input) {
+const CREATE_REQUEST = `
+  mutation CreateRequest($input: CreateRequestInput!) {
+    createRequest(input: $input) {
       id
       title
     }
   }
 `
 
-export default function CreateListingPage() {
+export default function CreateRequestPage() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    price: '',
-    condition: 'New',
+    budget: '',
+    condition: 'Any',
     category: 'Electronics',
     location: '',
-    imageUrl: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -32,31 +30,26 @@ export default function CreateListingPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleUploadComplete = (url) => {
-    setFormData((prev) => ({ ...prev, imageUrl: url || '' }))
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      await graphqlRequest(CREATE_LISTING, {
+      await graphqlRequest(CREATE_REQUEST, {
         input: {
           title: formData.title,
           description: formData.description || null,
-          price: parseFloat(formData.price),
+          budget: parseFloat(formData.budget),
           condition: formData.condition,
           category: formData.category,
           location: formData.location || null,
-          imageUrl: formData.imageUrl || null,
         },
       })
 
-      alert('Listing created successfully!')
-      navigate('/')
+      alert('Request created successfully!')
+      navigate('/want-to-buy')
     } catch (error) {
-      console.error('Failed to create listing:', error)
-      alert(error.message || 'Error creating listing.')
+      console.error('Failed to create request:', error)
+      alert(error.message || 'Error creating request.')
     } finally {
       setIsSubmitting(false)
     }
@@ -65,33 +58,14 @@ export default function CreateListingPage() {
   return (
     <div className="max-w-3xl mx-auto py-12 px-6">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Sell an Item</h2>
-        <p className="text-gray-500 mt-2">Upload a photo to get started.</p>
+        <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Request an Item</h2>
+        <p className="text-gray-500 mt-2">Let the community know what you are looking for.</p>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-        <div className="mb-8 border-b border-gray-100 pb-8">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">1. Photos</h3>
-          <ImageUploader onUploadComplete={handleUploadComplete} />
-
-          {formData.imageUrl && (
-            <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800 break-all">
-              <strong>Uploaded Successfully! URL:</strong>{' '}
-              <a
-                href={formData.imageUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-green-900"
-              >
-                {formData.imageUrl}
-              </a>
-            </div>
-          )}
-        </div>
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">2. Details</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Details</h3>
 
             <div className="space-y-4">
               <div>
@@ -103,20 +77,22 @@ export default function CreateListingPage() {
                   value={formData.title}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="e.g. iPhone 13 Pro - 128GB"
+                  placeholder="e.g. Calculus: Early Transcendentals 9th Ed"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Max Budget ($)
+                  </label>
                   <input
                     type="number"
-                    name="price"
+                    name="budget"
                     required
                     min="0"
                     step="0.01"
-                    value={formData.price}
+                    value={formData.budget}
                     onChange={handleChange}
                     className="input-field"
                     placeholder="0.00"
@@ -124,14 +100,17 @@ export default function CreateListingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Desired Condition
+                  </label>
                   <select
                     name="condition"
                     value={formData.condition}
                     onChange={handleChange}
                     className="select-field"
                   >
-                    <option value="New">New</option>
+                    <option value="Any">Any Condition</option>
+                    <option value="New">Brand New</option>
                     <option value="Like New">Like New</option>
                     <option value="Good">Good</option>
                     <option value="Fair">Fair</option>
@@ -157,7 +136,7 @@ export default function CreateListingPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Meetup Location
+                  Preferred Meetup Location
                 </label>
                 <select
                   name="location"
@@ -182,22 +161,22 @@ export default function CreateListingPage() {
                   value={formData.description}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="Describe the item, any defaults, why you're selling..."
+                  placeholder="Tell potential sellers what exactly you need..."
                 ></textarea>
               </div>
             </div>
           </div>
 
           <div className="pt-4 flex justify-end gap-3 border-t border-gray-100">
-            <button type="button" onClick={() => navigate('/')} className="btn-outline">
+            <button type="button" onClick={() => navigate('/want-to-buy')} className="btn-outline">
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || !formData.imageUrl || !formData.title || !formData.price}
+              disabled={isSubmitting || !formData.title || !formData.budget}
               className="btn-primary px-8"
             >
-              {isSubmitting ? 'Creating...' : 'List Item'}
+              {isSubmitting ? 'Posting...' : 'Post Request'}
             </button>
           </div>
         </form>

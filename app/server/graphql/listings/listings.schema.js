@@ -7,6 +7,7 @@ export const listingsTypeDefs = `#graphql
   type Seller {
     id: ID!
     name: String!
+    image: String
   }
 
   type Listing {
@@ -47,6 +48,7 @@ export const listingsTypeDefs = `#graphql
     category: String
     location: String
     imageUrl: String
+    status: String
   }
 
   type Query {

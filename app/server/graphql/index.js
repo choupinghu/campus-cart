@@ -10,12 +10,16 @@
 
 import { listingsTypeDefs } from './listings/listings.schema.js';
 import { listingsResolvers } from './listings/listings.resolvers.js';
+import { profileTypeDefs } from './profile/profile.schema.js';
+import { profileResolvers } from './profile/profile.resolvers.js';
+import { requestsTypeDefs } from './requests/requests.schema.js';
+import { requestsResolvers } from './requests/requests.resolvers.js';
 
 // Merged typeDefs — array format is natively supported by makeExecutableSchema
-export const typeDefs = [listingsTypeDefs];
+export const typeDefs = [listingsTypeDefs, profileTypeDefs, requestsTypeDefs];
 
 // Deep-merge resolvers from all domain modules
-export const resolvers = mergeResolvers([listingsResolvers]);
+export const resolvers = mergeResolvers([listingsResolvers, profileResolvers, requestsResolvers]);
 
 /**
  * Simple deep-merge for resolver objects.

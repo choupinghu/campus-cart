@@ -32,21 +32,29 @@ To ensure trust and exclusivity, the platform utilizes a secure authentication s
 - **Robust Security:** Powered by an Express.js backend and a Better Auth integration. Passwords enforce strict security policies (minimum 8 characters, capital letters, numbers, and special characters) with real-time feedback UI during onboarding.
 - **Protected Routing:** React router wrappers enforce session checks, preventing unauthenticated users from accessing core marketplace capabilities.
 
-### 2.2.1 Marketplace Architecture (Completed)
-- **Core Listing Lifecycle:** The core CRUD operations are functional.
-- **New Listing:** Sellers fill out a structured form along with photo (5MB limit, image only), persisted on the server filesystem and served via Express static middleware.
-- **My Listings:** Management page of seller's active listings with edit/delete functions.
-- **Edit Listing:** Sellers can update any field on an existing listing.
+### 2.2 Marketplace Architecture (Items for Sale)
+- **Core Listing Lifecycle:** Sellers can create, view, edit, and delete listings. Each listing includes a title, description, price, condition, category, and location.
+- **Image Management:** Listings support photo uploads (5MB limit), which are persisted on the server filesystem and served via Express static middleware.
+- **Smart Filtering:** Users can browse active listings and filter them by category and seller.
 
-### 2.2.2 Marketplace Architecture (In Progress)
-- **Structured Listings:** Sellers can categorize items with specific condition tags and clear pricing.
-- **Smart Search:** Buyers can quickly filter items by category, price range, and location.
-- **Direct Offers:** A simplified "Make Offer" workflow to standardize and accelerate negotiations.
+### 2.3 Requests Feature (Want to Buy)
+In addition to selling items, the platform now supports a buyer-driven workflow where students can post items they are looking to purchase.
+- **Request Lifecycle:** Students can post buying requests with a title, description, budget, and desired condition.
+- **Categorization & Location:** Requests are linked to the same category and location systems as listings, ensuring a unified search experience.
+- **Unified Navigation:** Buying requests are easily accessible via the "+" quick-action menu and the "Want to Buy" dashboard.
 
-### 2.3 API Security and Authorisation
+### 2.4 User Profile Enhancements
+To build a more personalized and trustworthy community, user profiles have been significantly expanded.
+- **Extended Profile Data:** Users can now manage their bio, contact phone number, and preferred campus location.
+- **Profile Customization:** Support for profile picture uploads allows users to personalize their presence on the platform.
+- **Activity Tracking:** Profiles show a summary of the user's activity, including the number of active listings and requests.
+
+### 2.5 API Security and Authorisation
 Mutating API Endpoints enforce server-side authentication and ownership verification.
-- **GraphQL Auth Context:** Session cookies are verified on every GraphQL request via `auth.api.getSession()`, injecting authenticated user in the resolver context to prevent unauthorised access
-- **Cookie Support:** All frontend fetch calls use `credentials: 'include'` to transmit session cookies
+- **Centralized Auth Helper:** A shared `requireAuth` utility is used across all GraphQL resolvers to ensure consistent session verification and error handling.
+- **GraphQL Auth Context:** Session cookies are verified on every GraphQL request via `auth.api.getSession()`, injecting the authenticated user into the resolver context.
+- **Status Validation:** Both listings and requests implement strict status enums (`active`, `sold`, `fulfilled`, `removed`) to prevent invalid data transitions.
+- **Cookie Support:** All frontend fetch calls use `credentials: 'include'` to transmit session cookies securely.
 
 ---
 
@@ -72,12 +80,15 @@ As a team of 3 developers, maintaining high code quality and continuous synchron
 - **Styling:** Tailwind CSS v4, utilizing the modern `@theme` directive for zero-configuration, robust modular styling.
 
 ### 4.2 Backend Layer
-- **API Server:** Node.js Express serving a GraphQL API using a lightweight, Apollo-free setup (`graphql` + `@graphql-tools/schema`), keeping the dependency footprint minimal.
-- **Modular GraphQL Architecture:** The GraphQL schema follows a domain-driven folder structure. Each feature domain (e.g. `listings/`) contains co-located schema definitions and resolvers. A central merge layer (`graphql/index.js`) aggregates all modules into a unified schema, enabling clean separation of concerns and straightforward horizontal scaling as new domains are added.
-- **Shared Prisma Singleton:** All resolver modules share a single `PrismaClient` instance (`server/prisma.js`), preventing connection pool exhaustion and ensuring consistent database access patterns.
-- **Database:** PostgreSQL 16 provisioned seamlessly via Docker, with pgvector planned for advanced search capabilities.
-- **ORM:** Prisma v6 providing highly type-safe database queries natively linked to the application layer. Schema changes are applied locally via `pnpm db:push`.
-- **File Upload Pipeline:** Multer middleware handles image uploads via a dedicated REST endpoint, storing image files locally while the DB stores image URLs, decoupling storage from the data layer. This uses REST since binary uploads are not well-suited for GraphQL.
+- **API Server:** Node.js Express serving a GraphQL API using a lightweight setup (`graphql` + `@graphql-tools/schema`).
+- **Modular GraphQL Architecture:** The backend follows a domain-driven structure. Each domain (`listings`, `requests`, `profile`) contains co-located schema definitions and resolvers, aggregated by a central merge layer.
+- **Schema & Input Validation:** Inputs are strictly validated (e.g., phone number formatting, budget scales, and status enums) to maintain data integrity.
+- **Shared Authentication Utility:** A centralized `requireAuth` helper provides a single point of entry for security checks across all mutations.
+- **Shared Prisma Singleton:** All resolver modules share a single `PrismaClient` instance, ensuring high-performance database access and preventing connection pool exhaustion.
+- **Shared Constants:** Categories and campus locations are centralized into shared constants, ensuring total synchronization between the frontend and backend.
+- **Database:** PostgreSQL 16 provisioned via Docker, with pgvector support for future expansions.
+- **ORM:** Prisma v6 providing highly type-safe database queries natively linked to the application layer.
+- **File Upload Pipeline:** Multer handles multi-part form data for image uploads via dedicated REST endpoints, decoupling binary storage from the GraphQL layer.
 
 ---
 

@@ -1,154 +1,47 @@
-import { useState, useMemo, Suspense } from 'react'
+import { useState, useMemo, Suspense, useEffect } from 'react'
 import { Search, ChevronDown, Tag, MapPin, Clock, MessageCircle, Bookmark } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useSession } from '../lib/auth'
 import Antigravity from '../components/Antigravity'
 import SpotlightCard from '../components/SpotlightCard'
+import { NUS_LOCATIONS } from '../constants/locations'
+import { CATEGORIES } from '../constants/categories'
+import { graphqlRequest } from '../services/graphqlClient'
 
-// ── Mock WTB data ─────────────────────────────────────────────────────────────
-const MOCK_WTB = [
-  {
-    id: 'wtb-1',
-    title: 'Calculus: Early Transcendentals (8th or 9th Edition)',
-    description:
-      'Looking for a copy in at least Good condition. Willing to pay up to S$40. DM me if you have it — needed urgently before week 3.',
-    category: 'Textbooks & Study Materials',
-    budget: 40,
-    condition: 'Good',
-    location: 'Kent Ridge Hall',
-    postedAgo: '2 hours ago',
-    avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Alice',
-    name: 'Alice T.',
-    urgent: true,
-    saved: false,
-  },
-  {
-    id: 'wtb-2',
-    title: 'Standing Desk / Adjustable Height Desk',
-    description:
-      'Moving into PGP and could really use a sit-stand desk. Budget around S$80. Any brand is fine as long as it is stable.',
-    category: 'Furniture & Home',
-    budget: 80,
-    condition: 'Any',
-    location: "Prince George's Park",
-    postedAgo: '5 hours ago',
-    avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Ben',
-    name: 'Ben K.',
-    urgent: false,
-    saved: false,
-  },
-  {
-    id: 'wtb-3',
-    title: 'Sony WH-1000XM4 or XM5 Noise-Cancelling Headphones',
-    description:
-      'Happy with either model in Like New or better condition. Max budget S$200. Willing to meet at UTown anytime on weekdays.',
-    category: 'Electronics & Gadgets',
-    budget: 200,
-    condition: 'Like New',
-    location: 'UTown Residence',
-    postedAgo: '1 day ago',
-    avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Chen',
-    name: 'Chen W.',
-    urgent: false,
-    saved: false,
-  },
-  {
-    id: 'wtb-4',
-    title: 'Lab Coat — Size S or XS (Female Fit)',
-    description:
-      'Need a clean lab coat for LSM modules. Budget up to S$20. New preferred but Like New is fine too.',
-    category: 'Lab Equipment',
-    budget: 20,
-    condition: 'Like New',
-    location: 'Science Faculty',
-    postedAgo: '1 day ago',
-    avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Diana',
-    name: 'Diana P.',
-    urgent: true,
-    saved: false,
-  },
-  {
-    id: 'wtb-5',
-    title: 'Mini Fridge (45–60L)',
-    description:
-      'Looking for a compact fridge for my dorm room. Should be whisper-quiet. Budget S$60–90. Can arrange self-collection.',
-    category: 'Kitchen & Appliances',
-    budget: 90,
-    condition: 'Good',
-    location: 'Raffles Hall',
-    postedAgo: '2 days ago',
-    avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Ethan',
-    name: 'Ethan L.',
-    urgent: false,
-    saved: false,
-  },
-  {
-    id: 'wtb-6',
-    title: 'Mechanical Keyboard (TKL or 75%)',
-    description:
-      'Preferably with tactile switches (Browns/Clears). Any brand. Budget around S$70. Let me know what you have!',
-    category: 'Electronics & Gadgets',
-    budget: 70,
-    condition: 'Any',
-    location: 'UTown Residence',
-    postedAgo: '3 days ago',
-    avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Fiona',
-    name: 'Fiona R.',
-    urgent: false,
-    saved: false,
-  },
-  {
-    id: 'wtb-7',
-    title: 'Guitar (Acoustic, Full Size)',
-    description:
-      'Beginner-friendly acoustic guitar. Budget max S$100. Condition not too important as long as it is playable.',
-    category: 'Musical Instruments',
-    budget: 100,
-    condition: 'Any',
-    location: 'Kent Ridge Hall',
-    postedAgo: '4 days ago',
-    avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=George',
-    name: 'George S.',
-    urgent: false,
-    saved: false,
-  },
-  {
-    id: 'wtb-8',
-    title: 'Introduction to Algorithms (CLRS) — 3rd or 4th Ed',
-    description:
-      'CS3230 required textbook. Any condition as long as all pages are intact. Budget S$50.',
-    category: 'Textbooks & Study Materials',
-    budget: 50,
-    condition: 'Any',
-    location: 'School of Computing',
-    postedAgo: '5 days ago',
-    avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Hannah',
-    name: 'Hannah M.',
-    urgent: true,
-    saved: false,
-  },
-]
-
-const CATEGORIES = [
-  'Textbooks & Study Materials',
-  'Electronics & Gadgets',
-  'Furniture & Home',
-  'Kitchen & Appliances',
-  'Lab Equipment',
-  'Musical Instruments',
-  'Others',
-]
-
-const LOCATIONS = [
-  'Kent Ridge Hall',
-  "Prince George's Park",
-  'UTown Residence',
-  'Raffles Hall',
-  'Science Faculty',
-  'School of Computing',
-]
+const GET_REQUESTS = `
+  query GetRequests($userId: String) {
+    requests(userId: $userId) {
+      id
+      title
+      description
+      budget
+      condition
+      location
+      createdAt
+      category { name }
+      user {
+        id
+        name
+        image
+      }
+    }
+  }
+`
 
 const SORT_OPTIONS = ['Newest', 'Budget: High to Low', 'Budget: Low to High', 'Urgent First']
+
+function formatPostedAgo(dateStr) {
+  const now = new Date()
+  const diff = now - new Date(dateStr)
+  const mins = Math.floor(diff / 60000)
+  const hours = Math.floor(mins / 60)
+  const days = Math.floor(hours / 24)
+
+  if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`
+  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`
+  if (mins > 0) return `${mins} min${mins > 1 ? 's' : ''} ago`
+  return 'Just now'
+}
 
 export default function WantToBuyPage() {
   const { data: session } = useSession()
@@ -161,7 +54,34 @@ export default function WantToBuyPage() {
   const [urgentOnly, setUrgentOnly] = useState(false)
   const [sortBy, setSortBy] = useState('Newest')
   const [sortOpen, setSortOpen] = useState(false)
-  const [listings, setListings] = useState(MOCK_WTB)
+  const [listings, setListings] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadRequests() {
+      try {
+        const data = await graphqlRequest(GET_REQUESTS)
+        if (data?.requests) {
+          setListings(
+            data.requests.map((r) => ({
+              ...r,
+              category: r.category.name,
+              name: r.user.name,
+              avatar: r.user.image,
+              urgent: r.description?.toLowerCase().includes('urgent') || false, // Simple heuristic for mock/legacy
+              postedAgo: formatPostedAgo(r.createdAt),
+              saved: false,
+            })),
+          )
+        }
+      } catch (err) {
+        console.error('Failed to fetch requests:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadRequests()
+  }, [])
 
   const toggleSave = (id) => {
     setListings((prev) => prev.map((l) => (l.id === id ? { ...l, saved: !l.saved } : l)))
@@ -268,12 +188,6 @@ export default function WantToBuyPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Link
-                to={isLoggedIn ? '/create-listing' : '/login'}
-                className="bg-[var(--color-nus-orange)] text-white px-6 py-4 rounded-xl font-bold hover:bg-[#d66e00] transition-all shrink-0 whitespace-nowrap"
-              >
-                Post a Request
-              </Link>
             </div>
           </div>
 
@@ -383,7 +297,7 @@ export default function WantToBuyPage() {
                 Location
               </p>
               <div className="space-y-3">
-                {LOCATIONS.map((l) => (
+                {NUS_LOCATIONS.map((l) => (
                   <label key={l} className="flex items-center gap-3 cursor-pointer group">
                     <input
                       type="checkbox"
@@ -442,7 +356,11 @@ export default function WantToBuyPage() {
             </div>
           </div>
 
-          {filtered.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <div className="w-10 h-10 border-4 border-nus-orange border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : filtered.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filtered.map((listing) => (
                 <WTBCard

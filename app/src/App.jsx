@@ -6,8 +6,11 @@ import WantToBuyPage from './pages/WantToBuyPage'
 import ListingDetailPage from './pages/ListingDetailPage'
 
 import CreateListingPage from './pages/CreateListingPage'
+import CreateRequestPage from './pages/CreateRequestPage'
 import MyListingsPage from './pages/MyListingsPage'
 import EditListingPage from './pages/EditListingPage'
+import EditRequestPage from './pages/EditRequestPage'
+import ProfilePage from './pages/ProfilePage'
 import { ProtectedRoute } from './components/ProtectedRoute'
 
 function App() {
@@ -55,6 +58,17 @@ function App() {
         />
 
         <Route
+          path="/create-request"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <CreateRequestPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/my-listings"
           element={
             <ProtectedRoute>
@@ -71,6 +85,28 @@ function App() {
             <ProtectedRoute>
               <MainLayout>
                 <EditListingPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/edit-request/:id"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <EditRequestPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <ProfilePage />
               </MainLayout>
             </ProtectedRoute>
           }

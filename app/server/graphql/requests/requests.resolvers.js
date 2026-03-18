@@ -2,112 +2,102 @@ import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma.js';
 import { requireAuth } from '../auth.js';
 
-// Shared select objects (no email exposed)
-const publicSellerSelect = { id: true, name: true, image: true };
+const publicRequesterSelect = { id: true, name: true, image: true };
 const categorySelect = { id: true, name: true };
-const ALLOWED_LISTING_STATUSES = ['active', 'sold', 'removed'];
+const ALLOWED_REQUEST_STATUSES = ['active', 'fulfilled', 'removed'];
 
-export const listingsResolvers = {
+export const requestsResolvers = {
     Query: {
-        // Fetch all active listings, optionally filtered by sellerId
-        listings: async (_parent, { sellerId }) => {
+        requests: async (_parent, { userId }) => {
             const where = { status: 'active' };
-            if (sellerId) where.sellerId = sellerId;
+            if (userId) where.userId = userId;
 
-            return prisma.listing.findMany({
+            return prisma.request.findMany({
                 where,
                 include: {
-                    seller: { select: publicSellerSelect },
+                    user: { select: publicRequesterSelect },
                     category: { select: categorySelect },
                 },
                 orderBy: { createdAt: 'desc' },
             });
         },
 
-        // Fetch a single listing by ID
-        listing: async (_parent, { id }) => {
-            const listing = await prisma.listing.findUnique({
+        request: async (_parent, { id }) => {
+            return prisma.request.findUnique({
                 where: { id },
                 include: {
-                    seller: { select: publicSellerSelect },
+                    user: { select: publicRequesterSelect },
                     category: { select: categorySelect },
                 },
             });
-            return listing || null;
         },
     },
 
     Mutation: {
-        // Create a new listing (authenticated, sellerId from session)
-        createListing: async (_parent, { input }, context) => {
+        createRequest: async (_parent, { input }, context) => {
             const user = requireAuth(context);
 
-            const { title, description, price, condition, category, location, imageUrl } = input;
+            const { title, description, budget, condition, category, location } = input;
 
-            if (!title || price == null || !category) {
-                throw new GraphQLError('Missing required fields: title, price, category', {
+            if (!title || budget == null || !category) {
+                throw new GraphQLError('Missing required fields: title, budget, category', {
                     extensions: { code: 'BAD_USER_INPUT' },
                 });
             }
 
-            // Upsert category to avoid race conditions
             const categoryRecord = await prisma.category.upsert({
                 where: { name: category },
                 update: {},
                 create: { name: category },
             });
 
-            return prisma.listing.create({
+            return prisma.request.create({
                 data: {
                     title,
                     description: description || null,
-                    price,
+                    budget,
                     condition: condition || null,
                     location: location || null,
-                    imageUrl: imageUrl || null,
-                    sellerId: user.id,
+                    userId: user.id,
                     categoryId: categoryRecord.id,
                 },
                 include: {
-                    seller: { select: publicSellerSelect },
+                    user: { select: publicRequesterSelect },
                     category: { select: categorySelect },
                 },
             });
         },
 
-        // Update a listing (authenticated + ownership check)
-        updateListing: async (_parent, { id, input }, context) => {
+        updateRequest: async (_parent, { id, input }, context) => {
             const user = requireAuth(context);
 
-            // Verify ownership
-            const existing = await prisma.listing.findUnique({ where: { id } });
+            const existing = await prisma.request.findUnique({ where: { id } });
             if (!existing) {
-                throw new GraphQLError('Listing not found', {
+                throw new GraphQLError('Request not found', {
                     extensions: { code: 'NOT_FOUND' },
                 });
             }
-            if (existing.sellerId !== user.id) {
-                throw new GraphQLError('You can only edit your own listings.', {
+            if (existing.userId !== user.id) {
+                throw new GraphQLError('You can only edit your own requests.', {
                     extensions: { code: 'FORBIDDEN' },
                 });
             }
 
-            const { title, description, price, condition, category, location, imageUrl } = input;
+            const { title, description, budget, condition, category, location, status } = input;
             const updateData = {};
 
-            if (title !== undefined && title !== null) updateData.title = title;
+            if (title !== undefined) updateData.title = title;
             if (description !== undefined) updateData.description = description;
-            if (price !== undefined && price !== null) updateData.price = price;
+            if (budget !== undefined) updateData.budget = budget;
             if (condition !== undefined) updateData.condition = condition;
             if (location !== undefined) updateData.location = location;
-            if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
-            if (input.status !== undefined) {
-                if (!ALLOWED_LISTING_STATUSES.includes(input.status)) {
+            if (status !== undefined) {
+                if (!ALLOWED_REQUEST_STATUSES.includes(status)) {
                     throw new GraphQLError('Invalid status value', {
                         extensions: { code: 'BAD_USER_INPUT' },
                     });
                 }
-                updateData.status = input.status;
+                updateData.status = status;
             }
 
             if (category !== undefined && category !== null) {
@@ -119,38 +109,37 @@ export const listingsResolvers = {
                 updateData.categoryId = categoryRecord.id;
             }
 
-            return prisma.listing.update({
+            return prisma.request.update({
                 where: { id },
                 data: updateData,
                 include: {
-                    seller: { select: publicSellerSelect },
+                    user: { select: publicRequesterSelect },
                     category: { select: categorySelect },
                 },
             });
         },
 
-        // Soft-delete a listing (authenticated + ownership check)
-        deleteListing: async (_parent, { id }, context) => {
+        deleteRequest: async (_parent, { id }, context) => {
             const user = requireAuth(context);
 
-            const existing = await prisma.listing.findUnique({ where: { id } });
+            const existing = await prisma.request.findUnique({ where: { id } });
             if (!existing) {
-                throw new GraphQLError('Listing not found', {
+                throw new GraphQLError('Request not found', {
                     extensions: { code: 'NOT_FOUND' },
                 });
             }
-            if (existing.sellerId !== user.id) {
-                throw new GraphQLError('You can only delete your own listings.', {
+            if (existing.userId !== user.id) {
+                throw new GraphQLError('You can only delete your own requests.', {
                     extensions: { code: 'FORBIDDEN' },
                 });
             }
 
-            await prisma.listing.update({
+            await prisma.request.update({
                 where: { id },
                 data: { status: 'removed' },
             });
 
-            return { message: 'Listing removed', id };
+            return { message: 'Request removed', id };
         },
     },
 };
