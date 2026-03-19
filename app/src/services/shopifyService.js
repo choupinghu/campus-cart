@@ -46,10 +46,27 @@ const normalizeShopifyProduct = (item, sourceName) => {
   }
 }
 
-export const fetchProducts = async () => {
-  const allProducts = []
+const CACHE_KEY = 'campuscart_shopify_cache'
+const CACHE_EXPIRY = 5 * 60 * 1000 // 5 minutes in ms
 
-  // Fetch from live endpoints
+export const fetchProducts = async () => {
+  // ── 1. Check Cache ──
+  try {
+    const cached = sessionStorage.getItem(CACHE_KEY)
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached)
+      if (Date.now() - timestamp < CACHE_EXPIRY) {
+        console.log('Serving Shopify products from session cache...')
+        return data
+      }
+    }
+  } catch (err) {
+    console.warn('Cache read error:', err)
+  }
+
+  // ── 2. Fetch Fresh Data ──
+  console.log('Fetching fresh products from Shopify stores...')
+  const allProducts = []
   const fetchPromises = Object.entries(ENDPOINTS).map(async ([sourceName, url]) => {
     try {
       const response = await fetch(url)
@@ -64,6 +81,22 @@ export const fetchProducts = async () => {
 
   await Promise.all(fetchPromises)
 
-  // Apply mock condition/location to all products
-  return allProducts.map(assignMockAttributes).sort(() => Math.random() - 0.5) // Shuffle
+  // ── 3. Post-Process & Cache ──
+  const processedProducts = allProducts
+    .map(assignMockAttributes)
+    .sort(() => Math.random() - 0.5)
+
+  try {
+    sessionStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({
+        data: processedProducts,
+        timestamp: Date.now(),
+      }),
+    )
+  } catch (err) {
+    console.warn('Cache write error:', err)
+  }
+
+  return processedProducts
 }
