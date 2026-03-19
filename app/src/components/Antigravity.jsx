@@ -33,15 +33,15 @@ export default function Antigravity({
     // Parse color string to rgb (supports hex, var(), names)
     const resolveRgb = (colorStr) => {
       if (typeof window === 'undefined') return { r: 74, g: 144, b: 217 }
-      
+
       const dummy = document.createElement('div')
       dummy.style.color = colorStr
       dummy.style.display = 'none'
       document.body.appendChild(dummy)
-      
+
       const computed = window.getComputedStyle(dummy).color
       document.body.removeChild(dummy)
-      
+
       const match = computed.match(/\d+/g)
       if (match && match.length >= 3) {
         return {
