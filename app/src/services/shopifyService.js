@@ -82,9 +82,7 @@ export const fetchProducts = async () => {
   await Promise.all(fetchPromises)
 
   // ── 3. Post-Process & Cache ──
-  const processedProducts = allProducts
-    .map(assignMockAttributes)
-    .sort(() => Math.random() - 0.5)
+  const processedProducts = allProducts.map(assignMockAttributes).sort(() => Math.random() - 0.5)
 
   try {
     sessionStorage.setItem(
