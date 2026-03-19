@@ -30,18 +30,29 @@ export default function Antigravity({
     let mouse = { x: width / 2, y: height / 2 }
     let time = 0
 
-    // Parse hex color to rgb
-    const hexToRgb = (hex) => {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-      return result
-        ? {
-            r: parseInt(result[1], 16),
-            g: parseInt(result[2], 16),
-            b: parseInt(result[3], 16),
-          }
-        : { r: 74, g: 144, b: 217 }
+    // Parse color string to rgb (supports hex, var(), names)
+    const resolveRgb = (colorStr) => {
+      if (typeof window === 'undefined') return { r: 74, g: 144, b: 217 }
+
+      const dummy = document.createElement('div')
+      dummy.style.color = colorStr
+      dummy.style.display = 'none'
+      document.body.appendChild(dummy)
+
+      const computed = window.getComputedStyle(dummy).color
+      document.body.removeChild(dummy)
+
+      const match = computed.match(/\d+/g)
+      if (match && match.length >= 3) {
+        return {
+          r: parseInt(match[0]),
+          g: parseInt(match[1]),
+          b: parseInt(match[2]),
+        }
+      }
+      return { r: 74, g: 144, b: 217 }
     }
-    const rgb = hexToRgb(color)
+    const rgb = resolveRgb(color)
 
     // Build particles arranged in concentric rings
     const particles = []

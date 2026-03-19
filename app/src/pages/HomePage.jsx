@@ -162,7 +162,7 @@ export default function HomePage() {
           {/* Live badge */}
           <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-nus-blue text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest mt-8">
             <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            Live · IUIGA · Bookshop.sg · NUS Press · CampusCart
+            Live · IUIGA · Bookshop.sg · NUS Press
           </div>
         </div>
       </section>
