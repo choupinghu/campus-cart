@@ -11,6 +11,7 @@
  */
 import dotenv from 'dotenv';
 import path from 'path';
+import process from 'process';
 import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
 import { auth } from '../server/auth.js';
