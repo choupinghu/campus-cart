@@ -56,6 +56,14 @@ Mutating API Endpoints enforce server-side authentication and ownership verifica
 - **Status Validation:** Both listings and requests implement strict status enums (`active`, `sold`, `fulfilled`, `removed`) to prevent invalid data transitions.
 - **Cookie Support:** All frontend fetch calls use `credentials: 'include'` to transmit session cookies securely.
 
+### 2.6 Data Seeding & External Product Integration
+To simulate an active marketplace ecosystem and streamline developer onboarding, the platform features two complementary data-population strategies.
+- **Prisma Seed Script:** A comprehensive seed script (`prisma/seed.js`) populates the database with demo users, categories, listings, and buying requests. Users are created through the Better Auth `signUpEmail` API, ensuring passwords are properly hashed and linked `Account` records are generated — allowing seeded users to log in immediately. The script is fully idempotent and can be re-run safely via `pnpm run db:seed`.
+- **External Shopify Store Integration:** The marketplace augments its internal listings with real product data fetched from external Shopify storefronts (IUIGA, Bookshop.sg, NUS Press) via their public `/products.json` endpoints. Products are normalized into the platform's listing format with mock attributes (condition, location, verification status) assigned at runtime.
+
+### 2.7 Client-Side Performance Caching
+To avoid redundant network calls and improve page-load performance, fetched Shopify products are cached in `sessionStorage` with a 5-minute TTL. Subsequent page visits within the cache window are served instantly from the local cache, eliminating unnecessary API calls to external storefronts.
+
 ---
 
 ## 3. Developer Experience & Collaboration Workflows
@@ -96,6 +104,5 @@ As a team of 3 developers, maintaining high code quality and continuous synchron
 As the marketplace scales, we are planning the following architectural and functional expansions to enhance user discovery and platform utility:
 
 - **AI-Powered Item Auto-Fill:** Implementing an external Vision API to identify and auto-categorize item listings based solely on user photo uploads. The image upload infrastructure and listing API are already in place to support this workflow.
-- **Database Seeding and Mock Data:** Fetching products from external free APIs (e.g., mock Shopify data) to automatically seed the database and simulate an active marketplace ecosystem.
 - **Omni-Channel & Mobile Integration:** Enhancing the frontend as a mobile-first experience to leverage native device mechanisms, such as immediate camera access for photo uploads.
 - **Authentication Expansions:** Supplementing our current email validation framework with scalable OAuth 2.0 pipelines (e.g. Sign in with Google / GitHub).

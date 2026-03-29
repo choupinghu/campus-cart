@@ -15,7 +15,11 @@
     "format:check": "prettier --check \"src/**/*.{js,jsx,css,json}\"",
     "prepare": "cd .. && husky app/.husky",
     "postinstall": "prisma generate",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "db:seed": "node prisma/seed.js"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@graphql-tools/schema": "^10.0.31",
