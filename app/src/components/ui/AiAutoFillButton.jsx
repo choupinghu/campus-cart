@@ -9,7 +9,7 @@ import { Sparkles, Loader2, AlertCircle, Check } from 'lucide-react'
  * @param {function} onSuggest - Callback receiving { title, description, suggestedPrice, condition, category }
  * @param {boolean} disabled - Whether the button is disabled (no image uploaded)
  */
-export default function AiAutoFillButton({ imageUrl, onSuggest, disabled }) {
+export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoadingChange }) {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -18,6 +18,7 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled }) {
     if (!imageUrl || isAnalyzing) return
 
     setIsAnalyzing(true)
+    if (onLoadingChange) onLoadingChange(true)
     setError('')
     setSuccess(false)
 
@@ -46,6 +47,7 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled }) {
       setError(err.message || 'Could not reach AI service. Try again or fill fields manually.')
     } finally {
       setIsAnalyzing(false)
+      if (onLoadingChange) onLoadingChange(false)
     }
   }
 

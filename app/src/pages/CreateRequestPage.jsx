@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { graphqlRequest } from '../services/graphqlClient'
 import ImageUploader from '../components/ui/ImageUploader'
@@ -27,6 +28,7 @@ export default function CreateRequestPage() {
   })
   const [imageUrl, setImageUrl] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isAiLoading, setIsAiLoading] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -79,6 +81,7 @@ export default function CreateRequestPage() {
               <AiAutoFillButton
                 imageUrl={imageUrl}
                 disabled={!imageUrl}
+                onLoadingChange={setIsAiLoading}
                 onSuggest={(suggestions) => {
                   setFormData((prev) => ({
                     ...prev,
@@ -96,9 +99,30 @@ export default function CreateRequestPage() {
           )}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Details</h3>
+        <form onSubmit={handleSubmit} className="space-y-6 relative">
+          {/* AI Loading Overlay */}
+          {isAiLoading && (
+            <div className="absolute inset-0 z-10 bg-white/70 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center p-6 transition-all duration-300">
+              <div className="flex flex-col items-center p-8 bg-white shadow-2xl rounded-2xl border border-indigo-50 -mt-10 max-w-sm w-full">
+                <Loader2 className="w-10 h-10 text-indigo-500 animate-spin mb-4" />
+                <h3 className="text-lg font-bold text-gray-900 mb-2 text-center">AI is analyzing your image</h3>
+                <p className="text-sm text-gray-500 text-center mb-6">
+                  Please wait while the AI generates a title, description, and suggested budget. This may take up to a minute.
+                </p>
+                {/* Indeterminate Progress Bar */}
+                <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden relative">
+                  <div 
+                    className="absolute top-0 bottom-0 left-0 bg-indigo-500 rounded-full w-1/3"
+                    style={{ animation: 'loading-bar 1.5s infinite ease-in-out' }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <fieldset disabled={isSubmitting || isAiLoading} className="space-y-6">
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Details</h3>
 
             <div className="space-y-4">
               <div>
@@ -212,6 +236,14 @@ export default function CreateRequestPage() {
               {isSubmitting ? 'Posting...' : 'Post Request'}
             </button>
           </div>
+          </fieldset>
+
+          <style>{`
+            @keyframes loading-bar {
+              0% { transform: translateX(-150%); }
+              100% { transform: translateX(350%); }
+            }
+          `}</style>
         </form>
       </div>
     </div>
