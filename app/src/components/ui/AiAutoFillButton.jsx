@@ -61,13 +61,14 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoad
           group relative inline-flex items-center justify-center gap-2.5 
           px-5 py-2.5 rounded-xl text-sm font-semibold
           transition-all duration-300 ease-out
-          ${disabled
-            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            : isAnalyzing
-              ? 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white cursor-wait'
-              : success
-                ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg shadow-emerald-200'
-                : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-200 hover:shadow-xl hover:shadow-violet-300 hover:-translate-y-0.5 active:translate-y-0'
+          ${
+            disabled
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              : isAnalyzing
+                ? 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white cursor-wait'
+                : success
+                  ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg shadow-emerald-200'
+                  : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-200 hover:shadow-xl hover:shadow-violet-300 hover:-translate-y-0.5 active:translate-y-0'
           }
         `}
       >
@@ -90,8 +91,9 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoad
           <Check className="w-4 h-4" />
         ) : (
           <Sparkles
-            className={`w-4 h-4 transition-transform duration-300 ${!disabled ? 'group-hover:rotate-12 group-hover:scale-110' : ''
-              }`}
+            className={`w-4 h-4 transition-transform duration-300 ${
+              !disabled ? 'group-hover:rotate-12 group-hover:scale-110' : ''
+            }`}
           />
         )}
 
@@ -123,9 +125,7 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoad
           </div>
           <div className="flex-1">
             <p className="font-bold text-lg text-gray-900 tracking-tight leading-tight">Success</p>
-            <p className="text-sm font-medium text-gray-600 mt-1">
-              Fields populated successfully.
-            </p>
+            <p className="text-sm font-medium text-gray-600 mt-1">Fields populated successfully.</p>
           </div>
         </div>
       )}

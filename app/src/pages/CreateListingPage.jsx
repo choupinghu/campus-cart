@@ -82,10 +82,10 @@ export default function CreateListingPage() {
             <Check className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
-            <p className="font-bold text-lg text-gray-900 tracking-tight leading-tight px-1">Success</p>
-            <p className="text-sm font-medium text-gray-500 mt-1">
-              Image uploaded successfully.
+            <p className="font-bold text-lg text-gray-900 tracking-tight leading-tight px-1">
+              Success
             </p>
+            <p className="text-sm font-medium text-gray-500 mt-1">Image uploaded successfully.</p>
           </div>
         </div>
       )}
@@ -114,10 +114,11 @@ export default function CreateListingPage() {
           </div>
         )}
 
-        <div className={`mb-8 border-b border-gray-100 pb-8 transition-opacity duration-300 ${isAiLoading ? 'opacity-30' : ''}`}>
+        <div
+          className={`mb-8 border-b border-gray-100 pb-8 transition-opacity duration-300 ${isAiLoading ? 'opacity-30' : ''}`}
+        >
           <h3 className="text-lg font-medium text-gray-900 mb-4">1. Photos</h3>
           <ImageUploader onUploadComplete={handleUploadComplete} />
-
 
           {/* AI Auto-Fill — appears after image upload */}
           {formData.imageUrl && (
@@ -164,7 +165,9 @@ export default function CreateListingPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Price ($)
+                    </label>
                     <input
                       type="number"
                       name="price"
@@ -179,7 +182,9 @@ export default function CreateListingPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Condition
+                    </label>
                     <select
                       name="condition"
                       value={formData.condition}
@@ -230,7 +235,9 @@ export default function CreateListingPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                  </label>
                   <textarea
                     name="description"
                     rows="4"

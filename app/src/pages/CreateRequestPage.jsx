@@ -73,7 +73,9 @@ export default function CreateRequestPage() {
             <Check className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
-            <p className="font-bold text-lg text-gray-900 tracking-tight leading-tight px-1">Success</p>
+            <p className="font-bold text-lg text-gray-900 tracking-tight leading-tight px-1">
+              Success
+            </p>
             <p className="text-sm font-medium text-gray-500 mt-1">
               Reference uploaded successfully.
             </p>
@@ -106,18 +108,22 @@ export default function CreateRequestPage() {
         )}
 
         {/* Optional photo upload for AI auto-fill */}
-        <div className={`mb-8 border-b border-gray-100 pb-8 transition-opacity duration-300 ${isAiLoading ? 'opacity-30' : ''}`}>
+        <div
+          className={`mb-8 border-b border-gray-100 pb-8 transition-opacity duration-300 ${isAiLoading ? 'opacity-30' : ''}`}
+        >
           <h3 className="text-lg font-medium text-gray-900 mb-1">Photo (Optional)</h3>
           <p className="text-sm text-gray-500 mb-4">
             Upload a reference photo to auto-fill the form with AI.
           </p>
-          <ImageUploader onUploadComplete={(url) => {
-            setImageUrl(url || '')
-            if (url) {
-              setShowUploadToast(true)
-              setTimeout(() => setShowUploadToast(false), 5000)
-            }
-          }} />
+          <ImageUploader
+            onUploadComplete={(url) => {
+              setImageUrl(url || '')
+              if (url) {
+                setShowUploadToast(true)
+                setTimeout(() => setShowUploadToast(false), 5000)
+              }
+            }}
+          />
 
           {imageUrl && (
             <div className="mt-4">
@@ -234,7 +240,9 @@ export default function CreateRequestPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Description
+                  </label>
                   <textarea
                     name="description"
                     rows="4"
@@ -248,7 +256,11 @@ export default function CreateRequestPage() {
             </div>
 
             <div className="pt-4 flex justify-end gap-3 border-t border-gray-100">
-              <button type="button" onClick={() => navigate('/want-to-buy')} className="btn-outline">
+              <button
+                type="button"
+                onClick={() => navigate('/want-to-buy')}
+                className="btn-outline"
+              >
                 Cancel
               </button>
               <button
