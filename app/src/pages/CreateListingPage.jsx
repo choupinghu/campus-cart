@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
+import AiAutoFillButton from '../components/ui/AiAutoFillButton'
 import { graphqlRequest } from '../services/graphqlClient'
 import { NUS_LOCATIONS } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
@@ -85,6 +86,28 @@ export default function CreateListingPage() {
               >
                 {formData.imageUrl}
               </a>
+            </div>
+          )}
+
+          {/* AI Auto-Fill — appears after image upload */}
+          {formData.imageUrl && (
+            <div className="mt-4">
+              <AiAutoFillButton
+                imageUrl={formData.imageUrl}
+                disabled={!formData.imageUrl}
+                onSuggest={(suggestions) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    title: suggestions.title || prev.title,
+                    description: suggestions.description || prev.description,
+                    price: suggestions.suggestedPrice
+                      ? String(suggestions.suggestedPrice)
+                      : prev.price,
+                    condition: suggestions.condition || prev.condition,
+                    category: suggestions.category || prev.category,
+                  }))
+                }}
+              />
             </div>
           )}
         </div>

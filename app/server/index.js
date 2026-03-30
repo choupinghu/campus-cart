@@ -13,6 +13,7 @@ import { typeDefs, resolvers } from './graphql/index.js';
 import { fromNodeHeaders } from 'better-auth/node';
 
 import uploadRoutes from './routes/upload.js';
+import aiRoutes from './routes/ai.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadsDir = path.resolve(__dirname, '..', 'uploads');
@@ -41,6 +42,7 @@ app.use("/api/auth", toNodeHandler(auth));
 // Static files & REST upload route
 app.use('/uploads', express.static(uploadsDir));
 app.use('/api/upload', uploadRoutes);
+app.use('/api/ai', aiRoutes);
 
 // GraphQL endpoint (lightweight — no Apollo overhead)
 app.post('/graphql', async (req, res) => {

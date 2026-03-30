@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { graphqlRequest } from '../services/graphqlClient'
+import ImageUploader from '../components/ui/ImageUploader'
+import AiAutoFillButton from '../components/ui/AiAutoFillButton'
 import { NUS_LOCATIONS } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
 
@@ -23,6 +25,7 @@ export default function CreateRequestPage() {
     category: 'Electronics',
     location: '',
   })
+  const [imageUrl, setImageUrl] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e) => {
@@ -63,6 +66,36 @@ export default function CreateRequestPage() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        {/* Optional photo upload for AI auto-fill */}
+        <div className="mb-8 border-b border-gray-100 pb-8">
+          <h3 className="text-lg font-medium text-gray-900 mb-1">Photo (Optional)</h3>
+          <p className="text-sm text-gray-500 mb-4">
+            Upload a reference photo to auto-fill the form with AI.
+          </p>
+          <ImageUploader onUploadComplete={(url) => setImageUrl(url || '')} />
+
+          {imageUrl && (
+            <div className="mt-4">
+              <AiAutoFillButton
+                imageUrl={imageUrl}
+                disabled={!imageUrl}
+                onSuggest={(suggestions) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    title: suggestions.title || prev.title,
+                    description: suggestions.description || prev.description,
+                    budget: suggestions.suggestedPrice
+                      ? String(suggestions.suggestedPrice)
+                      : prev.budget,
+                    condition: suggestions.condition || prev.condition,
+                    category: suggestions.category || prev.category,
+                  }))
+                }}
+              />
+            </div>
+          )}
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-4">Details</h3>

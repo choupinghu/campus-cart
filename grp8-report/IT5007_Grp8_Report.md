@@ -20,7 +20,7 @@ Currently, students buy and sell items such as textbooks, electronics, and hall 
 - **Poor Discovery:** Telegram chats are linear and unsearchable, causing listings to get buried quickly.
 - **Inefficient Coordination:** The common "PM me" culture results in wasted time negotiating availability, pricing, and meetup locations.
 
-**CampusCart** aims to resolve these issues by acting as a centralized, student-exclusive marketplace web application designed specifically for the NUS community.
+**CampusCart** aims to resolve these issues by acting as a centralized, student-exclusive marketplace web application designed specifically for the NUS community. **CampusCart** also leverages local LLMs to streamline the listing creation process through AI-powered field population.
 
 ---
 
@@ -64,6 +64,13 @@ To simulate an active marketplace ecosystem and streamline developer onboarding,
 ### 2.7 Client-Side Performance Caching
 To avoid redundant network calls and improve page-load performance, fetched Shopify products are cached in `sessionStorage` with a 5-minute TTL. Subsequent page visits within the cache window are served instantly from the local cache, eliminating unnecessary API calls to external storefronts.
 
+### 2.8 AI-Powered Auto-Fill
+To streamline the user experience, the platform integrates a local LLM to automate form population.
+- **Visual Analysis:** Leveraging the `llava:7b` vision model via Ollama, users can upload a photo of an item to automatically generate a title, description, suggested price, condition, and category.
+- **Model Selection & Rationale:** During development, we evaluated several vision LLMs. `moondream` (1.8B) was fast but struggled with complex prompts and JSON structure. `llama3.2-vision` (11B) was highly accurate but too slow for local CPU-only execution (~3-5 mins per image). We standardized on **`llava:7b`** as it provides the best balance of reasoning capability, prompt adherence, and local performance (~30-60s on average hardware).
+- **Dual-Workflow Support:** This feature is available for both "Sell an Item" (listings) and "Request an Item" (buying requests) forms.
+- **Human-in-the-Loop:** AI suggestions are presented for review, allowing users to modify any field before final submission, ensuring accuracy and control.
+
 ---
 
 ## 3. Developer Experience & Collaboration Workflows
@@ -97,12 +104,13 @@ As a team of 3 developers, maintaining high code quality and continuous synchron
 - **Database:** PostgreSQL 16 provisioned via Docker, with pgvector support for future expansions.
 - **ORM:** Prisma v6 providing highly type-safe database queries natively linked to the application layer.
 - **File Upload Pipeline:** Multer handles multi-part form data for image uploads via dedicated REST endpoints, decoupling binary storage from the GraphQL layer.
+- **Local LLM Infrastructure:** Ollama runs as a containerized service within the Docker network, serving the `llava:7b` vision model for image analysis without external API dependencies or costs.
 
 ---
 
 ## 5. Future Implementation Roadmap
 As the marketplace scales, we are planning the following architectural and functional expansions to enhance user discovery and platform utility:
 
-- **AI-Powered Item Auto-Fill:** Implementing an external Vision API to identify and auto-categorize item listings based solely on user photo uploads. The image upload infrastructure and listing API are already in place to support this workflow.
+- **AI-Powered Search & Recommendations:** Expanding the Ollama infrastructure to support semantic search and intelligent item recommendations based on user browsing history.
 - **Omni-Channel & Mobile Integration:** Enhancing the frontend as a mobile-first experience to leverage native device mechanisms, such as immediate camera access for photo uploads.
 - **Authentication Expansions:** Supplementing our current email validation framework with scalable OAuth 2.0 pipelines (e.g. Sign in with Google / GitHub).
