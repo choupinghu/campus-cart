@@ -11,6 +11,7 @@ Currently, students buy and sell items via scattered Telegram groups or generic 
 ## 🚀 The Solution
 A centralized marketplace featuring:
 - **Verified Access:** Authentication via NUS email.
+- **AI-Powered Auto-Fill:** Upload a photo and let AI (Ollama + llava:7b) populate the title, description, and price for you.
 - **Structured Listings:** Categorized items with condition tags and prices.
 - **Smart Search:** Filter by category, price, and location.
 - **Direct Offers:** A simplified "Make Offer" workflow.
@@ -18,6 +19,7 @@ A centralized marketplace featuring:
 ## 🛠 Tech Stack Overview
 - **Frontend:** React (Vite) + Tailwind CSS v4
 - **Backend:** Node.js (Express) + GraphQL
+- **AI Engine:** Ollama (running `llava:7b` locally)
 - **Database:** PostgreSQL (with pgvector for smart search)
 - **ORM:** Prisma
 - **Infrastructure:** Docker Compose
@@ -27,6 +29,19 @@ If you are a maintainer or team member looking to contribute, please refer to th
 - 🚀 **[Onboarding Guide](resources/onboard.md)**: Local setup instructions and dependency management
 - 📄 **[Code Collaboration](resources/git-rules.md)**: Branching strategies, PR workflow, and Git hook validation
 - ⚡️ **[Prisma DB Protocol](resources/prisma-workflow.md)**: Managing robust local PostgreSQL data prototyping
+
+### 🤖 Running AI Features (Ollama)
+The application uses **Ollama** as a local LLM service. To enable AI-powered field population:
+
+1. **Start the containers:**
+   ```bash
+   docker compose up -d
+   ```
+2. **Pull the vision model:** (Only needed once)
+   ```bash
+   docker compose exec ollama ollama pull llava:7b
+   ```
+3. **Verify:** Navigate to `http://localhost:8000/api/ai/health` to ensure the service is reachable.
 
 ---
 *Developed by IT5007 Finals — Group 14*
@@ -40,5 +55,6 @@ Specific areas where AI was used:
 - Auth library integration
 - Dockerfile and Docker Compose configuration
 - Headless PDF generation architectures
+- **Ollama AI Service integration**
 
 All AI-generated suggestions were reviewed, understood, and modified to fit the project requirements.
