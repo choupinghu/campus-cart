@@ -228,7 +228,7 @@ Example: Electronics, Laptop, Computer`
         const jsonString = cleaned.substring(startIdx, endIdx + 1)
         const parsed = JSON.parse(jsonString)
         if (Array.isArray(parsed)) suggestions = parsed
-      } catch (_) {
+      } catch {
         /* fall through */
       }
     }
