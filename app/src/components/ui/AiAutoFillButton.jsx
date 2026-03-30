@@ -61,14 +61,13 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoad
           group relative inline-flex items-center justify-center gap-2.5 
           px-5 py-2.5 rounded-xl text-sm font-semibold
           transition-all duration-300 ease-out
-          ${
-            disabled
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : isAnalyzing
-                ? 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white cursor-wait'
-                : success
-                  ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg shadow-emerald-200'
-                  : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-200 hover:shadow-xl hover:shadow-violet-300 hover:-translate-y-0.5 active:translate-y-0'
+          ${disabled
+            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+            : isAnalyzing
+              ? 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white cursor-wait'
+              : success
+                ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg shadow-emerald-200'
+                : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-200 hover:shadow-xl hover:shadow-violet-300 hover:-translate-y-0.5 active:translate-y-0'
           }
         `}
       >
@@ -91,21 +90,20 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoad
           <Check className="w-4 h-4" />
         ) : (
           <Sparkles
-            className={`w-4 h-4 transition-transform duration-300 ${
-              !disabled ? 'group-hover:rotate-12 group-hover:scale-110' : ''
-            }`}
+            className={`w-4 h-4 transition-transform duration-300 ${!disabled ? 'group-hover:rotate-12 group-hover:scale-110' : ''
+              }`}
           />
         )}
 
         {/* Label */}
         <span className="relative">
-          {isAnalyzing ? 'Analyzing image...' : success ? 'Fields populated!' : '✨ AI Auto-Fill'}
+          {isAnalyzing ? 'Analyzing image...' : success ? 'Done!' : 'AI Auto-Fill'}
         </span>
       </button>
 
       {/* Error message */}
       {error && (
-        <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+        <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 mt-2">
           <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <div>
             <p className="font-medium">Auto-fill unavailable</p>
@@ -114,22 +112,38 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoad
         </div>
       )}
 
-      {/* Success banner */}
+      {/* Success Toast (Fixed Notification with smooth entry/exit) */}
       {success && (
-        <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700">
-          <Check className="w-4 h-4 flex-shrink-0" />
-          <p>
-            Fields have been auto-filled by AI.{' '}
-            <span className="font-medium">Please review before submitting.</span>
-          </p>
+        <div
+          className="fixed top-24 right-6 z-[100] flex items-center gap-4 p-5 bg-white border-2 border-emerald-500/20 text-gray-900 rounded-2xl shadow-2xl toast-animation"
+          style={{ width: 'fit-content', minWidth: '380px' }}
+        >
+          <div className="bg-emerald-500 p-2.5 rounded-full shadow-inner ring-4 ring-emerald-50">
+            <Check className="w-6 h-6 text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-lg text-gray-900 tracking-tight leading-tight">Success</p>
+            <p className="text-sm font-medium text-gray-600 mt-1">
+              Fields populated successfully.
+            </p>
+          </div>
         </div>
       )}
 
-      {/* Shimmer animation keyframes */}
+      {/* Animation keyframes */}
       <style>{`
         @keyframes shimmer {
           0% { transform: translateX(-100%); }
           100% { transform: translateX(100%); }
+        }
+        @keyframes toast-lifecycle {
+          0% { opacity: 0; transform: translateX(40px); }
+          8% { opacity: 1; transform: translateX(0); }
+          92% { opacity: 1; transform: translateX(0); }
+          100% { opacity: 0; transform: translateX(40px); }
+        }
+        .toast-animation {
+          animation: toast-lifecycle 5s ease-in-out forwards;
         }
       `}</style>
     </div>
