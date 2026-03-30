@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useSession } from '../lib/auth'
 import Antigravity from '../components/Antigravity'
 import SpotlightCard from '../components/SpotlightCard'
+import AiSearchSuggestions from '../components/ui/AiSearchSuggestions'
 import { NUS_LOCATIONS } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
 import { graphqlRequest } from '../services/graphqlClient'
@@ -372,20 +373,36 @@ export default function WantToBuyPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white py-32 rounded-[3.5rem] text-center border border-gray-100 shadow-sm">
-              <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Search className="w-8 h-8 text-gray-300" />
+            <div className="bg-white p-12 lg:p-20 rounded-[3rem] text-center border border-gray-100 shadow-[0_4px_40px_-10px_rgba(0,0,0,0.05)] w-full">
+              <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner ring-8 ring-amber-50/50">
+                <Search className="w-10 h-10 text-[var(--color-nus-orange)]" />
               </div>
-              <h3 className="text-xl font-black text-gray-900 mb-2">No requests found</h3>
-              <p className="text-gray-500 mb-8 max-w-xs mx-auto">
-                Try adjusting your filters or be the first to post a request.
+              <h3 className="text-2xl font-black text-gray-900 mb-2">No requests found</h3>
+              <p className="text-gray-500 mb-10 max-w-sm mx-auto leading-relaxed">
+                We couldn&apos;t find any requests matching your filters or search keywords.
               </p>
               <button
                 onClick={clearFilters}
-                className="bg-[var(--color-nus-orange)] text-white px-8 py-3 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all"
+                className="bg-[var(--color-nus-orange)] text-white px-10 py-3.5 rounded-2xl font-bold hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[var(--color-nus-orange)]/20"
               >
                 Clear All Filters
               </button>
+
+              <div className="w-full max-w-5xl mx-auto">
+                <AiSearchSuggestions
+                  query={searchQuery}
+                  items={listings}
+                  columns={2}
+                  renderItem={(listing) => (
+                    <WTBCard
+                      key={listing.id}
+                      listing={listing}
+                      onSave={toggleSave}
+                      isLoggedIn={isLoggedIn}
+                    />
+                  )}
+                />
+              </div>
             </div>
           )}
         </div>

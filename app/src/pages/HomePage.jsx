@@ -4,7 +4,9 @@ import { fetchProducts } from '../services/shopifyService'
 import { graphqlRequest } from '../services/graphqlClient'
 import FilterSidebar from '../components/Marketplace/FilterSidebar'
 import ProductGrid from '../components/Marketplace/ProductGrid'
+import ProductCard from '../components/Marketplace/ProductCard'
 import Antigravity from '../components/Antigravity'
+import AiSearchSuggestions from '../components/ui/AiSearchSuggestions'
 import { Search } from 'lucide-react'
 
 const GET_LISTINGS = `
@@ -16,6 +18,8 @@ const GET_LISTINGS = `
       imageUrl
       condition
       location
+      description
+      category { name }
     }
   }
 `
@@ -59,6 +63,8 @@ export default function HomePage() {
             source: 'CampusCart',
             condition: listing.condition || 'Used',
             location: listing.location || 'NUS Campus',
+            category: listing.category?.name || 'Other',
+            description: listing.description || '',
             verified: true,
           }))
         } else {
@@ -180,6 +186,37 @@ export default function HomePage() {
               <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
                 Fetching listings…
               </p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="bg-white p-12 lg:p-20 rounded-[3rem] text-center border border-gray-100 shadow-[0_4px_40px_-10px_rgba(0,0,0,0.05)] w-full">
+              <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner ring-8 ring-blue-50/50">
+                <Search className="w-10 h-10 text-nus-blue" />
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-2">No items found</h3>
+              <p className="text-gray-500 mb-10 max-w-sm mx-auto leading-relaxed">
+                We couldn&apos;t find any listings matching your current search or filters.
+              </p>
+              <button
+                onClick={() =>
+                  setFilters({
+                    search: '',
+                    sources: [],
+                    conditions: [],
+                    locations: [],
+                    priceMin: '',
+                    priceMax: '',
+                  })
+                }
+                className="bg-nus-blue text-white px-10 py-3.5 rounded-2xl font-bold hover:bg-nus-blue-hover hover:scale-105 active:scale-95 transition-all shadow-xl shadow-nus-blue/20"
+              >
+                Clear All Filters
+              </button>
+
+              <AiSearchSuggestions
+                query={filters.search}
+                items={allProducts}
+                renderItem={(product) => <ProductCard key={product.id} product={product} />}
+              />
             </div>
           ) : (
             <ProductGrid products={filteredProducts} />
