@@ -22,7 +22,7 @@ The National University of Singapore has over 40,000 students, many of whom live
 - **Poor Discovery:** Telegram buy/sell groups are linear chat streams. Listings are buried within minutes, and there is no structured search, filtering, or categorization — making it nearly impossible for buyers to find specific items efficiently.
 - **Inefficient Coordination:** The pervasive "PM me" culture across these channels wastes significant time on repetitive negotiations around pricing, item condition, availability, and meetup logistics.
 
-**CampusCart** was conceived to directly address these pain points by providing a centralized, student-exclusive marketplace web application purpose-built for the NUS community. By requiring NUS email verification for access, structuring listings with categories and metadata, and offering direct offer mechanisms, CampusCart transforms the fragmented student trading experience into a trusted, searchable, and efficient digital marketplace.
+**CampusCart** aims to resolve these issues by acting as a centralized, student-exclusive marketplace web application designed specifically for the NUS community. **CampusCart** also leverages local LLMs to streamline the listing creation process through AI-powered field population.
 
 ---
 
@@ -137,6 +137,13 @@ To simulate an active marketplace ecosystem and streamline developer onboarding,
 
 To avoid redundant network calls and improve page-load performance, fetched Shopify product data is cached in `sessionStorage` with a 5-minute TTL. Subsequent page visits within the cache window are served instantly from the local cache, eliminating unnecessary API calls to external storefronts.
 
+### 2.8 AI-Powered Auto-Fill
+To streamline the user experience, the platform integrates a local LLM to automate form population.
+- **Visual Analysis:** Leveraging the `llava:7b` vision model via Ollama, users can upload a photo of an item to automatically generate a title, description, suggested price, condition, and category.
+- **Model Selection & Rationale:** During development, we evaluated several vision LLMs. `moondream` (1.8B) was fast but struggled with complex prompts and JSON structure. `llama3.2-vision` (11B) was highly accurate but too slow for local CPU-only execution (~3-5 mins per image). We standardized on **`llava:7b`** as it provides the best balance of reasoning capability, prompt adherence, and local performance (~30-60s on average hardware).
+- **Dual-Workflow Support:** This feature is available for both "Sell an Item" (listings) and "Request an Item" (buying requests) forms.
+- **Human-in-the-Loop:** AI suggestions are presented for review, allowing users to modify any field before final submission, ensuring accuracy and control.
+
 ---
 
 ## 4. Developer Experience & Collaboration Workflows
@@ -191,6 +198,7 @@ The diagram below illustrates the full system architecture of CampusCart — fro
 - **Database:** PostgreSQL 16, provisioned via Docker, with `pgvector` extension enabled for future semantic search capabilities.
 - **ORM:** Prisma v6, providing type-safe database queries natively linked to the application layer.
 - **File Upload Pipeline:** Multer handles multipart form data for image uploads via dedicated REST endpoints, cleanly decoupling binary storage from the GraphQL data layer.
+- **Local LLM Infrastructure:** Ollama runs as a containerized service within the Docker network, serving the `llava:7b` vision model for image analysis without external API dependencies or costs.
 
 ---
 
@@ -198,7 +206,6 @@ The diagram below illustrates the full system architecture of CampusCart — fro
 
 As the marketplace scales beyond its MVP, the following architectural and functional expansions are planned to enhance user discovery and platform utility:
 
-- **AI-Powered Item Auto-Fill:** Implementing an external Vision API (e.g., Google Cloud Vision or OpenAI Vision) to identify, describe, and auto-categorize item listings from a user's photo upload. The image upload pipeline (Multer REST endpoint) and listing creation API are already in place — the AI call would slot in as an intermediate processing step before the listing is saved.
-- **Semantic Search via pgvector:** The PostgreSQL database already has the `pgvector` extension enabled. The natural next step is to generate vector embeddings for listing titles and descriptions (using a lightweight embedding model) and store them alongside listing records. This would enable similarity-based search — surfacing semantically related listings even when keyword terms don't match exactly.
-- **Omni-Channel & Mobile Integration:** Enhancing the frontend as a mobile-first progressive web app experience to leverage native device capabilities, such as immediate camera access for photo uploads.
-- **Authentication Expansions:** Supplementing the current email validation framework with scalable OAuth 2.0 pipelines (e.g., Sign in with Google or GitHub). Better Auth already supports OAuth providers — this would be a configuration-level addition rather than an architectural change.
+- **AI-Powered Search & Recommendations:** Expanding the Ollama infrastructure to support semantic search and intelligent item recommendations based on user browsing history.
+- **Omni-Channel & Mobile Integration:** Enhancing the frontend as a mobile-first experience to leverage native device mechanisms, such as immediate camera access for photo uploads.
+- **Authentication Expansions:** Supplementing our current email validation framework with scalable OAuth 2.0 pipelines (e.g. Sign in with Google / GitHub).
