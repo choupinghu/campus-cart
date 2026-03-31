@@ -1,16 +1,6 @@
 import ProductCard from './ProductCard'
 
 export default function ProductGrid({ products }) {
-  if (products.length === 0) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center py-20 text-gray-500">
-        <div className="text-4xl mb-4">🔍</div>
-        <p className="text-lg">No items found matching your filters.</p>
-        <p className="text-sm">Try adjusting your search criteria.</p>
-      </div>
-    )
-  }
-
   return (
     <div className="flex-1">
       {/* Grid Header */}
