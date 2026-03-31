@@ -184,7 +184,10 @@ As a team of three developers working in parallel, maintaining high code quality
 
 The diagram below illustrates the full system architecture of CampusCart — from the browser through to the data layer — and how each component is connected.
 
-![CampusCart System Architecture](./images/architecture.png)
+<div class="figure">
+  <img src="./images/arch-diag.png" alt="CampusCart System Architecture Diagram" />
+</div>
+<p class="figure-caption">Figure 8: CampusCart System Architecture — illustrating the Docker Compose container routing, external API integrations, local AI services, and Developer Experience pipelines.</p>
 
 ### 5.2 Key Architectural Decisions
 
