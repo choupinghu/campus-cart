@@ -144,6 +144,20 @@ To streamline the user experience, the platform integrates a local LLM to automa
 - **Dual-Workflow Support:** This feature is available for both "Sell an Item" (listings) and "Request an Item" (buying requests) forms.
 - **Human-in-the-Loop:** AI suggestions are presented for review, allowing users to modify any field before final submission, ensuring accuracy and control.
 
+### 2.9 AI-Powered Search Recommendations (Recommended Items)
+To prevent users from hitting "dead ends" during search, the platform uses the local LLM to proactively suggest items.
+- **Intelligent Fallback:** When a search query returns zero results, the system automatically triggers a request to the local `llava:7b` model to generate 3 broader or synonymous search terms.
+- **Proactive Discovery:** Instead of just showing text suggestions, the platform automatically filters the entire marketplace catalog using the AI-generated keywords and displays a "Recommended for You" gallery.
+- **Fuzzy Word-Based Matching:** To ensure high relevance, the recommendation engine uses a custom fuzzy matching algorithm that splits keywords into individual words and scans across titles, descriptions, categories, and storefront sources.
+- **Performance Optimization:** Requests to the local LLM are debounced by 1 second to prevent redundant API calls during active typing, ensuring a smooth and responsive UI even on hardware with limited resources.
+
+### 2.9 AI-Powered Search Recommendations (Recommended Items)
+To prevent users from hitting "dead ends" during search, the platform uses the local LLM to proactively suggest items.
+- **Intelligent Fallback:** When a search query returns zero results, the system automatically triggers a request to the local `llava:7b` model to generate 3 broader or synonymous search terms.
+- **Proactive Discovery:** Instead of just showing text suggestions, the platform automatically filters the entire marketplace catalog using the AI-generated keywords and displays a "Recommended for You" gallery.
+- **Fuzzy Word-Based Matching:** To ensure high relevance, the recommendation engine uses a custom fuzzy matching algorithm that splits keywords into individual words and scans across titles, descriptions, categories, and storefront sources.
+- **Performance Optimization:** Requests to the local LLM are debounced by 1 second to prevent redundant API calls during active typing, ensuring a smooth and responsive UI even on hardware with limited resources.
+
 ---
 
 ## 4. Developer Experience & Collaboration Workflows
@@ -206,6 +220,6 @@ The diagram below illustrates the full system architecture of CampusCart — fro
 
 As the marketplace scales beyond its MVP, the following architectural and functional expansions are planned to enhance user discovery and platform utility:
 
-- **AI-Powered Search & Recommendations:** Expanding the Ollama infrastructure to support semantic search and intelligent item recommendations based on user browsing history.
+- **AI-Powered Search & Recommendations (Phase 2):** Expanding the current recommendation infrastructure to support deeper semantic vector-based search using `pgvector` for even more nuanced item discovery.
 - **Omni-Channel & Mobile Integration:** Enhancing the frontend as a mobile-first experience to leverage native device mechanisms, such as immediate camera access for photo uploads.
 - **Authentication Expansions:** Supplementing our current email validation framework with scalable OAuth 2.0 pipelines (e.g. Sign in with Google / GitHub).
