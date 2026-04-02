@@ -9,7 +9,7 @@ const STORE_URLS = {
 }
 
 export default function ProductCard({ product }) {
-  const isCampusCart = product.source === 'CampusCart'
+  const isCampusCart = product.source === 'User-listed' || product.source === 'CampusCart'
 
   // For Shopify products, build the real store URL from externalUrl handle
   const externalUrl =

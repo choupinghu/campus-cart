@@ -63,17 +63,16 @@ export default function WantToBuyPage() {
       try {
         const data = await graphqlRequest(GET_REQUESTS)
         if (data?.requests) {
-          setListings(
-            data.requests.map((r) => ({
-              ...r,
-              category: r.category.name,
-              name: r.user.name,
-              avatar: r.user.image,
-              urgent: r.description?.toLowerCase().includes('urgent') || false, // Simple heuristic for mock/legacy
-              postedAgo: formatPostedAgo(r.createdAt),
-              saved: false,
-            })),
-          )
+          const mapped = data.requests.map((r) => ({
+            ...r,
+            category: r.category?.name || 'Other',
+            name: r.user?.name || 'NUS Student',
+            avatar: r.user?.image || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + (r.user?.id || 'default'),
+            urgent: r.description?.toLowerCase().includes('urgent') || false,
+            postedAgo: formatPostedAgo(r.createdAt),
+            saved: false,
+          }))
+          setListings(mapped)
         }
       } catch (err) {
         console.error('Failed to fetch requests:', err)
