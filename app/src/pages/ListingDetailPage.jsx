@@ -121,7 +121,7 @@ export default function ListingDetailPage() {
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="bg-blue-50 text-nus-blue text-[10px] font-black px-3 py-1 rounded-full border border-blue-100 uppercase tracking-widest">
-                CampusCart
+                {product.seller?.name || 'CampusCart'}
               </span>
               {product.condition && (
                 <span className="flex items-center gap-1.5 text-[10px] text-green-600 font-black bg-green-50 px-3 py-1 rounded-full border border-green-100 uppercase tracking-widest">

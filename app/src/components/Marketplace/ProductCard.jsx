@@ -50,7 +50,7 @@ export default function ProductCard({ product }) {
       {/* Content */}
       <div className="flex flex-col flex-grow p-5">
         <span className="text-[10px] font-black text-nus-orange tracking-widest uppercase mb-1.5">
-          {product.source}
+          {isCampusCart ? product.seller?.name || 'CampusCart' : product.source}
         </span>
 
         <h3 className="font-extrabold text-nus-blue text-lg leading-tight mb-3 line-clamp-2 min-h-[3rem] group-hover:text-nus-blue-hover transition-colors">
