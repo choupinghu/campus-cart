@@ -1,14 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { graphqlRequest } from '../services/graphqlClient'
-import {
-  ChevronRight,
-  MapPin,
-  CheckCircle,
-  MessageCircle,
-  Star,
-  ArrowLeft,
-} from 'lucide-react'
+import { ChevronRight, MapPin, CheckCircle, MessageCircle, Star, ArrowLeft } from 'lucide-react'
 
 const GET_LISTING_BY_ID = `
   query GetListing($id: ID!) {

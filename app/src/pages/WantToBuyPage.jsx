@@ -35,9 +35,9 @@ function formatPostedAgo(dateStr) {
   if (!dateStr) return 'some time ago'
   const isNumeric = /^\d+$/.test(dateStr.toString())
   const date = isNumeric ? new Date(parseInt(dateStr)) : new Date(dateStr)
-  
+
   if (isNaN(date.getTime())) return 'some time ago'
-  
+
   const now = new Date()
   const diff = now - date
   const mins = Math.floor(Math.abs(diff) / 60000)
@@ -73,7 +73,9 @@ export default function WantToBuyPage() {
             ...r,
             category: r.category?.name || 'Other',
             name: r.user?.name || 'NUS Student',
-            avatar: r.user?.image || 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + (r.user?.id || 'default'),
+            avatar:
+              r.user?.image ||
+              'https://api.dicebear.com/7.x/avataaars/svg?seed=' + (r.user?.id || 'default'),
             urgent: r.description?.toLowerCase().includes('urgent') || false,
             postedAgo: formatPostedAgo(r.createdAt),
             saved: false,
@@ -120,8 +122,12 @@ export default function WantToBuyPage() {
 
     if (sortBy === 'Newest') {
       result = [...result].sort((a, b) => {
-        const timeA = /^\d+$/.test(a.createdAt?.toString()) ? parseInt(a.createdAt) : new Date(a.createdAt).getTime()
-        const timeB = /^\d+$/.test(b.createdAt?.toString()) ? parseInt(b.createdAt) : new Date(b.createdAt).getTime()
+        const timeA = /^\d+$/.test(a.createdAt?.toString())
+          ? parseInt(a.createdAt)
+          : new Date(a.createdAt).getTime()
+        const timeB = /^\d+$/.test(b.createdAt?.toString())
+          ? parseInt(b.createdAt)
+          : new Date(b.createdAt).getTime()
         return (timeB || 0) - (timeA || 0)
       })
     } else if (sortBy === 'Budget: High to Low') {
@@ -373,11 +379,7 @@ export default function WantToBuyPage() {
           ) : filtered.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filtered.map((listing) => (
-                 <WTBCard
-                  key={listing.id}
-                  listing={listing}
-                  isLoggedIn={isLoggedIn}
-                />
+                <WTBCard key={listing.id} listing={listing} isLoggedIn={isLoggedIn} />
               ))}
             </div>
           ) : (
@@ -402,11 +404,7 @@ export default function WantToBuyPage() {
                   items={listings}
                   columns={2}
                   renderItem={(listing) => (
-                    <WTBCard 
-                      key={listing.id} 
-                      listing={listing} 
-                      isLoggedIn={isLoggedIn} 
-                    />
+                    <WTBCard key={listing.id} listing={listing} isLoggedIn={isLoggedIn} />
                   )}
                 />
               </div>
