@@ -21,6 +21,7 @@ const GET_LISTINGS = `
       description
       category { name }
       seller { name }
+      createdAt
     }
   }
 `
@@ -63,6 +64,7 @@ export default function HomePage() {
             image: listing.imageUrl || 'https://placehold.co/400x400/e2e8f0/64748b?text=No+Image',
             source: 'User-listed',
             seller: listing.seller,
+            createdAt: listing.createdAt,
             condition: listing.condition || 'Used',
             location: listing.location || 'NUS Campus',
             category: listing.category?.name || 'Other',

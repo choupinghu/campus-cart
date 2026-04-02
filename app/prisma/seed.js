@@ -159,27 +159,33 @@ const CATEGORY_IMAGES = [
 const REQUESTS = [
   // Textbooks
   { title: 'Looking for ST2334 Textbook', description: 'Need "Probability and Statistics for Engineering and the Sciences" by Devore. Any edition.', budget: 20.0, condition: 'Used', location: 'Anywhere on campus', userIdx: 1, categoryIdx: 0 },
+  { title: 'CS2100 Lab Manual', description: 'Desperately need this by tomorrow! Willing to pay extra for immediate collection.', budget: 25.0, condition: 'Good', location: 'COM1', userIdx: 14, categoryIdx: 0 },
   { title: 'WTB: CS3230 Algorithm Design Textbook', description: 'Kleinberg & Tardos preferred. Will take any condition.', budget: 25.0, condition: null, location: 'COM1', userIdx: 4, categoryIdx: 0 },
   { title: 'Looking for LSM1301 General Biology Textbook', description: 'Campbell Biology, any recent edition. Highlighting is fine.', budget: 15.0, condition: 'Used', location: 'Science Library', userIdx: 9, categoryIdx: 0 },
 
   // Electronics
   { title: 'Need a 24" Monitor', description: 'Preferably IPS panel with USB-C. Budget flexible for good condition.', budget: 120.0, condition: 'Like New', location: 'UTown Residence', userIdx: 0, categoryIdx: 1 },
+  { title: 'MacBook Air Charger (30W/60W)', description: 'Magsafe 3 or USB-C. Mine just broke and I have a deadline tonight!', budget: 45.0, condition: 'Used', location: 'UTown / PGP', userIdx: 5, categoryIdx: 1 },
   { title: 'WTB: USB-C Hub / Dongle', description: 'Need HDMI + USB-A ports at minimum. For connecting to lecture hall projectors.', budget: 25.0, condition: null, location: null, userIdx: 7, categoryIdx: 1 },
   { title: 'Looking for Cheap Tablet for Note-Taking', description: 'Any tablet that supports stylus input. Mostly for PDF annotation.', budget: 200.0, condition: 'Used', location: null, userIdx: 12, categoryIdx: 1 },
 
   // Furniture
   { title: 'Wanted: Desk Lamp for Study', description: 'Looking for an LED desk lamp, preferably with adjustable brightness.', budget: 25.0, condition: null, location: 'Kent Ridge Hall', userIdx: 2, categoryIdx: 2 },
+  { title: 'Clothes Hanging Rack', description: 'Moving in today and need a place for my clothes ASAP! Urgent!', budget: 20.0, condition: 'Any', location: 'PGP House 7', userIdx: 13, categoryIdx: 2 },
   { title: 'Need Small Bookshelf for Hall Room', description: 'Max 80cm tall, prefer white or light wood. Must fit beside single bed.', budget: 30.0, condition: 'Used', location: 'Sheares Hall', userIdx: 8, categoryIdx: 2 },
 
   // Clothing
   { title: 'Looking for NUS Engineering Jacket (Size L)', description: 'Any colour, preferably recent batch. Can meet on campus.', budget: 30.0, condition: 'Used', location: null, userIdx: 1, categoryIdx: 3 },
+  { title: 'Formal Blazer for Interview (Navy)', description: 'Size M or L. Career fair is tomorrow and mine survived a coffee spill. Help!', budget: 40.0, condition: 'Good', location: 'Kent Ridge Hall', userIdx: 19, categoryIdx: 3 },
   { title: 'WTB: NUS Computing Club Polo', description: 'Any year, size M or L. Willing to buy multiples.', budget: 15.0, condition: 'Used', location: 'COM1', userIdx: 6, categoryIdx: 3 },
 
   // Stationery
   { title: 'Need Whiteboard Markers (Assorted)', description: 'For group study room sessions. Prefer non-toxic brands.', budget: 8.0, condition: 'New', location: 'Central Library', userIdx: 15, categoryIdx: 4 },
+  { title: 'Graphic Calculator TI-84 Plus', description: 'Math finals in 2 days. Urgent request!', budget: 100.0, condition: 'Working', location: 'UTown', userIdx: 10, categoryIdx: 1 }, // Map to electronics or stationery? Categorized as electronics in title but using categoryIdx 1
 
   // Sports
   { title: 'Need Badminton Racket', description: 'Intermediate-level racket for hall games. Yonex preferred.', budget: 40.0, condition: 'Like New', location: 'MPSH Court', userIdx: 0, categoryIdx: 5 },
+  { title: 'Football Cleats (Size 10)', description: 'Match tonight at 7 PM. Desperately need a pair!', budget: 45.0, condition: 'Good', location: 'MPSH Field', userIdx: 3, categoryIdx: 5 },
   { title: 'Looking for Resistance Bands Set', description: 'For home workouts in hall room. Full set preferred.', budget: 15.0, condition: null, location: 'UTown Gym', userIdx: 11, categoryIdx: 5 },
   { title: 'WTB: Football Boots (US 9)', description: 'For interhall games. Nike or Adidas preferred, firm ground studs.', budget: 50.0, condition: 'Used', location: 'MPSH Field', userIdx: 18, categoryIdx: 5 },
 ];
@@ -231,7 +237,12 @@ async function main() {
 
   // 4. Create listings ────────────────────────────────────────────────
   console.log('🏷  Creating listings …');
-  for (const l of LISTINGS) {
+  for (let i = 0; i < LISTINGS.length; i++) {
+    const l = LISTINGS[i];
+    // Spread over the last 14 days
+    const daysAgo = Math.random() * 14;
+    const createdAt = new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000);
+
     const listing = await prisma.listing.create({
       data: {
         title: l.title,
@@ -242,6 +253,7 @@ async function main() {
         imageUrl: l.imageUrl || CATEGORY_IMAGES[l.categoryIdx],
         sellerId: createdUsers[l.sellerIdx].id,
         categoryId: createdCategories[l.categoryIdx].id,
+        createdAt,
       },
     });
     console.log(`   ✓ ${listing.title}`);
@@ -250,7 +262,12 @@ async function main() {
 
   // 5. Create requests ────────────────────────────────────────────────
   console.log('🔍 Creating requests …');
-  for (const r of REQUESTS) {
+  for (let i = 0; i < REQUESTS.length; i++) {
+    const r = REQUESTS[i];
+    // Spread over the last 7 days
+    const hoursAgo = Math.random() * 168; // 7 days * 24 hours
+    const createdAt = new Date(Date.now() - hoursAgo * 60 * 60 * 1000);
+
     const request = await prisma.request.create({
       data: {
         title: r.title,
@@ -260,6 +277,7 @@ async function main() {
         location: r.location,
         userId: createdUsers[r.userIdx].id,
         categoryId: createdCategories[r.categoryIdx].id,
+        createdAt,
       },
     });
     console.log(`   ✓ ${request.title}`);
