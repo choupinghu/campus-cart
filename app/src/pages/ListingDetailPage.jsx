@@ -33,7 +33,6 @@ export default function ListingDetailPage() {
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [wishlisted, setWishlisted] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -103,14 +102,6 @@ export default function ListingDetailPage() {
         <div className="lg:col-span-7 space-y-6">
           <div className="aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-gray-50 border border-gray-100 relative shadow-2xl shadow-black/5">
             <img src={imageUrl} alt={product.title} className="w-full h-full object-cover" />
-            <button
-              onClick={() => setWishlisted((v) => !v)}
-              className="absolute top-6 right-6 p-3 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg transition-colors"
-            >
-              <Heart
-                className={`w-6 h-6 transition-colors ${wishlisted ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-400'}`}
-              />
-            </button>
           </div>
         </div>
 
