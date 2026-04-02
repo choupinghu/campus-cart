@@ -5,7 +5,6 @@ import {
   ChevronRight,
   MapPin,
   CheckCircle,
-  Heart,
   MessageCircle,
   Star,
   ArrowLeft,

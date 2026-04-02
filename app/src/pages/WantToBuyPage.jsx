@@ -1,5 +1,5 @@
 import { useState, useMemo, Suspense, useEffect } from 'react'
-import { Search, ChevronDown, Tag, MapPin, Clock, MessageCircle, Bookmark } from 'lucide-react'
+import { Search, ChevronDown, Tag, MapPin, Clock, MessageCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useSession } from '../lib/auth'
 import Antigravity from '../components/Antigravity'
