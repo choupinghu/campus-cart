@@ -40,7 +40,7 @@ CampusCart provides verified, structured, and efficient peer-to-peer commerce fo
 
 ---
 
-## 🎓 For Evaluators / Prof
+## 🎓 For Evaluators / Professors / TAs
 
 **Prerequisites:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running. Nothing else needed.
 
