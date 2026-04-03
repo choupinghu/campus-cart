@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react'
 import { NUS_SPINNER_VERBS } from '../../utils/spinnerVerbs'
 
 const SIZES = {
-  sm: { ring: 'w-6 h-6',   border: 'border-2',     centerDot: 'w-1 h-1',     gap: 'gap-0.5' },
-  md: { ring: 'w-10 h-10', border: 'border-[3px]', centerDot: 'w-1.5 h-1.5', gap: 'gap-1'   },
-  lg: { ring: 'w-14 h-14', border: 'border-[3px]', centerDot: 'w-2.5 h-2.5', gap: 'gap-1'   },
+  sm: { ring: 'w-6 h-6', border: 'border-2', centerDot: 'w-1 h-1', gap: 'gap-0.5' },
+  md: { ring: 'w-10 h-10', border: 'border-[3px]', centerDot: 'w-1.5 h-1.5', gap: 'gap-1' },
+  lg: { ring: 'w-14 h-14', border: 'border-[3px]', centerDot: 'w-2.5 h-2.5', gap: 'gap-1' },
 }
 
 export default function NusSpinner({ size = 'md', verb, showVerb = true, onCancel }) {
   const [currentVerb, setCurrentVerb] = useState(
-    () => verb ?? NUS_SPINNER_VERBS[Math.floor(Math.random() * NUS_SPINNER_VERBS.length)]
+    () => verb ?? NUS_SPINNER_VERBS[Math.floor(Math.random() * NUS_SPINNER_VERBS.length)],
   )
   const [orangeIdx, setOrangeIdx] = useState(0)
 
