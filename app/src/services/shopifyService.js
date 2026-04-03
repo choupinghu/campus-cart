@@ -1,5 +1,5 @@
 // List of sources
-export const SOURCES = ['IUIGA', 'Bookshop.sg', 'NUS Press']
+export const SOURCES = ['User-listed', 'IUIGA', 'Bookshop.sg', 'NUS Press']
 export const CONDITIONS = ['New / Sealed', 'Like New', 'Good', 'Used']
 export const LOCATIONS = [
   'Kent Ridge Hall',

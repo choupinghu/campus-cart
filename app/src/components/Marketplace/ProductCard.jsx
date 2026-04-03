@@ -8,8 +8,27 @@ const STORE_URLS = {
   'NUS Press': 'https://nuspress.nus.edu.sg/products',
 }
 
+function formatPostedAgo(dateStr) {
+  if (!dateStr) return null
+  const isNumeric = /^\d+$/.test(dateStr.toString())
+  const date = isNumeric ? new Date(parseInt(dateStr)) : new Date(dateStr)
+  if (isNaN(date.getTime())) return null
+
+  const now = new Date()
+  const diff = now - date
+  const mins = Math.floor(Math.abs(diff) / 60000)
+  const hours = Math.floor(mins / 60)
+  const days = Math.floor(hours / 24)
+
+  if (days > 0) return `${days}d ago`
+  if (hours > 0) return `${hours}h ago`
+  if (mins > 0) return `${mins}m ago`
+  return 'Just now'
+}
+
 export default function ProductCard({ product }) {
-  const isCampusCart = product.source === 'CampusCart'
+  const isCampusCart = product.source === 'User-listed' || product.source === 'CampusCart'
+  const postedAgo = formatPostedAgo(product.createdAt)
 
   // For Shopify products, build the real store URL from externalUrl handle
   const externalUrl =
@@ -50,7 +69,7 @@ export default function ProductCard({ product }) {
       {/* Content */}
       <div className="flex flex-col flex-grow p-5">
         <span className="text-[10px] font-black text-nus-orange tracking-widest uppercase mb-1.5">
-          {product.source}
+          {isCampusCart ? product.seller?.name || 'CampusCart' : product.source}
         </span>
 
         <h3 className="font-extrabold text-nus-blue text-lg leading-tight mb-3 line-clamp-2 min-h-[3rem] group-hover:text-nus-blue-hover transition-colors">
@@ -78,6 +97,12 @@ export default function ProductCard({ product }) {
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span className="text-[9px] font-black uppercase tracking-wider">Verified</span>
             </div>
+          )}
+
+          {postedAgo && (
+            <span className="text-[9px] font-bold text-gray-400/80 uppercase tracking-tight">
+              {postedAgo}
+            </span>
           )}
         </div>
       </div>

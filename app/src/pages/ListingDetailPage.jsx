@@ -1,15 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { graphqlRequest } from '../services/graphqlClient'
-import {
-  ChevronRight,
-  MapPin,
-  CheckCircle,
-  Heart,
-  MessageCircle,
-  Star,
-  ArrowLeft,
-} from 'lucide-react'
+import { ChevronRight, MapPin, CheckCircle, MessageCircle, Star, ArrowLeft } from 'lucide-react'
 
 const GET_LISTING_BY_ID = `
   query GetListing($id: ID!) {
@@ -34,7 +26,6 @@ export default function ListingDetailPage() {
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [wishlisted, setWishlisted] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -104,14 +95,6 @@ export default function ListingDetailPage() {
         <div className="lg:col-span-7 space-y-6">
           <div className="aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-gray-50 border border-gray-100 relative shadow-2xl shadow-black/5">
             <img src={imageUrl} alt={product.title} className="w-full h-full object-cover" />
-            <button
-              onClick={() => setWishlisted((v) => !v)}
-              className="absolute top-6 right-6 p-3 bg-white/90 backdrop-blur-md rounded-2xl shadow-lg transition-colors"
-            >
-              <Heart
-                className={`w-6 h-6 transition-colors ${wishlisted ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-400'}`}
-              />
-            </button>
           </div>
         </div>
 
@@ -121,7 +104,7 @@ export default function ListingDetailPage() {
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="bg-blue-50 text-nus-blue text-[10px] font-black px-3 py-1 rounded-full border border-blue-100 uppercase tracking-widest">
-                CampusCart
+                {product.seller?.name || 'CampusCart'}
               </span>
               {product.condition && (
                 <span className="flex items-center gap-1.5 text-[10px] text-green-600 font-black bg-green-50 px-3 py-1 rounded-full border border-green-100 uppercase tracking-widest">

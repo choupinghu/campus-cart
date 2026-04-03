@@ -1,5 +1,5 @@
 import { useState, useMemo, Suspense, useEffect } from 'react'
-import { Search, ChevronDown, Tag, MapPin, Clock, MessageCircle, Bookmark } from 'lucide-react'
+import { Search, ChevronDown, Tag, MapPin, Clock, MessageCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useSession } from '../lib/auth'
 import Antigravity from '../components/Antigravity'
@@ -32,9 +32,15 @@ const GET_REQUESTS = `
 const SORT_OPTIONS = ['Newest', 'Budget: High to Low', 'Budget: Low to High', 'Urgent First']
 
 function formatPostedAgo(dateStr) {
+  if (!dateStr) return 'some time ago'
+  const isNumeric = /^\d+$/.test(dateStr.toString())
+  const date = isNumeric ? new Date(parseInt(dateStr)) : new Date(dateStr)
+
+  if (isNaN(date.getTime())) return 'some time ago'
+
   const now = new Date()
-  const diff = now - new Date(dateStr)
-  const mins = Math.floor(diff / 60000)
+  const diff = now - date
+  const mins = Math.floor(Math.abs(diff) / 60000)
   const hours = Math.floor(mins / 60)
   const days = Math.floor(hours / 24)
 
@@ -63,17 +69,18 @@ export default function WantToBuyPage() {
       try {
         const data = await graphqlRequest(GET_REQUESTS)
         if (data?.requests) {
-          setListings(
-            data.requests.map((r) => ({
-              ...r,
-              category: r.category.name,
-              name: r.user.name,
-              avatar: r.user.image,
-              urgent: r.description?.toLowerCase().includes('urgent') || false, // Simple heuristic for mock/legacy
-              postedAgo: formatPostedAgo(r.createdAt),
-              saved: false,
-            })),
-          )
+          const mapped = data.requests.map((r) => ({
+            ...r,
+            category: r.category?.name || 'Other',
+            name: r.user?.name || 'NUS Student',
+            avatar:
+              r.user?.image ||
+              'https://api.dicebear.com/7.x/avataaars/svg?seed=' + (r.user?.id || 'default'),
+            urgent: r.description?.toLowerCase().includes('urgent') || false,
+            postedAgo: formatPostedAgo(r.createdAt),
+            saved: false,
+          }))
+          setListings(mapped)
         }
       } catch (err) {
         console.error('Failed to fetch requests:', err)
@@ -83,10 +90,6 @@ export default function WantToBuyPage() {
     }
     loadRequests()
   }, [])
-
-  const toggleSave = (id) => {
-    setListings((prev) => prev.map((l) => (l.id === id ? { ...l, saved: !l.saved } : l)))
-  }
 
   const toggle = (list, setter, item) =>
     setter((prev) => (prev.includes(item) ? prev.filter((x) => x !== item) : [...prev, item]))
@@ -117,11 +120,23 @@ export default function WantToBuyPage() {
       )
     })
 
-    if (sortBy === 'Budget: High to Low') result = [...result].sort((a, b) => b.budget - a.budget)
-    else if (sortBy === 'Budget: Low to High')
+    if (sortBy === 'Newest') {
+      result = [...result].sort((a, b) => {
+        const timeA = /^\d+$/.test(a.createdAt?.toString())
+          ? parseInt(a.createdAt)
+          : new Date(a.createdAt).getTime()
+        const timeB = /^\d+$/.test(b.createdAt?.toString())
+          ? parseInt(b.createdAt)
+          : new Date(b.createdAt).getTime()
+        return (timeB || 0) - (timeA || 0)
+      })
+    } else if (sortBy === 'Budget: High to Low') {
+      result = [...result].sort((a, b) => b.budget - a.budget)
+    } else if (sortBy === 'Budget: Low to High') {
       result = [...result].sort((a, b) => a.budget - b.budget)
-    else if (sortBy === 'Urgent First')
+    } else if (sortBy === 'Urgent First') {
       result = [...result].sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0))
+    }
 
     return result
   }, [listings, searchQuery, selectedCategories, selectedLocations, budgetMax, urgentOnly, sortBy])
@@ -364,12 +379,7 @@ export default function WantToBuyPage() {
           ) : filtered.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {filtered.map((listing) => (
-                <WTBCard
-                  key={listing.id}
-                  listing={listing}
-                  onSave={toggleSave}
-                  isLoggedIn={isLoggedIn}
-                />
+                <WTBCard key={listing.id} listing={listing} isLoggedIn={isLoggedIn} />
               ))}
             </div>
           ) : (
@@ -394,12 +404,7 @@ export default function WantToBuyPage() {
                   items={listings}
                   columns={2}
                   renderItem={(listing) => (
-                    <WTBCard
-                      key={listing.id}
-                      listing={listing}
-                      onSave={toggleSave}
-                      isLoggedIn={isLoggedIn}
-                    />
+                    <WTBCard key={listing.id} listing={listing} isLoggedIn={isLoggedIn} />
                   )}
                 />
               </div>
@@ -412,7 +417,7 @@ export default function WantToBuyPage() {
 }
 
 // ── WTB Card ──────────────────────────────────────────────────────────────────
-function WTBCard({ listing, onSave, isLoggedIn }) {
+function WTBCard({ listing, isLoggedIn }) {
   return (
     <SpotlightCard
       className="group bg-white rounded-[2rem] border border-gray-100 p-6 flex flex-col gap-4 hover:shadow-[0_16px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
@@ -425,7 +430,7 @@ function WTBCard({ listing, onSave, isLoggedIn }) {
         </div>
       )}
 
-      {/* Top row: avatar + name + save */}
+      {/* Top row: avatar + name */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img
@@ -441,15 +446,6 @@ function WTBCard({ listing, onSave, isLoggedIn }) {
             </p>
           </div>
         </div>
-        <button
-          onClick={() => onSave(listing.id)}
-          title={listing.saved ? 'Unsave' : 'Save request'}
-          className={`p-2 rounded-xl transition-all ${listing.saved ? 'text-[var(--color-nus-orange)] bg-amber-50' : 'text-gray-300 hover:text-[var(--color-nus-orange)] hover:bg-amber-50'}`}
-        >
-          <Bookmark
-            className={`w-4 h-4 ${listing.saved ? 'fill-[var(--color-nus-orange)]' : ''}`}
-          />
-        </button>
       </div>
 
       {/* Category pill */}
