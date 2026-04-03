@@ -15,8 +15,10 @@ services:
       - OLLAMA_BASE_URL=http://ollama:11434
       - OLLAMA_MODEL=llava:7b
     depends_on:
-      - db
-      - ollama
+      db:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
 
   db:
     image: postgres:16-alpine
@@ -28,6 +30,12 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-marketplace}
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketplace -d marketplace"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   ollama:
     image: ollama/ollama:latest
@@ -35,11 +43,14 @@ services:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
+    # Auto-pulls llava:7b on first run (~4.7GB). Subsequent starts skip if already cached.
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull llava:7b && wait"]
     healthcheck:
       test: ["CMD-SHELL", "ollama list || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
     # GPU passthrough (uncomment if you have NVIDIA GPU + nvidia-container-toolkit)
     # deploy:
     #   resources:

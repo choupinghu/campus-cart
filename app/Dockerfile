@@ -9,4 +9,4 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 EXPOSE 5173
 EXPOSE 8000
-CMD ["pnpm", "dev"]
+CMD ["sh", "-c", "pnpm db:push && pnpm db:seed && pnpm dev"]
