@@ -137,44 +137,88 @@ To simulate an active marketplace ecosystem and streamline developer onboarding,
 
 To avoid redundant network calls and improve page-load performance, fetched Shopify product data is cached in `sessionStorage` with a 5-minute TTL. Subsequent page visits within the cache window are served instantly from the local cache, eliminating unnecessary API calls to external storefronts.
 
-### 2.8 AI-Powered Auto-Fill
+### 3.8 AI-Powered Auto-Fill
 To streamline the user experience, the platform integrates a local LLM to automate form population.
 - **Visual Analysis:** Leveraging the `llava:7b` vision model via Ollama, users can upload a photo of an item to automatically generate a title, description, suggested price, condition, and category.
 - **Model Selection & Rationale:** During development, we evaluated several vision LLMs. `moondream` (1.8B) was fast but struggled with complex prompts and JSON structure. `llama3.2-vision` (11B) was highly accurate but too slow for local CPU-only execution (~3-5 mins per image). We standardized on **`llava:7b`** as it provides the best balance of reasoning capability, prompt adherence, and local performance (~30-60s on average hardware).
 - **Dual-Workflow Support:** This feature is available for both "Sell an Item" (listings) and "Request an Item" (buying requests) forms.
 - **Human-in-the-Loop:** AI suggestions are presented for review, allowing users to modify any field before final submission, ensuring accuracy and control.
+- **Branded Loading Experience:** Image analysis on local hardware typically takes 30–60 seconds. Rather than leaving users with an unresponsive form, the submission surface is replaced with a full-screen NUS-branded overlay powered by the `NusSpinner` component — a pulsing NUS blue arc, three bouncing dots with an alternating NUS orange highlight cycling across them, and rotating Linus-themed verbs ("Linus is on it...", "Roaring through the data...", etc.). Users can cancel the in-flight AI request at any time via an `AbortController`-backed cancel button, which immediately dismisses the overlay and restores the form to its previous state.
 
-### 2.9 AI-Powered Search Recommendations (Recommended Items)
-To prevent users from hitting "dead ends" during search, the platform uses the local LLM to proactively suggest items.
+### 3.9 AI-Powered Search Recommendations
+To prevent users from hitting dead ends during search, the platform uses the local LLM to proactively suggest alternative results.
 - **Intelligent Fallback:** When a search query returns zero results, the system automatically triggers a request to the local `llava:7b` model to generate 3 broader or synonymous search terms.
-- **Proactive Discovery:** Instead of just showing text suggestions, the platform automatically filters the entire marketplace catalog using the AI-generated keywords and displays a "Recommended for You" gallery.
-- **Fuzzy Word-Based Matching:** To ensure high relevance, the recommendation engine uses a custom fuzzy matching algorithm that splits keywords into individual words and scans across titles, descriptions, categories, and storefront sources.
-- **Performance Optimization:** Requests to the local LLM are debounced by 1 second to prevent redundant API calls during active typing, ensuring a smooth and responsive UI even on hardware with limited resources.
-
-### 2.9 AI-Powered Search Recommendations (Recommended Items)
-To prevent users from hitting "dead ends" during search, the platform uses the local LLM to proactively suggest items.
-- **Intelligent Fallback:** When a search query returns zero results, the system automatically triggers a request to the local `llava:7b` model to generate 3 broader or synonymous search terms.
-- **Proactive Discovery:** Instead of just showing text suggestions, the platform automatically filters the entire marketplace catalog using the AI-generated keywords and displays a "Recommended for You" gallery.
-- **Fuzzy Word-Based Matching:** To ensure high relevance, the recommendation engine uses a custom fuzzy matching algorithm that splits keywords into individual words and scans across titles, descriptions, categories, and storefront sources.
-- **Performance Optimization:** Requests to the local LLM are debounced by 1 second to prevent redundant API calls during active typing, ensuring a smooth and responsive UI even on hardware with limited resources.
+- **Proactive Discovery:** Instead of displaying an empty state, the platform automatically filters the marketplace catalog using the AI-generated keywords and surfaces a "Recommended for You" gallery.
+- **Fuzzy Word-Based Matching:** The recommendation engine uses a custom fuzzy matching algorithm that splits keywords into individual words and scans across titles, descriptions, categories, and storefront sources for high relevance.
+- **Performance Optimization:** Requests to the local LLM are debounced by 1 second to prevent redundant API calls during active typing, ensuring a responsive UI even on hardware with limited resources.
+- **Consistent Loading Feedback:** While recommendations are being generated, the search surface displays the same `NusSpinner` component used in the AI auto-fill flow — providing a unified, on-brand loading experience across all AI-driven interactions on the platform.
 
 ---
 
-## 4. Developer Experience & Collaboration Workflows
+## 4. Developer Experience & Deployment Architecture
 
-As a team of three developers working in parallel, maintaining high code quality and continuous synchronization across different local environments was critical to the project's success.
+As a team of three developers working across different machines and operating systems, maintaining a frictionless, device-agnostic environment was as important as the application features themselves. We invested deliberately in the developer experience layer to eliminate setup friction, enforce code consistency, and ensure the platform could be evaluated without requiring any local development tooling.
 
-### 4.1 Code Quality Assurance
+### 4.1 Two-Flow Deployment Architecture
 
-- **Husky Git Hooks:** Client-side git hooks enforced via Husky automatically check for staging errors, while custom branch-name validators prevent direct pushes to the `main` branch.
-- **Linting & Formatting:** ESLint (flat config) and Prettier are configured to catch syntactic errors early and enforce a uniform, readable code style across all files.
-- **CI/CD Pipeline:** GitHub Actions automatically run linting, formatting, and build-validation checks on every Pull Request, acting as a quality gate before merge.
+One of the most deliberate infrastructure decisions we made was the design of a **dual Docker Compose strategy** — separating the evaluator's experience from the developer's workflow into two distinct, purpose-built flows.
 
-### 4.2 Developer Synchronization & Repository Organization
+**Evaluator Flow — Single Command Startup (`docker-compose.yml`)**
 
-- **Containerized Infrastructure:** The entire application stack (Vite frontend, Express API, and PostgreSQL database) is orchestrated using Docker Compose, providing a completely device-agnostic development environment that eliminates "works on my machine" issues.
-- **Automated Database Synchronization:** Using Prisma as the ORM, schema generation is automated via `postinstall` scripts. Database states are synchronized seamlessly across all team members' machines via `pnpm prisma db push`.
-- **Structured Context Documentation:** A comprehensive set of markdown documentation resides in the `resources/` directory, including developer onboarding guides, Prisma workflow references, and Git collaboration protocols. This documentation serves as the team's single source of truth, minimizing communication friction and ensuring architectural consistency.
+For evaluators and the course instructor, the entire application stack — frontend, backend, PostgreSQL database, and the Ollama AI service — is orchestrated through a single command:
+
+```bash
+cp .env.example app/.env
+docker compose up --build
+```
+
+The startup sequence is fully automated at the container level. The `app` service CMD executes three commands in sequence: `pnpm db:push` (schema synchronization), `pnpm db:seed` (demo data population), and `pnpm dev` (application startup). This guarantees that every evaluation begins from an identical, fully seeded state — 20 verified student accounts, 6 categories, 46 listings, and 20 want-to-buy requests — without requiring the evaluator to install Node.js, pnpm, or any other local tooling beyond Docker.
+
+Service readiness is enforced through Docker Compose health checks. The `app` service declares `condition: service_healthy` dependencies on both the `db` and `ollama` services, preventing the application from starting before PostgreSQL accepts connections and the Ollama API is responsive. The Ollama service automatically pulls the `llava:7b` model (~4.7 GB) on first boot via an overridden container entrypoint, eliminating what was previously a manual post-startup step.
+
+**Developer Flow — Split Infrastructure (`docker-compose.dev.yml`)**
+
+For active development, running the application layer inside Docker introduces unnecessary overhead — rebuilds on every code change, slower feedback loops, and reduced debuggability. We therefore provide a separate, minimal `docker-compose.dev.yml` that runs only the stateful infrastructure services (PostgreSQL and Ollama), while the application itself runs natively on the developer's machine:
+
+```bash
+# Start infrastructure only
+docker compose -f docker-compose.dev.yml up -d
+
+# Run the application natively with hot-reload
+cd app && pnpm install && pnpm dev
+```
+
+Vite's Hot Module Replacement and `nodemon`'s file watching provide instant feedback on frontend and backend changes respectively, with no container restarts required. A first-time database setup script (`pnpm db:setup`) consolidates schema push and seeding into a single command, after which the developer environment is fully operational.
+
+This separation — stateful services in Docker, stateless application on the host — is the standard pattern for production-grade development workflows and eliminates the friction that typically causes environment inconsistencies across team members' machines.
+
+### 4.2 Database Lifecycle Management
+
+The database workflow is designed to be **safe by default and explicit when destructive**. Three distinct commands cover every scenario a developer or evaluator will encounter:
+
+| Command | Behaviour | When to use |
+|---|---|---|
+| `pnpm db:push` | Applies schema changes to the database without touching data | After any change to `schema.prisma` |
+| `pnpm db:seed` | Clears all data and reloads the full demo dataset | When a fresh, consistent dataset is needed |
+| `pnpm db:setup` | Runs `db:push` then `db:seed` sequentially | First-time setup on a new machine |
+
+`prisma generate` runs automatically as a `postinstall` hook on every `pnpm install`, ensuring the Prisma client is always in sync with the schema after a `git pull`. Developers never need to remember to regenerate the client manually.
+
+The seed script (`prisma/seed.js`) creates all users through the Better Auth `signUpEmail` API rather than inserting raw database records. This ensures passwords are properly hashed, linked `Account` records are generated, and seeded users can log in immediately with valid sessions — faithfully replicating the production authentication flow in the demo environment.
+
+### 4.3 Code Quality Assurance
+
+- **Husky Git Hooks:** Client-side hooks enforced via Husky run on `pre-push`, validating branch naming conventions and preventing direct pushes to `main`. All team members work exclusively through Pull Requests, maintaining a clean and reviewable git history.
+- **Linting & Formatting:** ESLint (flat config) and Prettier are configured project-wide. Running `pnpm lint:fix` and `pnpm format` before each commit ensures uniform code style across all contributors.
+- **CI/CD Pipeline:** GitHub Actions automatically execute linting, formatting validation, and build checks on every Pull Request. This acts as an automated quality gate — no PR can be merged with failing checks, regardless of local environment differences.
+
+### 4.4 Documentation & Onboarding
+
+Recognising that the course instructor evaluates the project without access to the development team, we structured documentation around two distinct audiences, each with a dedicated entry point:
+
+- **`resources/DEMO.md`** — A minimal evaluator guide. Prerequisites are reduced to Docker Desktop only. The guide covers the two setup commands, login credentials, and a curated list of features to evaluate. Troubleshooting steps address the most common failure modes (port conflicts, model download timing, DB readiness).
+- **`resources/onboard.md`** — A comprehensive developer onboarding guide covering the three-step dev workflow (infrastructure, application, database), the full command reference, GraphQL domain structure, schema change procedures, and the Git collaboration workflow.
+- **`README.md`** — Serves as the self-contained entry point for both audiences. Rather than delegating entirely to linked documents, the README includes the complete startup commands and login credentials inline, ensuring no critical information is missed if a reader does not follow the documentation links.
 
 ---
 
@@ -203,6 +247,8 @@ The diagram below illustrates the full system architecture of CampusCart — fro
 
 - **Framework:** React powered by Vite for rapid compilation and Hot Module Replacement during development.
 - **Styling:** Tailwind CSS v4, utilizing the modern `@theme` directive for zero-configuration, utility-first styling with customizable design tokens.
+- **NUS Design System:** All UI is anchored to a custom design token set — `nus-blue (#003d7c)`, `nus-orange (#ef7c00)`, and their hover variants — declared once in `index.css` and consumed uniformly across the application. Reusable Tailwind component classes (`.btn-primary`, `.btn-outline`, `.card`, `.heading-caps`, `.badge-accent`, etc.) enforce visual consistency across all pages and components without duplicating utility strings.
+- **NusSpinner:** A purpose-built, NUS-branded loading component used across all AI-driven interactions. It renders an animated NUS blue ring, three bouncing center dots with an orange accent cycling through them at a 600 ms interval, and rotating Linus-themed verbs that fade in with a CSS keyframe animation (`nus-verb-in`). The component accepts `size` (`sm`/`md`/`lg`), an optional static `verb`, and an `onCancel` callback — keeping it composable across different loading contexts without modification.
 
 ### 5.4 Backend Layer
 
