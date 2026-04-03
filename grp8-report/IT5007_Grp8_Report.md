@@ -217,8 +217,7 @@ The seed script (`prisma/seed.js`) creates all users through the Better Auth `si
 Recognising that the course instructor evaluates the project without access to the development team, we structured documentation around two distinct audiences, each with a dedicated entry point:
 
 - **`resources/DEMO.md`** — A minimal evaluator guide. Prerequisites are reduced to Docker Desktop only. The guide covers the two setup commands, login credentials, and a curated list of features to evaluate. Troubleshooting steps address the most common failure modes (port conflicts, model download timing, DB readiness).
-- **`resources/onboard.md`** — A comprehensive developer onboarding guide covering the three-step dev workflow (infrastructure, application, database), the full command reference, GraphQL domain structure, schema change procedures, and the Git collaboration workflow.
-- **`README.md`** — Serves as the self-contained entry point for both audiences. Rather than delegating entirely to linked documents, the README includes the complete startup commands and login credentials inline, ensuring no critical information is missed if a reader does not follow the documentation links.
+- **`README.md` (“For Developers” section)** — The canonical developer onboarding guide covering the three-step dev workflow (infrastructure, application, database), the core command reference, and the primary setup instructions needed to contribute locally.
 
 ---
 
