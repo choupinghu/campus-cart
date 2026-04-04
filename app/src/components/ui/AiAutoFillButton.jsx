@@ -1,24 +1,39 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Sparkles, Loader2, AlertCircle, Check } from 'lucide-react'
 
 /**
  * AI Auto-Fill button that sends the uploaded image to the backend
  * for analysis and returns structured suggestions to populate form fields.
  *
- * @param {string} imageUrl - The URL of the uploaded image
- * @param {function} onSuggest - Callback receiving { title, description, suggestedPrice, condition, category }
- * @param {boolean} disabled - Whether the button is disabled (no image uploaded)
+ * @param {string}   imageUrl       - The URL of the uploaded image
+ * @param {function} onSuggest      - Callback receiving { title, description, suggestedPrice, condition, category }
+ * @param {boolean}  disabled       - Whether the button is disabled (no image uploaded)
+ * @param {function} onLoadingChange - Called with (isLoading, cancelFn?) on state change
  */
 export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoadingChange }) {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const abortRef = useRef(null)
+
+  const stopLoading = () => {
+    setIsAnalyzing(false)
+    if (onLoadingChange) onLoadingChange(false, null)
+  }
+
+  const handleCancel = () => {
+    abortRef.current?.abort()
+    stopLoading()
+  }
 
   const handleAnalyze = async () => {
     if (!imageUrl || isAnalyzing) return
 
+    const controller = new AbortController()
+    abortRef.current = controller
+
     setIsAnalyzing(true)
-    if (onLoadingChange) onLoadingChange(true)
+    if (onLoadingChange) onLoadingChange(true, handleCancel)
     setError('')
     setSuccess(false)
 
@@ -29,6 +44,7 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoad
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ imageUrl }),
+        signal: controller.signal,
       })
 
       const data = await response.json()
@@ -39,15 +55,13 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoad
 
       onSuggest(data.suggestions)
       setSuccess(true)
-
-      // Clear success state after a few seconds
       setTimeout(() => setSuccess(false), 4000)
     } catch (err) {
+      if (err.name === 'AbortError') return // user cancelled — no error shown
       console.error('AI analysis error:', err)
       setError(err.message || 'Could not reach AI service. Try again or fill fields manually.')
     } finally {
-      setIsAnalyzing(false)
-      if (onLoadingChange) onLoadingChange(false)
+      stopLoading()
     }
   }
 
@@ -65,10 +79,10 @@ export default function AiAutoFillButton({ imageUrl, onSuggest, disabled, onLoad
             disabled
               ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
               : isAnalyzing
-                ? 'bg-gradient-to-r from-violet-500 to-indigo-500 text-white cursor-wait'
+                ? 'bg-nus-blue text-white cursor-wait opacity-80'
                 : success
                   ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg shadow-emerald-200'
-                  : 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-200 hover:shadow-xl hover:shadow-violet-300 hover:-translate-y-0.5 active:translate-y-0'
+                  : 'bg-nus-blue text-white shadow-lg shadow-nus-blue/20 hover:bg-nus-blue-hover hover:-translate-y-0.5 active:translate-y-0'
           }
         `}
       >

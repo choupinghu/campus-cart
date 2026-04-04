@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Sparkles } from 'lucide-react'
+import NusSpinner from './NusSpinner'
 
 /**
  * AiRecommendedSection
@@ -98,14 +99,8 @@ export default function AiRecommendedSection({
     <div className="mt-16 pt-16 border-t border-dashed border-gray-100 w-full animate-in fade-in duration-700">
       <div className="flex flex-col items-center justify-center gap-6 min-h-[120px]">
         {loading ? (
-          <div className="flex flex-col items-center gap-4 py-8">
-            <div className="relative">
-              <div className="w-12 h-12 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin" />
-              <Sparkles className="absolute -top-1 -right-1 w-5 h-5 text-indigo-400 animate-pulse" />
-            </div>
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-indigo-600/60 transition-all">
-              Finding similar items...
-            </p>
+          <div className="py-8">
+            <NusSpinner size="md" verb="Linus is finding similar items..." />
           </div>
         ) : error ? (
           <p className="text-sm text-gray-400">Try adjusting your filters for better results.</p>
@@ -119,10 +114,10 @@ export default function AiRecommendedSection({
           <div className="w-full space-y-10">
             <div className="flex flex-col items-center gap-2">
               <h4 className="flex items-center gap-2.5 text-[11px] font-black text-gray-900 uppercase tracking-[0.3em]">
-                <Sparkles className="w-4 h-4 text-indigo-500 fill-indigo-100" />
+                <Sparkles className="w-4 h-4 text-nus-blue fill-nus-blue/10" />
                 {title}
               </h4>
-              <div className="w-12 h-1 bg-indigo-500 rounded-full opacity-20" />
+              <div className="w-12 h-1 bg-nus-blue rounded-full opacity-20" />
             </div>
 
             {/* Flex layout with justify-center to correctly handle fewer items */}

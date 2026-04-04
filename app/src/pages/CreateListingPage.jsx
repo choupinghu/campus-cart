@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { Loader2, Check } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Check } from 'lucide-react'
+import NusSpinner from '../components/ui/NusSpinner'
 import { useNavigate } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
 import AiAutoFillButton from '../components/ui/AiAutoFillButton'
@@ -30,6 +31,12 @@ export default function CreateListingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isAiLoading, setIsAiLoading] = useState(false)
   const [showUploadToast, setShowUploadToast] = useState(false)
+  const aiCancelRef = useRef(null)
+
+  const handleAiLoadingChange = (isLoading, cancelFn = null) => {
+    setIsAiLoading(isLoading)
+    aiCancelRef.current = cancelFn
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -96,20 +103,19 @@ export default function CreateListingPage() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 relative overflow-hidden">
-        {/* AI Loading Overlay (Full Container) */}
+        {/* AI Loading Overlay */}
         {isAiLoading && (
-          <div className="absolute inset-0 z-[100] bg-white/70 backdrop-blur-md flex flex-col items-center justify-center p-6 transition-all duration-300">
-            <div className="flex flex-col items-center p-10 bg-white shadow-2xl rounded-3xl border border-indigo-50 -mt-10 max-w-sm w-full mx-auto">
-              <div className="relative mb-6">
-                <div className="absolute inset-0 scale-150 blur-2xl bg-indigo-200/50 rounded-full animate-pulse"></div>
-                <Loader2 className="w-12 h-12 text-indigo-500 animate-spin relative" />
+          <div className="absolute inset-0 z-[100] bg-white/80 backdrop-blur-sm flex items-center justify-center">
+            <div className="flex flex-col items-center gap-8 p-12 bg-white rounded-2xl shadow-sm border border-gray-100 w-72 text-center">
+              <NusSpinner size="lg" onCancel={() => aiCancelRef.current?.()} />
+              <div className="space-y-1">
+                <h3 className="text-sm font-bold text-gray-900 tracking-tight">
+                  Analyzing your image
+                </h3>
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  Linus is generating your title, description, and price.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2 text-center tracking-tight">
-                Analyzing your image
-              </h3>
-              <p className="text-sm text-gray-500 text-center leading-relaxed">
-                Please wait while we generate a title, description, and suggested price.
-              </p>
             </div>
           </div>
         )}
@@ -126,7 +132,7 @@ export default function CreateListingPage() {
               <AiAutoFillButton
                 imageUrl={formData.imageUrl}
                 disabled={!formData.imageUrl || isAiLoading}
-                onLoadingChange={setIsAiLoading}
+                onLoadingChange={handleAiLoadingChange}
                 onSuggest={(suggestions) => {
                   setFormData((prev) => ({
                     ...prev,
