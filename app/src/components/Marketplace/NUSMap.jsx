@@ -23,12 +23,11 @@ export default function NUSMap({
   const toSvgY = (pct) => (pct / 100) * 1028
 
   const isSelected = (name) => selectedLocations.includes(name)
-
-  const hasHeatmap = Object.keys(locationCounts).length > 0
-  const maxCount = Math.max(...Object.values(locationCounts), 1)
+  const isHeatmapMode = locationCounts !== null && Object.keys(locationCounts).length >= 0
+  const maxCount = Math.max(...Object.values(locationCounts || {}), 1)
 
   const getDemandColor = (count) => {
-    if (!hasHeatmap) return null
+    if (!isHeatmapMode) return null
     if (count === 0) return '#003D7C' // Standard Blue
     const intensity = count / maxCount
     if (intensity > 0.7) return '#EF4444' // Red
@@ -45,8 +44,7 @@ export default function NUSMap({
             NUS Kent Ridge Campus
           </h2>
           <div className="flex flex-col items-start gap-2.5">
-            {hasHeatmap && (
-              /* Buy Side Legend (Heat Focus) */
+            {isHeatmapMode && (
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-3 py-1 px-3 bg-gray-50 rounded-lg border border-gray-100">
                   <span className="text-[8px] font-black uppercase tracking-widest text-gray-400">
@@ -106,6 +104,7 @@ export default function NUSMap({
                 onMouseLeave={() => setHoveredLocation(null)}
                 style={{ cursor: 'pointer' }}
                 role="button"
+                aria-pressed={selected}
                 aria-label={`Filter by ${loc.name}${selected ? ' (selected)' : ''}`}
                 tabIndex={0}
                 onKeyDown={(e) => {
@@ -116,7 +115,7 @@ export default function NUSMap({
                 }}
               >
                 {/* ── Feature 6: Heatmap Radial Glow ── */}
-                {hasHeatmap && locationCounts[loc.name] > 0 && (
+                {isHeatmapMode && locationCounts?.[loc.name] > 0 && (
                   <circle
                     cx="0"
                     cy="0"
@@ -124,7 +123,7 @@ export default function NUSMap({
                     fill={getDemandColor(locationCounts[loc.name])}
                     opacity="0.15"
                   >
-                    {locationCounts[loc.name] / maxCount > 0.6 && (
+                    {locationCounts[loc.name] / maxCount > 0.7 && (
                       <>
                         <animate
                           attributeName="r"
@@ -152,17 +151,16 @@ export default function NUSMap({
                 {/* Pin shadow */}
                 <ellipse cx="0" cy="18" rx="10" ry="4" fill="rgba(0,0,0,0.15)" />
 
-                {/* Pin body — teardrop shape (Static 400% size) */}
                 <path
                   d={`
-                    M 0,-14
-                    C -8,-14 -12,-8 -12,0
-                    C -12,8 0,14 0,14
-                    C 0,14 12,8 12,0
-                    C 12,-8 8,-14 0,-14
-                    Z
-                  `}
-                  fill={hasHeatmap ? getDemandColor(locationCounts[loc.name]) : '#003D7C'}
+                      M 0,-14
+                      C -8,-14 -12,-8 -12,0
+                      C -12,8 0,14 0,14
+                      C 0,14 12,8 12,0
+                      C 12,-8 8,-14 0,-14
+                      Z
+                    `}
+                  fill={isHeatmapMode ? getDemandColor(locationCounts?.[loc.name] || 0) : '#003D7C'}
                   stroke={selected ? 'white' : 'rgba(255,255,255,0.7)'}
                   strokeWidth={selected ? '3.5' : '1'}
                   style={{

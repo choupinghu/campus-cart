@@ -6,6 +6,15 @@ const publicRequesterSelect = { id: true, name: true, image: true };
 const categorySelect = { id: true, name: true };
 const ALLOWED_REQUEST_STATUSES = ['active', 'fulfilled', 'removed'];
 
+export const VALID_MAP_LOCATIONS = [
+    'UTown Residence',
+    'Raffles Hall',
+    'Science Faculty',
+    "Prince George's Park",
+    'Kent Ridge Hall',
+    'School of Computing',
+];
+
 export const requestsResolvers = {
     Query: {
         requests: async (_parent, { userId }) => {
@@ -32,15 +41,6 @@ export const requestsResolvers = {
             });
         },
         requestLocationCounts: async () => {
-            const VALID_MAP_LOCATIONS = [
-                'UTown Residence',
-                'Raffles Hall',
-                'Science Faculty',
-                "Prince George's Park",
-                'Kent Ridge Hall',
-                'School of Computing',
-            ];
-
             const counts = await prisma.request.groupBy({
                 by: ['location'],
                 where: {
@@ -49,9 +49,14 @@ export const requestsResolvers = {
                 },
                 _count: { id: true },
             });
-            return counts.map((c) => ({
-                location: c.location,
-                requestCount: c._count.id,
+
+            // Map results to an object for easy lookup
+            const countMap = Object.fromEntries(counts.map((c) => [c.location, c._count.id]));
+
+            // Ensure every valid location is returned, defaulting to 0
+            return VALID_MAP_LOCATIONS.map((loc) => ({
+                location: loc,
+                requestCount: countMap[loc] || 0,
             }));
         },
     },
