@@ -190,7 +190,6 @@ export default function NUSMap({
               </g>
             )
           })}
-
         </svg>
 
         {/* ── Internal Dynamic HUD (Top Right - Scaled Down 50%) ── */}
