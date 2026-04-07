@@ -170,7 +170,7 @@ export default function WantToBuyPage() {
     return result
   }, [listings, searchQuery, selectedCategories, selectedLocations, budgetMax, urgentOnly, sortBy])
 
-  // Identify high-demand locations (top 3 spots exceeding 60% intensity)
+  // Identify high-demand locations (top 3 spots exceeding 70% intensity)
   const highDemandLocations = useMemo(() => {
     if (!locationCounts || Object.keys(locationCounts).length === 0) return []
     const sorted = Object.entries(locationCounts)

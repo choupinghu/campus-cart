@@ -1,19 +1,11 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma.js';
 import { requireAuth } from '../auth.js';
+import { NUS_LOCATION_NAMES } from '../../../src/constants/locations.js';
 
 const publicRequesterSelect = { id: true, name: true, image: true };
 const categorySelect = { id: true, name: true };
 const ALLOWED_REQUEST_STATUSES = ['active', 'fulfilled', 'removed'];
-
-export const VALID_MAP_LOCATIONS = [
-    'UTown Residence',
-    'Raffles Hall',
-    'Science Faculty',
-    "Prince George's Park",
-    'Kent Ridge Hall',
-    'School of Computing',
-];
 
 export const requestsResolvers = {
     Query: {
@@ -45,7 +37,7 @@ export const requestsResolvers = {
                 by: ['location'],
                 where: {
                     status: 'active',
-                    location: { in: VALID_MAP_LOCATIONS },
+                    location: { in: NUS_LOCATION_NAMES },
                 },
                 _count: { id: true },
             });
@@ -54,7 +46,7 @@ export const requestsResolvers = {
             const countMap = Object.fromEntries(counts.map((c) => [c.location, c._count.id]));
 
             // Ensure every valid location is returned, defaulting to 0
-            return VALID_MAP_LOCATIONS.map((loc) => ({
+            return NUS_LOCATION_NAMES.map((loc) => ({
                 location: loc,
                 requestCount: countMap[loc] || 0,
             }));
