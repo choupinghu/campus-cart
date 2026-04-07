@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma.js';
 import { requireAuth } from '../auth.js';
-import { NUS_LOCATION_NAMES } from '../../shared/constants/locations.js';
+import { NUS_LOCATION_NAMES } from '../../../shared/constants/locations.js';
 
 const publicRequesterSelect = { id: true, name: true, image: true };
 const categorySelect = { id: true, name: true };

@@ -1,7 +1,7 @@
-import fs from 'fs'
-import path from 'path'
 import { fileURLToPath } from 'url'
-import { CATEGORIES } from '../shared/constants/categories.js'
+import path from 'path'
+import fs from 'fs'
+import { CATEGORIES } from '../../shared/constants/categories.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const uploadsDir = path.resolve(__dirname, '..', '..', 'uploads')

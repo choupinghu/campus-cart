@@ -49,17 +49,6 @@ const USERS = [
   { name: 'Tiffany Wee', email: 'tiffany@u.nus.edu', password: 'Password123' },
 ];
 
-// ── Categories ───────────────────────────────────────────────────────
-const CATEGORIES = [
-  'Textbooks',
-  'Electronics',
-  'Furniture',
-  'Clothing',
-  'Stationery',
-  'Sports',
-  'Other',
-];
-
 // ── Listings (sellerIdx references USERS array index) ────────────────
 const LISTINGS = [
   // ── Alice (0) ──
