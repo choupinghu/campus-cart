@@ -1,9 +1,1 @@
-export const CATEGORIES = [
-  'Textbooks',
-  'Electronics',
-  'Furniture',
-  'Clothing',
-  'Stationery',
-  'Sports',
-  'Other',
-]
+export { CATEGORIES } from '../../shared/constants/categories.js';

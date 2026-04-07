@@ -39,7 +39,7 @@ Provide the following details:
 1. title: A catchy, concise title (max 60 chars)
 2. description: A clear 1-2 sentence description of the item and its visible state
 3. suggestedPrice: A fair price in SGD (number only)
-4. category: Choose exactly one from [Textbooks, Electronics, Furniture, Clothing, Stationery, Sports, Other]
+4. category: Choose exactly one from [${VALID_CATEGORIES.join(', ')}]
 5. condition: Choose exactly one from [New, Like New, Good, Fair]
 
 You MUST return ONLY a valid JSON object. Do not include any other text.

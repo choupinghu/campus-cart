@@ -1,4 +1,5 @@
 import { SOURCES, CONDITIONS, LOCATIONS } from '../../services/shopifyService'
+import { NUS_LOCATION_NAMES } from '../../constants/locations.js'
 
 export default function FilterSidebar({ filters, setFilters }) {
   const handleCheckboxChange = (category, value) => {
