@@ -23,7 +23,10 @@ export default function NUSMap({
   const toSvgY = (pct) => (pct / 100) * 1028
 
   const isSelected = (name) => selectedLocations.includes(name)
-  const isHeatmapMode = locationCounts !== null && Object.keys(locationCounts).length >= 0
+  const isHeatmapMode =
+    locationCounts !== null &&
+    typeof locationCounts === 'object' &&
+    Object.keys(locationCounts).length > 0
   const maxCount = Math.max(...Object.values(locationCounts || {}), 1)
 
   const getDemandColor = (count) => {
@@ -85,8 +88,10 @@ export default function NUSMap({
           {/* Outer water / surroundings */}
           <rect width="1000" height="1028" fill="#EFF6FF" />
 
-          {/* User's custom Google Map overlay (add nus-map.png to public folder) */}
-          <image href="/nus-map.png" x="0" y="0" width="1000" height="1028" opacity="0.9" />
+          {/* Large campus map overlay - only load in full view for performance (~4MB asset) */}
+          {!smaller && (
+            <image href="/nus-map.png" x="0" y="0" width="1000" height="1028" opacity="0.9" />
+          )}
 
           {/* ── Location Pins ── */}
           {NUS_LOCATIONS.map((loc) => {

@@ -83,7 +83,14 @@ export default function FilterSidebar({ filters, setFilters }) {
         </div>
       </div>
 
-      {renderCheckboxes('Location', 'locations', LOCATIONS)}
+      {/* Dynamic Location Filter (Merges default locations with any selected pins) */}
+      {renderCheckboxes(
+        'Location',
+        'locations',
+        Array.from(new Set([...LOCATIONS, ...(filters.locations || [])])).sort((a, b) =>
+          a.localeCompare(b),
+        ),
+      )}
     </div>
   )
 }

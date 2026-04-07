@@ -15,6 +15,7 @@ import process from 'process';
 import { fileURLToPath } from 'url';
 import { PrismaClient } from '@prisma/client';
 import { auth } from '../server/auth.js';
+import { CATEGORIES } from '../shared/constants/categories.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,8 +26,6 @@ dotenv.config();
 
 const prisma = new PrismaClient();
 
-// ── Demo users (20 NUS students) ─────────────────────────────────────
-// Emails and passwords are set like this for easy dev access
 const USERS = [
   { name: 'Alice Tan', email: 'alice@u.nus.edu', password: 'Password123' },
   { name: 'Bob Lim', email: 'bob@u.nus.edu', password: 'Password123' },

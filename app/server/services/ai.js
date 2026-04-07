@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { CATEGORIES } from '../shared/constants/categories.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const uploadsDir = path.resolve(__dirname, '..', '..', 'uploads')
@@ -9,15 +10,7 @@ const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://ollama:11434'
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llava:7b'
 
 // Valid categories & conditions — must stay in sync with frontend constants
-const VALID_CATEGORIES = [
-  'Textbooks',
-  'Electronics',
-  'Furniture',
-  'Clothing',
-  'Stationery',
-  'Sports',
-  'Other',
-]
+const VALID_CATEGORIES = CATEGORIES
 const VALID_CONDITIONS = ['New', 'Like New', 'Good', 'Fair']
 
 /**
