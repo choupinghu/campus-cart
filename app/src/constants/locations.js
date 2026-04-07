@@ -6,9 +6,12 @@
  * - NUS Campus Map (Feature 5)
  *
  * Each location has an (x, y) position expressed as a percentage (0–100)
- * of the SVG viewBox (800 × 500), used to place pins on the campus map.
+ * relative to the campus map coordinate space. These percentages are used
+ * to place pins on the SVG map regardless of its absolute dimensions; the
+ * current NUSMap viewBox is 1000 × 1028.
  *
- * To add a new location, append an entry with { name, x, y }.
+ * To add a new location, append an entry with { name, x, y }, where x and y
+ * are percentage coordinates in the same 0–100 scale.
  */
 export const NUS_LOCATIONS = [
   { name: 'UTown Residence', x: 22, y: 23.5 },

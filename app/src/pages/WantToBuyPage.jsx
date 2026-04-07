@@ -170,7 +170,7 @@ export default function WantToBuyPage() {
     return result
   }, [listings, searchQuery, selectedCategories, selectedLocations, budgetMax, urgentOnly, sortBy])
 
-  // Identify high-demand locations (top 3 or top 30% by volume)
+  // Identify high-demand locations (top 3 spots exceeding 60% intensity)
   const highDemandLocations = useMemo(() => {
     if (!locationCounts || Object.keys(locationCounts).length === 0) return []
     const sorted = Object.entries(locationCounts)
@@ -267,7 +267,7 @@ export default function WantToBuyPage() {
       <div className="max-w-7xl mx-auto px-4 mt-12 grid grid-cols-1 lg:grid-cols-4 gap-10">
         {/* Sidebar */}
         <aside className="hidden lg:block space-y-6">
-          {/* Interactive Map */}
+          {/* ── Map Overview ── */}
           <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
             <NUSMap
               smaller={true}

@@ -109,7 +109,12 @@ export default function NUSMap({
                 role="button"
                 aria-label={`Filter by ${loc.name}${selected ? ' (selected)' : ''}`}
                 tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && onLocationClick?.(loc.name)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+                    if (e.key !== 'Enter') e.preventDefault()
+                    onLocationClick?.(loc.name)
+                  }
+                }}
               >
                 {/* ── Feature 6: Heatmap Radial Glow ── */}
                 {hasHeatmap && locationCounts[loc.name] > 0 && (
@@ -219,7 +224,7 @@ export default function NUSMap({
           {selectedLocations.length > 0 && (
             <button
               onClick={() =>
-                NUS_LOCATIONS.forEach((loc) => isSelected(loc.name) && onLocationClick(loc.name))
+                NUS_LOCATIONS.forEach((loc) => isSelected(loc.name) && onLocationClick?.(loc.name))
               }
               className="pointer-events-auto text-[7px] font-black text-white bg-nus-blue hover:bg-red-500 px-2 py-1 rounded-md uppercase tracking-widest transition-colors shadow-sm"
             >
@@ -235,7 +240,7 @@ export default function NUSMap({
           {selectedLocations.map((name) => (
             <button
               key={name}
-              onClick={() => onLocationClick(name)}
+              onClick={() => onLocationClick?.(name)}
               className="flex items-center gap-1.5 bg-nus-blue text-white text-[10px] font-black px-3 py-1.5 rounded-full hover:bg-red-500 transition-colors group"
               title={`Remove filter: ${name}`}
             >

@@ -181,7 +181,7 @@ export default function HomePage() {
       {/* ── Main Content: Sidebar + Grid ── */}
       <div className="flex flex-col lg:flex-row gap-12 max-w-[1400px] w-full mx-auto px-4 py-12">
         {/* ── Map Overview ── */}
-        <div className="w-full lg:w-full lg:col-span-4 mb-4 lg:hidden bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+        <div className="w-full mb-4 lg:hidden bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col items-center">
           <NUSMap
             smaller={true}
             selectedLocations={filters.locations}

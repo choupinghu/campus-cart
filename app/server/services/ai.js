@@ -9,7 +9,14 @@ const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://ollama:11434'
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llava:7b'
 
 // Valid categories & conditions — must stay in sync with frontend constants
-const VALID_CATEGORIES = ['Electronics', 'Textbooks', 'Furniture', 'Clothing', 'Other']
+const VALID_CATEGORIES = [
+  'Textbooks',
+  'Electronics',
+  'Furniture',
+  'Clothing',
+  'Stationery',
+  'Sports',
+]
 const VALID_CONDITIONS = ['New', 'Like New', 'Good', 'Fair']
 
 /**
@@ -38,7 +45,7 @@ Provide the following details:
 1. title: A catchy, concise title (max 60 chars)
 2. description: A clear 1-2 sentence description of the item and its visible state
 3. suggestedPrice: A fair price in SGD (number only)
-4. category: Choose exactly one from [Electronics, Textbooks, Furniture, Clothing, Other]
+4. category: Choose exactly one from [Textbooks, Electronics, Furniture, Clothing, Stationery, Sports]
 5. condition: Choose exactly one from [New, Like New, Good, Fair]
 
 You MUST return ONLY a valid JSON object. Do not include any other text.
