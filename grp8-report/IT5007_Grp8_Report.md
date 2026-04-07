@@ -137,7 +137,25 @@ To simulate an active marketplace ecosystem and streamline developer onboarding,
 
 To avoid redundant network calls and improve page-load performance, fetched Shopify product data is cached in `sessionStorage` with a 5-minute TTL. Subsequent page visits within the cache window are served instantly from the local cache, eliminating unnecessary API calls to external storefronts.
 
-### 3.8 AI-Powered Auto-Fill
+### 3.8 Interactive NUS Campus Map (Spatial Discovery)
+
+To enhance local discovery, the marketplace features a custom-built, interactive SVG map of the NUS Kent Ridge campus.
+
+- **Interactive SVG Silhouette:** The map is a hand-traced SVG silhouette of the campus, overlaid on a high-fidelity reference image. Each campus landmark (UTown, Science Faculty, School of Computing, etc.) is mapped to precise relative (x, y) coordinates within the SVG viewBox.
+- **Bi-directional Filtering:** Users can click pins on the map to instantly filter the listing grid. This interaction is bi-directional: selecting a location in the sidebar also highlights the corresponding pin on the map.
+- **Dynamic HUD Overlay:** A glassmorphism-inspired HUD (Heads-Up Display) in the top-right corner of the map provides real-time feedback on the hovered or selected location, including a "Quick Clear" action for active filters.
+- **Visual Cues:** Pins utilize a sophisticated selection system: active pins feature a thick white focus ring, a glowing white core, and a static translucent orange halo to stay distinct from background elements.
+
+### 3.9 Request Demand Heatmap (Want to Buy Only)
+
+To provide actionable data for sellers, the "Want to Buy" dashboard integrates a spatial demand heatmap.
+
+- **Real-time Demand Aggregation:** A specialized `requestLocationCounts` GraphQL query uses Prisma's `groupBy` feature to count active buying requests across every campus landmark.
+- **Heatmap Visualization:** Locations on the map are color-coded based on request density: **Blue (Low)** → **Orange (Mid)** → **Red (High)**.
+- **Atmospheric Glow:** High-demand areas (top 30% intensity) feature a large, breathing radial glow animation that creates a "hotspot" effect around the pin, signaling urgent buyer activity to potential sellers.
+- **Demand Dashboard Banner:** A dedicated "Demand Hotspots" banner above the listings grid highlights the busiest areas. Each hotspot is a clickable pill using NUS brand colors (Blue/Orange) that serves as a shortcut for spatial filtering.
+
+### 3.10 AI-Powered Auto-Fill
 To streamline the user experience, the platform integrates a local LLM to automate form population.
 - **Visual Analysis:** Leveraging the `llava:7b` vision model via Ollama, users can upload a photo of an item to automatically generate a title, description, suggested price, condition, and category.
 - **Model Selection & Rationale:** During development, we evaluated several vision LLMs. `moondream` (1.8B) was fast but struggled with complex prompts and JSON structure. `llama3.2-vision` (11B) was highly accurate but too slow for local CPU-only execution (~3-5 mins per image). We standardized on **`llava:7b`** as it provides the best balance of reasoning capability, prompt adherence, and local performance (~30-60s on average hardware).
@@ -145,7 +163,7 @@ To streamline the user experience, the platform integrates a local LLM to automa
 - **Human-in-the-Loop:** AI suggestions are presented for review, allowing users to modify any field before final submission, ensuring accuracy and control.
 - **Branded Loading Experience:** Image analysis on local hardware typically takes 30–60 seconds. Rather than leaving users with an unresponsive form, the submission surface is replaced with a full-screen NUS-branded overlay powered by the `NusSpinner` component — a pulsing NUS blue arc, three bouncing dots with an alternating NUS orange highlight cycling across them, and rotating Linus-themed verbs ("Linus is on it...", "Roaring through the data...", etc.). Users can cancel the in-flight AI request at any time via an `AbortController`-backed cancel button, which immediately dismisses the overlay and restores the form to its previous state.
 
-### 3.9 AI-Powered Search Recommendations
+### 3.11 AI-Powered Search Recommendations
 To prevent users from hitting dead ends during search, the platform uses the local LLM to proactively suggest alternative results.
 - **Intelligent Fallback:** When a search query returns zero results, the system automatically triggers a request to the local `llava:7b` model to generate 3 broader or synonymous search terms.
 - **Proactive Discovery:** Instead of displaying an empty state, the platform automatically filters the marketplace catalog using the AI-generated keywords and surfaces a "Recommended for You" gallery.
