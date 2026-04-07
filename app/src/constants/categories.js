@@ -5,4 +5,5 @@ export const CATEGORIES = [
   'Clothing',
   'Stationery',
   'Sports',
+  'Other',
 ]

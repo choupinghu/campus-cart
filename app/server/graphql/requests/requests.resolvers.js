@@ -32,11 +32,20 @@ export const requestsResolvers = {
             });
         },
         requestLocationCounts: async () => {
+            const VALID_MAP_LOCATIONS = [
+                'UTown Residence',
+                'Raffles Hall',
+                'Science Faculty',
+                "Prince George's Park",
+                'Kent Ridge Hall',
+                'School of Computing',
+            ];
+
             const counts = await prisma.request.groupBy({
                 by: ['location'],
                 where: {
                     status: 'active',
-                    location: { not: null },
+                    location: { in: VALID_MAP_LOCATIONS },
                 },
                 _count: { id: true },
             });

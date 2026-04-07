@@ -58,6 +58,7 @@ const CATEGORIES = [
   'Clothing',
   'Stationery',
   'Sports',
+  'Other',
 ];
 
 // ── Listings (sellerIdx references USERS array index) ────────────────
