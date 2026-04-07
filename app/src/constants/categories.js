@@ -1,1 +1,8 @@
-export const CATEGORIES = ['Electronics', 'Textbooks', 'Furniture', 'Clothing', 'Other']
+export const CATEGORIES = [
+  'Textbooks',
+  'Electronics',
+  'Furniture',
+  'Clothing',
+  'Stationery',
+  'Sports',
+]

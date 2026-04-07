@@ -5,9 +5,10 @@ import { useSession } from '../lib/auth'
 import Antigravity from '../components/Antigravity'
 import SpotlightCard from '../components/SpotlightCard'
 import AiSearchSuggestions from '../components/ui/AiSearchSuggestions'
-import { NUS_LOCATIONS } from '../constants/locations'
+import { NUS_LOCATION_NAMES } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
 import { graphqlRequest } from '../services/graphqlClient'
+import NUSMap from '../components/Marketplace/NUSMap'
 
 const GET_REQUESTS = `
   query GetRequests($userId: String) {
@@ -223,8 +224,21 @@ export default function WantToBuyPage() {
 
       {/* ── Main ── */}
       <div className="max-w-7xl mx-auto px-4 mt-12 grid grid-cols-1 lg:grid-cols-4 gap-10">
-        {/* ── Sidebar ── */}
-        <aside className="hidden lg:block">
+        {/* Sidebar */}
+        <aside className="hidden lg:block space-y-6">
+          {/* Interactive Map */}
+          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+            <NUSMap
+              smaller={true}
+              selectedLocations={selectedLocations}
+              onLocationClick={(name) =>
+                setSelectedLocations(prev =>
+                  prev.includes(name) ? prev.filter(l => l !== name) : [...prev, name]
+                )
+              }
+            />
+          </div>
+
           <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm sticky top-24 space-y-8">
             <h3 className="font-black text-gray-900 flex items-center justify-between">
               <span className="flex items-center gap-2.5">
@@ -313,7 +327,7 @@ export default function WantToBuyPage() {
                 Location
               </p>
               <div className="space-y-3">
-                {NUS_LOCATIONS.map((l) => (
+                {NUS_LOCATION_NAMES.map((l) => (
                   <label key={l} className="flex items-center gap-3 cursor-pointer group">
                     <input
                       type="checkbox"
