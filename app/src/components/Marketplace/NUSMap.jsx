@@ -12,6 +12,7 @@ import { NUS_LOCATIONS } from '../../constants/locations'
 export default function NUSMap({
   selectedLocations = [],
   onLocationClick,
+  onClearSelection,
   locationCounts = {},
   smaller = false,
 }) {
@@ -71,8 +72,6 @@ export default function NUSMap({
           </div>
         </div>
       </div>
-
-      {/* Map container */}
 
       {/* Map container */}
       <div
@@ -192,12 +191,6 @@ export default function NUSMap({
             )
           })}
 
-          {/* SVG filter for drop shadow */}
-          <defs>
-            <filter id="pin-shadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.12" />
-            </filter>
-          </defs>
         </svg>
 
         {/* ── Internal Dynamic HUD (Top Right - Scaled Down 50%) ── */}
@@ -223,9 +216,7 @@ export default function NUSMap({
 
           {selectedLocations.length > 0 && (
             <button
-              onClick={() =>
-                NUS_LOCATIONS.forEach((loc) => isSelected(loc.name) && onLocationClick?.(loc.name))
-              }
+              onClick={() => onClearSelection?.()}
               className="pointer-events-auto text-[7px] font-black text-white bg-nus-blue hover:bg-red-500 px-2 py-1 rounded-md uppercase tracking-widest transition-colors shadow-sm"
             >
               Clear ({selectedLocations.length})

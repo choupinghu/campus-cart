@@ -182,18 +182,19 @@ export default function HomePage() {
       <div className="flex flex-col lg:flex-row gap-12 max-w-[1400px] w-full mx-auto px-4 py-12">
         {/* ── Map Overview ── */}
         <div className="w-full mb-4 lg:hidden bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col items-center">
-          <NUSMap
-            smaller={true}
-            selectedLocations={filters.locations}
-            onLocationClick={(name) =>
-              setFilters((prev) => ({
-                ...prev,
-                locations: prev.locations.includes(name)
-                  ? prev.locations.filter((l) => l !== name)
-                  : [...prev.locations, name],
-              }))
-            }
-          />
+            <NUSMap
+              smaller={true}
+              selectedLocations={filters.locations}
+              onLocationClick={(name) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  locations: prev.locations.includes(name)
+                    ? prev.locations.filter((l) => l !== name)
+                    : [...prev.locations, name],
+                }))
+              }
+              onClearSelection={() => setFilters((prev) => ({ ...prev, locations: [] }))}
+            />
         </div>
 
         <div className="w-full lg:w-[280px] flex-shrink-0 space-y-8">
@@ -209,6 +210,7 @@ export default function HomePage() {
                     : [...prev.locations, name],
                 }))
               }
+              onClearSelection={() => setFilters((prev) => ({ ...prev, locations: [] }))}
             />
           </div>
           <FilterSidebar filters={filters} setFilters={setFilters} />

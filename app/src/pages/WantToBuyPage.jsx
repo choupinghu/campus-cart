@@ -179,7 +179,7 @@ export default function WantToBuyPage() {
 
     const maxVal = Math.max(...Object.values(locationCounts), 1)
     return sorted
-      .filter(([, count]) => count / maxVal > 0.6) // Only show the truly 'red' ones
+      .filter(([, count]) => count / maxVal > 0.7) // Matches NUSMap 'high' threshold
       .map(([name]) => name)
   }, [locationCounts])
 
@@ -277,6 +277,7 @@ export default function WantToBuyPage() {
                   prev.includes(name) ? prev.filter((l) => l !== name) : [...prev, name],
                 )
               }
+              onClearSelection={() => setSelectedLocations([])}
               locationCounts={locationCounts}
             />
           </div>
