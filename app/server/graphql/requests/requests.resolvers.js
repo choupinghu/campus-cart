@@ -31,6 +31,20 @@ export const requestsResolvers = {
                 },
             });
         },
+        requestLocationCounts: async () => {
+            const counts = await prisma.request.groupBy({
+                by: ['location'],
+                where: {
+                    status: 'active',
+                    location: { not: null },
+                },
+                _count: { id: true },
+            });
+            return counts.map((c) => ({
+                location: c.location,
+                requestCount: c._count.id,
+            }));
+        },
     },
 
     Mutation: {
