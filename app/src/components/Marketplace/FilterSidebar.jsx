@@ -51,6 +51,15 @@ export default function FilterSidebar({ filters, setFilters }) {
       {renderCheckboxes('Source', 'sources', SOURCES)}
       {renderCheckboxes('Condition', 'conditions', CONDITIONS)}
 
+      {/* Dynamic Location Filter (Merges defaults with Map locations) */}
+      {renderCheckboxes(
+        'Location',
+        'locations',
+        Array.from(
+          new Set([...LOCATIONS, ...NUS_LOCATION_NAMES, ...(filters.locations || [])]),
+        ).sort((a, b) => a.localeCompare(b)),
+      )}
+
       {/* Price Range */}
       <div className="mb-8">
         <h3 className="text-xs font-bold text-gray-500 tracking-widest uppercase mb-4">
@@ -83,15 +92,6 @@ export default function FilterSidebar({ filters, setFilters }) {
           </div>
         </div>
       </div>
-
-      {/* Dynamic Location Filter (Merges default locations with any selected pins) */}
-      {renderCheckboxes(
-        'Location',
-        'locations',
-        Array.from(new Set([...LOCATIONS, ...(filters.locations || [])])).sort((a, b) =>
-          a.localeCompare(b),
-        ),
-      )}
     </div>
   )
 }

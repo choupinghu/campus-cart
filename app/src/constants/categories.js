@@ -1,1 +1,1 @@
-export { CATEGORIES } from '../../shared/constants/categories.js';
+export { CATEGORIES } from '../../shared/constants/categories.js'

@@ -1,1 +1,1 @@
-export * from '../../shared/constants/locations.js';
+export * from '../../shared/constants/locations.js'
