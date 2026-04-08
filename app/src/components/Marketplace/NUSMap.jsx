@@ -88,10 +88,8 @@ export default function NUSMap({
           {/* Outer water / surroundings */}
           <rect width="1000" height="1028" fill="#EFF6FF" />
 
-          {/* Large campus map overlay - only load in full view for performance (~4MB asset) */}
-          {!smaller && (
-            <image href="/nus-map.png" x="0" y="0" width="1000" height="1028" opacity="0.9" />
-          )}
+          {/* Large campus map overlay (~4MB asset) */}
+          <image href="/nus-map.png" x="0" y="0" width="1000" height="1028" opacity="0.9" />
 
           {/* ── Location Pins ── */}
           {NUS_LOCATIONS.map((loc) => {
