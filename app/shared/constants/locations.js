@@ -27,3 +27,41 @@ export const NUS_LOCATIONS = [
  * Use this wherever a plain string[] is needed (dropdowns, filters, etc.)
  */
 export const NUS_LOCATION_NAMES = NUS_LOCATIONS.map((l) => l.name)
+
+const NUS_LOCATION_LOOKUP = Object.fromEntries(
+  NUS_LOCATION_NAMES.map((name) => [name.toLowerCase(), name]),
+)
+
+// Legacy seed values grouped into nearest supported map anchor.
+const LEGACY_LOCATION_ALIASES = {
+  'biz library': 'Raffles Hall',
+  'bukit timah campus': 'Raffles Hall',
+  com1: 'School of Computing',
+  com2: 'School of Computing',
+  'central library': 'Science Faculty',
+  'cinnamon college': 'UTown Residence',
+  'e3 engineering': 'Science Faculty',
+  'eusoff hall': 'Kent Ridge Hall',
+  'kent ridge mrt': 'Science Faculty',
+  lt27: 'Science Faculty',
+  'mpsh court': 'Kent Ridge Hall',
+  'mpsh field': 'Kent Ridge Hall',
+  'pgp house 7': "Prince George's Park",
+  'science library': 'Science Faculty',
+  'sheares hall': 'Kent Ridge Hall',
+  'tembusu college': 'UTown Residence',
+  utown: 'UTown Residence',
+  'utown / pgp': 'UTown Residence',
+  'utown gym': 'UTown Residence',
+  'utown pool': 'UTown Residence',
+}
+
+export function normalizeNusLocation(location) {
+  if (typeof location !== 'string') return null
+
+  const trimmed = location.trim()
+  if (!trimmed) return null
+
+  const lookupKey = trimmed.toLowerCase()
+  return NUS_LOCATION_LOOKUP[lookupKey] || LEGACY_LOCATION_ALIASES[lookupKey] || null
+}

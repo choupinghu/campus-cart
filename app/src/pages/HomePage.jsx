@@ -40,6 +40,15 @@ export default function HomePage() {
     priceMax: '',
   })
 
+  const toggleMapLocation = (name) => {
+    setFilters((prev) => ({
+      ...prev,
+      locations: prev.locations.includes(name)
+        ? prev.locations.filter((location) => location !== name)
+        : [...prev.locations, name],
+    }))
+  }
+
   useEffect(() => {
     async function loadProducts() {
       setLoading(true)
@@ -180,36 +189,13 @@ export default function HomePage() {
 
       {/* ── Main Content: Sidebar + Grid ── */}
       <div className="flex flex-col lg:flex-row gap-12 max-w-[1400px] w-full mx-auto px-4 py-12">
-        {/* ── Map Overview ── */}
-        <div className="w-full mb-4 lg:hidden bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col items-center">
-          <NUSMap
-            smaller={true}
-            selectedLocations={filters.locations}
-            onLocationClick={(name) =>
-              setFilters((prev) => ({
-                ...prev,
-                locations: prev.locations.includes(name)
-                  ? prev.locations.filter((l) => l !== name)
-                  : [...prev.locations, name],
-              }))
-            }
-            onClearSelection={() => setFilters((prev) => ({ ...prev, locations: [] }))}
-          />
-        </div>
-
         <div className="w-full lg:w-[280px] flex-shrink-0 space-y-8">
-          <div className="hidden lg:block bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
             <NUSMap
               smaller={true}
+              showBackgroundImage={false}
               selectedLocations={filters.locations}
-              onLocationClick={(name) =>
-                setFilters((prev) => ({
-                  ...prev,
-                  locations: prev.locations.includes(name)
-                    ? prev.locations.filter((l) => l !== name)
-                    : [...prev.locations, name],
-                }))
-              }
+              onLocationClick={toggleMapLocation}
               onClearSelection={() => setFilters((prev) => ({ ...prev, locations: [] }))}
             />
           </div>

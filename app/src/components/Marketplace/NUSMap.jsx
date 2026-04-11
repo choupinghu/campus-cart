@@ -15,6 +15,7 @@ export default function NUSMap({
   onClearSelection,
   locationCounts = {},
   smaller = false,
+  showBackgroundImage = true,
 }) {
   const [hoveredLocation, setHoveredLocation] = useState(null)
 
@@ -88,8 +89,34 @@ export default function NUSMap({
           {/* Outer water / surroundings */}
           <rect width="1000" height="1028" fill="#EFF6FF" />
 
-          {/* Large campus map overlay (~4MB asset) */}
-          <image href="/nus-map.png" x="0" y="0" width="1000" height="1028" opacity="0.9" />
+          {showBackgroundImage ? (
+            <image href="/nus-map.png" x="0" y="0" width="1000" height="1028" opacity="0.9" />
+          ) : (
+            <>
+              <rect width="1000" height="1028" fill="#F8FBFF" />
+              <path
+                d="M100 180C220 120 360 140 470 220C590 306 720 296 880 214V820C760 900 640 930 500 918C340 902 228 868 100 910Z"
+                fill="#DBEAFE"
+                opacity="0.8"
+              />
+              <path
+                d="M170 275C300 215 430 232 520 302C628 386 735 392 840 340"
+                fill="none"
+                stroke="#93C5FD"
+                strokeWidth="18"
+                strokeLinecap="round"
+                opacity="0.7"
+              />
+              <path
+                d="M180 640C315 592 422 620 520 702C602 770 696 780 810 742"
+                fill="none"
+                stroke="#BFDBFE"
+                strokeWidth="14"
+                strokeLinecap="round"
+                opacity="0.75"
+              />
+            </>
+          )}
 
           {/* ── Location Pins ── */}
           {NUS_LOCATIONS.map((loc) => {
