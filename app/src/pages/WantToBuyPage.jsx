@@ -5,9 +5,10 @@ import { useSession } from '../lib/auth'
 import Antigravity from '../components/Antigravity'
 import SpotlightCard from '../components/SpotlightCard'
 import AiSearchSuggestions from '../components/ui/AiSearchSuggestions'
-import { NUS_LOCATIONS } from '../constants/locations'
+import { NUS_LOCATION_NAMES } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
 import { graphqlRequest } from '../services/graphqlClient'
+import NUSMap from '../components/Marketplace/NUSMap'
 
 const GET_REQUESTS = `
   query GetRequests($userId: String) {
@@ -25,6 +26,15 @@ const GET_REQUESTS = `
         name
         image
       }
+    }
+  }
+`
+
+const GET_REQUEST_LOCATION_COUNTS = `
+  query GetRequestLocationCounts {
+    requestLocationCounts {
+      location
+      requestCount
     }
   }
 `
@@ -63,6 +73,7 @@ export default function WantToBuyPage() {
   const [sortOpen, setSortOpen] = useState(false)
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
+  const [locationCounts, setLocationCounts] = useState({})
 
   useEffect(() => {
     async function loadRequests() {
@@ -89,6 +100,24 @@ export default function WantToBuyPage() {
       }
     }
     loadRequests()
+  }, [])
+
+  useEffect(() => {
+    async function loadCounts() {
+      try {
+        const data = await graphqlRequest(GET_REQUEST_LOCATION_COUNTS)
+        if (data?.requestLocationCounts) {
+          const map = {}
+          data.requestLocationCounts.forEach((lc) => {
+            map[lc.location] = lc.requestCount
+          })
+          setLocationCounts(map)
+        }
+      } catch (err) {
+        console.error('Failed to fetch location counts:', err)
+      }
+    }
+    loadCounts()
   }, [])
 
   const toggle = (list, setter, item) =>
@@ -140,6 +169,19 @@ export default function WantToBuyPage() {
 
     return result
   }, [listings, searchQuery, selectedCategories, selectedLocations, budgetMax, urgentOnly, sortBy])
+
+  // Identify high-demand locations (top 3 spots exceeding 70% intensity)
+  const highDemandLocations = useMemo(() => {
+    if (!locationCounts || Object.keys(locationCounts).length === 0) return []
+    const sorted = Object.entries(locationCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 3)
+
+    const maxVal = Math.max(...Object.values(locationCounts), 1)
+    return sorted
+      .filter(([, count]) => count / maxVal > 0.7) // Matches NUSMap 'high' threshold
+      .map(([name]) => name)
+  }, [locationCounts])
 
   return (
     <div className="bg-gray-50/50 min-h-screen pb-20">
@@ -223,8 +265,23 @@ export default function WantToBuyPage() {
 
       {/* ── Main ── */}
       <div className="max-w-7xl mx-auto px-4 mt-12 grid grid-cols-1 lg:grid-cols-4 gap-10">
-        {/* ── Sidebar ── */}
-        <aside className="hidden lg:block">
+        {/* Sidebar */}
+        <aside className="hidden lg:block space-y-6">
+          {/* ── Map Overview ── */}
+          <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+            <NUSMap
+              smaller={true}
+              selectedLocations={selectedLocations}
+              onLocationClick={(name) =>
+                setSelectedLocations((prev) =>
+                  prev.includes(name) ? prev.filter((l) => l !== name) : [...prev, name],
+                )
+              }
+              onClearSelection={() => setSelectedLocations([])}
+              locationCounts={locationCounts}
+            />
+          </div>
+
           <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm sticky top-24 space-y-8">
             <h3 className="font-black text-gray-900 flex items-center justify-between">
               <span className="flex items-center gap-2.5">
@@ -313,7 +370,7 @@ export default function WantToBuyPage() {
                 Location
               </p>
               <div className="space-y-3">
-                {NUS_LOCATIONS.map((l) => (
+                {NUS_LOCATION_NAMES.map((l) => (
                   <label key={l} className="flex items-center gap-3 cursor-pointer group">
                     <input
                       type="checkbox"
@@ -371,6 +428,75 @@ export default function WantToBuyPage() {
               )}
             </div>
           </div>
+
+          {/* ── High Demand Banner ── */}
+          {highDemandLocations.length > 0 && (
+            <div className="mb-10 bg-red-50/50 border border-red-100 p-6 rounded-[2.5rem] flex flex-col items-start gap-8 shadow-sm overflow-hidden relative group">
+              {/* Animated background glow */}
+              <div className="absolute -top-12 -right-12 w-48 h-48 bg-red-400 opacity-[0.03] blur-3xl rounded-full" />
+
+              <div className="flex items-center gap-6">
+                <div className="relative">
+                  <div className="w-16 h-16 bg-red-500 rounded-3xl flex items-center justify-center shadow-xl shadow-red-500/25 ring-8 ring-red-50">
+                    <span className="flex h-4 w-4 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-4 w-4 bg-white"></span>
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-xl font-black text-gray-900 leading-none mb-2">
+                    Demand Hotspots
+                  </h4>
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+                    <p className="text-[11px] font-black text-red-500 uppercase tracking-widest">
+                      Live Area Activity
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4 pl-1">
+                  Trending Locations:
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  {highDemandLocations.map((loc) => (
+                    <button
+                      key={loc}
+                      onClick={() => toggle(selectedLocations, setSelectedLocations, loc)}
+                      className={`flex items-center gap-3 px-5 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 ${
+                        selectedLocations.includes(loc)
+                          ? 'bg-[var(--color-nus-orange)] text-white shadow-xl shadow-nus-orange/30 scale-105'
+                          : 'bg-white border border-gray-100 text-nus-blue hover:bg-gray-50 hover:shadow-lg hover:scale-105 active:scale-95'
+                      }`}
+                    >
+                      <div
+                        className={`p-1.5 rounded-lg ${selectedLocations.includes(loc) ? 'bg-white/20' : 'bg-blue-50'}`}
+                      >
+                        <MapPin className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="flex flex-col items-start gap-0.5">
+                        <span
+                          className={
+                            selectedLocations.includes(loc) ? 'text-white' : 'text-gray-900'
+                          }
+                        >
+                          {loc}
+                        </span>
+                        <span
+                          className={`text-[9px] ${selectedLocations.includes(loc) ? 'text-amber-100' : 'text-gray-400'}`}
+                        >
+                          {locationCounts[loc]} requests found
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {loading ? (
             <div className="flex justify-center py-20">

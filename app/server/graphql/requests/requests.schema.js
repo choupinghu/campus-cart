@@ -38,9 +38,15 @@ export const requestsTypeDefs = `#graphql
     status: String
   }
 
+  type RequestLocationCount {
+    location: String!
+    requestCount: Int!
+  }
+
   extend type Query {
     requests(userId: String): [Request!]!
     request(id: ID!): Request
+    requestLocationCounts: [RequestLocationCount!]!
   }
 
   extend type Mutation {

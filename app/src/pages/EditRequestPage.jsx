@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { graphqlRequest } from '../services/graphqlClient'
-import { NUS_LOCATIONS } from '../constants/locations'
+import { NUS_LOCATION_NAMES } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
 
 const GET_REQUEST = `
@@ -198,7 +198,7 @@ export default function EditRequestPage() {
                   className="select-field"
                 >
                   <option value="">Select a location</option>
-                  {NUS_LOCATIONS.map((loc) => (
+                  {NUS_LOCATION_NAMES.map((loc) => (
                     <option key={loc} value={loc}>
                       {loc}
                     </option>

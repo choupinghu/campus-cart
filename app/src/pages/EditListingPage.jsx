@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import ImageUploader from '../components/ui/ImageUploader'
 import { graphqlRequest } from '../services/graphqlClient'
-import { NUS_LOCATIONS } from '../constants/locations'
+import { NUS_LOCATION_NAMES } from '../constants/locations'
 import { CATEGORIES } from '../constants/categories'
 
 const GET_LISTING = `
@@ -226,7 +226,7 @@ export default function EditListingPage() {
                   className="select-field"
                 >
                   <option value="">Select a location</option>
-                  {NUS_LOCATIONS.map((loc) => (
+                  {NUS_LOCATION_NAMES.map((loc) => (
                     <option key={loc} value={loc}>
                       {loc}
                     </option>

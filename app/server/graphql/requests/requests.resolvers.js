@@ -1,10 +1,28 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma.js';
 import { requireAuth } from '../auth.js';
+import {
+    NUS_LOCATION_NAMES,
+    normalizeNusLocation,
+} from '../../../shared/constants/locations.js';
 
 const publicRequesterSelect = { id: true, name: true, image: true };
 const categorySelect = { id: true, name: true };
 const ALLOWED_REQUEST_STATUSES = ['active', 'fulfilled', 'removed'];
+
+const normalizeLocationForStorage = (location) => {
+    if (typeof location !== 'string') return location || null;
+
+    const trimmed = location.trim();
+    if (!trimmed) return null;
+
+    return normalizeNusLocation(trimmed) || trimmed;
+};
+
+const normalizeRequestLocation = (request) => ({
+    ...request,
+    location: normalizeLocationForStorage(request.location),
+});
 
 export const requestsResolvers = {
     Query: {
@@ -12,7 +30,7 @@ export const requestsResolvers = {
             const where = { status: 'active' };
             if (userId) where.userId = userId;
 
-            return prisma.request.findMany({
+            const requests = await prisma.request.findMany({
                 where,
                 include: {
                     user: { select: publicRequesterSelect },
@@ -20,16 +38,43 @@ export const requestsResolvers = {
                 },
                 orderBy: { createdAt: 'desc' },
             });
+
+            return requests.map(normalizeRequestLocation);
         },
 
         request: async (_parent, { id }) => {
-            return prisma.request.findUnique({
+            const request = await prisma.request.findUnique({
                 where: { id },
                 include: {
                     user: { select: publicRequesterSelect },
                     category: { select: categorySelect },
                 },
             });
+
+            return request ? normalizeRequestLocation(request) : null;
+        },
+        requestLocationCounts: async () => {
+            const counts = await prisma.request.groupBy({
+                by: ['location'],
+                where: {
+                    status: 'active',
+                    location: { not: null },
+                },
+                _count: { id: true },
+            });
+
+            const countMap = counts.reduce((map, count) => {
+                const normalizedLocation = normalizeNusLocation(count.location);
+                if (!normalizedLocation) return map;
+
+                map[normalizedLocation] = (map[normalizedLocation] || 0) + count._count.id;
+                return map;
+            }, {});
+
+            return NUS_LOCATION_NAMES.map((loc) => ({
+                location: loc,
+                requestCount: countMap[loc] || 0,
+            }));
         },
     },
 
@@ -57,7 +102,7 @@ export const requestsResolvers = {
                     description: description || null,
                     budget,
                     condition: condition || null,
-                    location: location || null,
+                    location: normalizeLocationForStorage(location),
                     userId: user.id,
                     categoryId: categoryRecord.id,
                 },
@@ -90,7 +135,7 @@ export const requestsResolvers = {
             if (description !== undefined) updateData.description = description;
             if (budget !== undefined) updateData.budget = budget;
             if (condition !== undefined) updateData.condition = condition;
-            if (location !== undefined) updateData.location = location;
+            if (location !== undefined) updateData.location = normalizeLocationForStorage(location);
             if (status !== undefined) {
                 if (!ALLOWED_REQUEST_STATUSES.includes(status)) {
                     throw new GraphQLError('Invalid status value', {
@@ -109,7 +154,7 @@ export const requestsResolvers = {
                 updateData.categoryId = categoryRecord.id;
             }
 
-            return prisma.request.update({
+            const request = await prisma.request.update({
                 where: { id },
                 data: updateData,
                 include: {
@@ -117,6 +162,8 @@ export const requestsResolvers = {
                     category: { select: categorySelect },
                 },
             });
+
+            return normalizeRequestLocation(request);
         },
 
         deleteRequest: async (_parent, { id }, context) => {

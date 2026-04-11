@@ -1,11 +1,26 @@
 import { GraphQLError } from 'graphql';
 import { prisma } from '../../prisma.js';
 import { requireAuth } from '../auth.js';
+import { normalizeNusLocation } from '../../../shared/constants/locations.js';
 
 // Shared select objects (no email exposed)
 const publicSellerSelect = { id: true, name: true, image: true };
 const categorySelect = { id: true, name: true };
 const ALLOWED_LISTING_STATUSES = ['active', 'sold', 'removed'];
+
+const normalizeLocationForStorage = (location) => {
+    if (typeof location !== 'string') return location || null;
+
+    const trimmed = location.trim();
+    if (!trimmed) return null;
+
+    return normalizeNusLocation(trimmed) || trimmed;
+};
+
+const normalizeListingLocation = (listing) => ({
+    ...listing,
+    location: normalizeLocationForStorage(listing.location),
+});
 
 export const listingsResolvers = {
     Query: {
@@ -14,7 +29,7 @@ export const listingsResolvers = {
             const where = { status: 'active' };
             if (sellerId) where.sellerId = sellerId;
 
-            return prisma.listing.findMany({
+            const listings = await prisma.listing.findMany({
                 where,
                 include: {
                     seller: { select: publicSellerSelect },
@@ -22,6 +37,8 @@ export const listingsResolvers = {
                 },
                 orderBy: { createdAt: 'desc' },
             });
+
+            return listings.map(normalizeListingLocation);
         },
 
         // Fetch a single listing by ID
@@ -33,7 +50,8 @@ export const listingsResolvers = {
                     category: { select: categorySelect },
                 },
             });
-            return listing || null;
+
+            return listing ? normalizeListingLocation(listing) : null;
         },
     },
 
@@ -63,7 +81,7 @@ export const listingsResolvers = {
                     description: description || null,
                     price,
                     condition: condition || null,
-                    location: location || null,
+                    location: normalizeLocationForStorage(location),
                     imageUrl: imageUrl || null,
                     sellerId: user.id,
                     categoryId: categoryRecord.id,
@@ -99,7 +117,7 @@ export const listingsResolvers = {
             if (description !== undefined) updateData.description = description;
             if (price !== undefined && price !== null) updateData.price = price;
             if (condition !== undefined) updateData.condition = condition;
-            if (location !== undefined) updateData.location = location;
+            if (location !== undefined) updateData.location = normalizeLocationForStorage(location);
             if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
             if (input.status !== undefined) {
                 if (!ALLOWED_LISTING_STATUSES.includes(input.status)) {
@@ -119,7 +137,7 @@ export const listingsResolvers = {
                 updateData.categoryId = categoryRecord.id;
             }
 
-            return prisma.listing.update({
+            const listing = await prisma.listing.update({
                 where: { id },
                 data: updateData,
                 include: {
@@ -127,6 +145,8 @@ export const listingsResolvers = {
                     category: { select: categorySelect },
                 },
             });
+
+            return normalizeListingLocation(listing);
         },
 
         // Soft-delete a listing (authenticated + ownership check)
