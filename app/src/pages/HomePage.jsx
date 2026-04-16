@@ -193,7 +193,6 @@ export default function HomePage() {
           <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
             <NUSMap
               smaller={true}
-              showBackgroundImage={false}
               selectedLocations={filters.locations}
               onLocationClick={toggleMapLocation}
               onClearSelection={() => setFilters((prev) => ({ ...prev, locations: [] }))}
