@@ -171,6 +171,62 @@ To prevent users from hitting dead ends during search, the platform uses the loc
 - **Performance Optimization:** Requests to the local LLM are debounced by 1 second to prevent redundant API calls during active typing, ensuring a responsive UI even on hardware with limited resources.
 - **Consistent Loading Feedback:** While recommendations are being generated, the search surface displays the same `NusSpinner` component used in the AI auto-fill flow — providing a unified, on-brand loading experience across all AI-driven interactions on the platform.
 
+### 3.12 Payment Integration (Stripe)
+
+To introduce a trusted transaction layer to the marketplace, CampusCart integrates the **Stripe** payment platform in test mode. This feature demonstrates industry-standard payment architecture — from PCI-compliant secret management to the full checkout UI — without processing any real charges.
+
+**Design Decision: Stripe PaymentIntent Model**
+
+Rather than collecting card details and charging them directly, CampusCart adopts Stripe's **PaymentIntent API pattern** — the current Stripe best practice for card payments. Under this model:
+
+1. The server creates a `PaymentIntent` object via the Stripe SDK and returns only a short-lived `client_secret` to the browser.
+2. The client uses Stripe.js to mount an embedded card form (`CardElement`) and, when ready, call `confirmCardPayment` with the `client_secret`.
+3. At no point does the browser ever see the `STRIPE_SECRET_KEY` — it lives exclusively on the server, enforcing PCI DSS requirements.
+
+This decoupling has a critical security implication: even if the frontend were fully compromised, an attacker cannot initiate or escalate charges without the server-side secret key.
+
+**Implementation Scope**
+
+The implementation covers the full checkout architecture without requiring real payment credentials:
+
+| Layer | What was built |
+|---|---|
+| **Prisma schema** | `Order` model linking buyer, listing, and `paymentIntentId` for full transaction traceability |
+| **GraphQL mutation** | `createPaymentIntent(listingId)` — validates listing availability, checks ownership, calls Stripe SDK, creates `Order` record |
+| **Stripe service** | Lazy-initialized singleton (`getStripe()`) — server boots without crashing even when no key is configured, fails gracefully at call time |
+| **Frontend service** | `stripePromise` loaded once from Stripe's CDN via `loadStripe()` — never re-instantiated, CSP-safe |
+| **PaymentModal** | Full two-panel modal: order summary (image, title, price, seller) + Stripe Elements card form (styled to NUS brand tokens) |
+| **ListingDetailPage** | "Buy Now" CTA with sold overlay, seller ownership guard, and modal integration |
+
+**UX Flow**
+
+```
+User clicks "Buy Now"
+  → Modal opens (loading state)
+  → GraphQL mutation: createPaymentIntent
+      → Server: validates listing → calls stripe.paymentIntents.create → saves Order (pending) → returns client_secret
+  → Modal: Stripe Elements mounts card form with custom NUS blue appearance
+  → User enters card details (test card: 4242 4242 4242 4242)
+  → Submit → stripe.confirmCardPayment → success state
+  → Listing shows "Sold" overlay
+```
+
+**What was intentionally deferred**
+
+Two components are architectural decisions that are documented rather than implemented, as they require infrastructure outside the scope of an academic project:
+
+- **Stripe Webhooks:** In production, Stripe calls a server endpoint (`POST /api/stripe/webhook`) to confirm payment success, signed with a webhook secret for tamper-proof delivery. This ensures Order status is updated reliably even if the client disconnects after payment. Implementing this requires a publicly accessible HTTPS URL and Stripe signature verification.
+- **Live mode:** Switching from test keys (`sk_test_*`) to live keys (`sk_live_*`) activates real charge processing. The toggle is a single environment variable change — the application code is identical in both modes.
+
+**Key Learning: Why not store card numbers?**
+
+Stripe Elements are iframe-embedded inputs hosted on Stripe's domain. Card numbers never touch CampusCart's servers or JavaScript context — Stripe tokenizes them internally. This architectural boundary is why Stripe is able to absorb PCI DSS compliance on behalf of merchants: the payment handler never enters the merchant's data scope.
+
+<div class="figure">
+  <img src="./images/stripe-modal.png" alt="Stripe Payment Modal — full checkout UI with order summary and card form" />
+</div>
+<p class="figure-caption">Figure X: Stripe payment modal — two-panel layout showing order summary and embedded Stripe Elements card form styled to NUS brand tokens.</p>
+
 ---
 
 ## 4. Developer Experience & Deployment Architecture
@@ -289,3 +345,4 @@ As the marketplace scales beyond its MVP, the following architectural and functi
 - **AI-Powered Search & Recommendations (Phase 2):** Expanding the current recommendation infrastructure to support deeper semantic vector-based search using `pgvector` for even more nuanced item discovery.
 - **Omni-Channel & Mobile Integration:** Enhancing the frontend as a mobile-first experience to leverage native device mechanisms, such as immediate camera access for photo uploads.
 - **Authentication Expansions:** Supplementing our current email validation framework with scalable OAuth 2.0 pipelines (e.g. Sign in with Google / GitHub).
+- **Payment Production Upgrade:** The Stripe integration is ready for production with two changes: (1) swap `sk_test_*` / `pk_test_*` keys for live keys, and (2) implement `POST /api/stripe/webhook` with Stripe signature verification (`stripe.webhooks.constructEvent`) to reliably update `Order.status` from `pending` to `succeeded` or `failed` via Stripe's push delivery — resilient to browser disconnects and network failures at confirmation time.
