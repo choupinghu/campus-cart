@@ -121,7 +121,9 @@ function CheckoutForm({ listing, userEmail, clientSecret, orderId, onSuccess, on
       <div className="flex items-center justify-center gap-2">
         <ShieldCheck className="w-3.5 h-3.5 text-gray-300" />
         <span className="text-[10px] text-gray-400 font-bold">Secured by</span>
-        <span className="text-sm font-black tracking-tight" style={{ color: '#635BFF' }}>stripe</span>
+        <span className="text-sm font-black tracking-tight" style={{ color: '#635BFF' }}>
+          stripe
+        </span>
         <span className="text-[10px] text-gray-400 font-bold">· End-to-end encrypted</span>
       </div>
     </form>
@@ -182,8 +184,7 @@ export default function PaymentModal({ listing, user, onClose, onSuccess }) {
       }
     : null
 
-  const imageUrl =
-    listing.imageUrl || 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image'
+  const imageUrl = listing.imageUrl || 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image'
 
   return (
     <div
