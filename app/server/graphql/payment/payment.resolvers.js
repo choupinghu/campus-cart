@@ -28,7 +28,7 @@ export const paymentResolvers = {
 
             const amountInCents = Math.round(listing.price * 100);
 
-            const intent = await getStripe().paymentIntents.create({
+            const intent = await (await getStripe()).paymentIntents.create({
                 amount: amountInCents,
                 currency: 'sgd',
                 metadata: {

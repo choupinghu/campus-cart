@@ -1,8 +1,6 @@
-import Stripe from 'stripe';
-
 let _stripe = null;
 
-export function getStripe() {
+export async function getStripe() {
     if (!_stripe) {
         const key = process.env.STRIPE_SECRET_KEY;
         if (!key || key.startsWith('REPLACE')) {
@@ -10,6 +8,7 @@ export function getStripe() {
                 'Stripe is not configured. Add STRIPE_SECRET_KEY to your .env file.',
             );
         }
+        const { default: Stripe } = await import('stripe');
         _stripe = new Stripe(key);
     }
     return _stripe;

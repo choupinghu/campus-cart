@@ -118,9 +118,11 @@ function CheckoutForm({ listing, userEmail, clientSecret, orderId, onSuccess, on
       </button>
 
       {/* Security footer */}
-      <div className="flex items-center justify-center gap-2 text-[10px] text-gray-400 font-bold">
+      <div className="flex items-center justify-center gap-2">
         <ShieldCheck className="w-3.5 h-3.5 text-gray-300" />
-        Secured by Stripe · End-to-end encrypted
+        <span className="text-[10px] text-gray-400 font-bold">Secured by</span>
+        <span className="text-sm font-black tracking-tight" style={{ color: '#635BFF' }}>stripe</span>
+        <span className="text-[10px] text-gray-400 font-bold">· End-to-end encrypted</span>
       </div>
     </form>
   )
@@ -197,7 +199,7 @@ export default function PaymentModal({ listing, user, onClose, onSuccess }) {
       />
 
       {/* Modal panel */}
-      <div className="relative z-10 w-full sm:max-w-2xl bg-white rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl animate-slide-up sm:animate-none sm:scale-100 overflow-hidden max-h-[95dvh] flex flex-col">
+      <div className="relative z-10 w-full sm:max-w-3xl bg-white rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl animate-slide-up sm:animate-none sm:scale-100 overflow-hidden max-h-[95dvh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-8 pt-8 pb-6 border-b border-gray-100 shrink-0">
           <div className="flex items-center gap-3">
@@ -227,7 +229,7 @@ export default function PaymentModal({ listing, user, onClose, onSuccess }) {
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-5">
                 Order Summary
               </p>
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gray-100 mb-5">
+              <div className="aspect-[3/2] rounded-2xl overflow-hidden bg-gray-100 mb-5">
                 <img src={imageUrl} alt={listing.title} className="w-full h-full object-cover" />
               </div>
               <h3 className="font-black text-gray-900 text-base leading-tight mb-2">
