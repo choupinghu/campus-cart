@@ -22,6 +22,7 @@ model User {
   accounts      Account[]
   listings      Listing[]
   requests      Request[]
+  orders        Order[]
 
   @@unique([email])
   @@map("user")
@@ -94,6 +95,21 @@ model Listing {
   status      String   @default("active") // active, sold, removed
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  orders      Order[]
+}
+
+model Order {
+  id              String   @id @default(uuid())
+  listing         Listing  @relation(fields: [listingId], references: [id])
+  listingId       String
+  buyer           User     @relation(fields: [buyerId], references: [id])
+  buyerId         String
+  paymentIntentId String   @unique
+  amount          Float
+  currency        String   @default("sgd")
+  status          String   @default("pending") // pending | succeeded | failed
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Request {

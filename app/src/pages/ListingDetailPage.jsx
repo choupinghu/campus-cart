@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { graphqlRequest } from '../services/graphqlClient'
 import { ChevronRight, MapPin, CheckCircle, MessageCircle, Star, ArrowLeft } from 'lucide-react'
+import { useSession } from '../lib/auth'
+import PaymentModal from '../components/payment/PaymentModal'
 
 const GET_LISTING_BY_ID = `
   query GetListing($id: ID!) {
@@ -13,7 +15,9 @@ const GET_LISTING_BY_ID = `
       condition
       location
       description
+      status
       seller {
+        id
         name
         image
       }
@@ -23,9 +27,12 @@ const GET_LISTING_BY_ID = `
 
 export default function ListingDetailPage() {
   const { id } = useParams()
+  const { data: session } = useSession()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showPayment, setShowPayment] = useState(false)
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -72,6 +79,8 @@ export default function ListingDetailPage() {
   }
 
   const imageUrl = product.imageUrl || 'https://placehold.co/800x600/e2e8f0/64748b?text=No+Image'
+  const isSold = product.status === 'sold' || purchaseSuccess
+  const isOwnListing = session?.user?.id && product.seller?.id === session.user.id
 
   return (
     <div className="bg-white min-h-screen pb-20">
@@ -95,6 +104,13 @@ export default function ListingDetailPage() {
         <div className="lg:col-span-7 space-y-6">
           <div className="aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-gray-50 border border-gray-100 relative shadow-2xl shadow-black/5">
             <img src={imageUrl} alt={product.title} className="w-full h-full object-cover" />
+            {isSold && (
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <span className="text-white font-black text-2xl uppercase tracking-widest bg-black/60 px-6 py-3 rounded-2xl">
+                  Sold
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -184,18 +200,48 @@ export default function ListingDetailPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <button className="bg-nus-orange text-white font-black py-4 rounded-2xl text-sm shadow-lg shadow-nus-orange/20 hover:scale-[1.02] active:scale-95 transition-all">
-                Make an Offer →
-              </button>
-              <button className="bg-white border-2 border-gray-100 text-gray-900 font-black py-4 rounded-2xl text-sm flex items-center justify-center gap-2 hover:bg-gray-50 active:scale-95 transition-all">
-                <MessageCircle className="w-4 h-4" />
-                Chat
-              </button>
+            <div className="flex flex-col gap-3">
+              {isSold ? (
+                <div className="w-full bg-gray-100 text-gray-400 font-black py-4 rounded-2xl text-sm text-center">
+                  This item has been sold
+                </div>
+              ) : isOwnListing ? (
+                <div className="w-full bg-gray-100 text-gray-400 font-black py-4 rounded-2xl text-sm text-center">
+                  Your listing
+                </div>
+              ) : (
+                <button
+                  onClick={() => setShowPayment(true)}
+                  className="w-full bg-nus-blue text-white font-black py-4 rounded-2xl text-sm shadow-lg shadow-nus-blue/20 hover:scale-[1.02] active:scale-95 transition-all"
+                >
+                  Buy Now — S$ {parseFloat(product.price).toFixed(2)}
+                </button>
+              )}
+              <div className="grid grid-cols-2 gap-3">
+                <button className="bg-nus-orange text-white font-black py-3.5 rounded-2xl text-sm shadow-lg shadow-nus-orange/10 hover:scale-[1.02] active:scale-95 transition-all">
+                  Make an Offer →
+                </button>
+                <button className="bg-white border-2 border-gray-100 text-gray-900 font-black py-3.5 rounded-2xl text-sm flex items-center justify-center gap-2 hover:bg-gray-50 active:scale-95 transition-all">
+                  <MessageCircle className="w-4 h-4" />
+                  Chat
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {showPayment && (
+        <PaymentModal
+          listing={product}
+          user={session?.user}
+          onClose={() => setShowPayment(false)}
+          onSuccess={() => {
+            setShowPayment(false)
+            setPurchaseSuccess(true)
+          }}
+        />
+      )}
     </div>
   )
 }
