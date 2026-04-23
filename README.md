@@ -1,26 +1,16 @@
 # CampusCart — NUS Campus Marketplace
 
-A centralized, student-exclusive web application for NUS students to buy and sell textbooks, electronics, hall furniture, and more — with AI-powered listing creation.
+> A modern, AI-powered web app for NUS students to buy and sell items securely on campus. See the PDF report for all technical and feature details.
 
 **IT5007 Finals · Group 14**
 
 ---
 
-## The Problem
+# 📄 Final Project Report (PDF)
 
-Students currently rely on unstructured Telegram groups and generic platforms like Carousell to buy and sell items on campus. This leads to:
-- **Lack of Trust** — No way to verify if a buyer or seller is a genuine NUS student
-- **Poor Discovery** — Listings get buried in linear chat streams with no search or filtering
-- **Inefficient Coordination** — Repetitive "PM me" negotiations waste time
+**All technical details, features, and rationale are documented in our formal report:**
 
-## The Solution
-
-CampusCart provides verified, structured, and efficient peer-to-peer commerce for the NUS community:
-- **Verified Access** — Authentication restricted to `@u.nus.edu` email addresses
-- **AI Auto-Fill** — Upload a photo and let the local LLM (`llava:7b`) populate title, description, and price
-- **Structured Listings** — Categorized items with condition tags, pricing, and campus location
-- **Want-to-Buy Requests** — Post items you're looking for, not just items you're selling
-- **Smart Search** — Real-time search with AI-powered recommendations when no results are found
+➡️ **[IT5007_Grp8_Report.pdf](./grp8-report/IT5007_Grp8_Report.pdf)**
 
 ---
 
@@ -42,7 +32,7 @@ CampusCart provides verified, structured, and efficient peer-to-peer commerce fo
 
 ## 🎓 For Evaluators / Professors / TAs
 
-**Prerequisites:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running. Nothing else needed.
+**Prerequisite:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running. No other setup required.
 
 ```bash
 # 1. Copy environment file
@@ -54,9 +44,8 @@ docker compose up --build
 
 This single command builds the app, starts the database, pulls the AI model (~4.7 GB, first run only), seeds 20 demo users and 46 listings, and starts the application.
 
-**Open:** http://localhost:5173
-
-**Login with any demo account** (password: `Password123`):
+- **Open:** http://localhost:5173
+- **Demo login:** Use any account below (password: `Password123`)
 
 | Name | Email |
 |---|---|
@@ -65,15 +54,15 @@ This single command builds the app, starts the database, pulls the AI model (~4.
 | Charlie Wong | charlie@u.nus.edu |
 | Diana Chen | diana@u.nus.edu |
 
-> First run takes 3–8 minutes (AI model download). Subsequent starts take ~20 seconds.
+> **First run:** Takes 3–8 minutes (AI model download). Subsequent starts take ~20 seconds.
 
-→ Full evaluator guide with troubleshooting: **[resources/DEMO.md](resources/DEMO.md)**
+→ Full evaluator guide with troubleshooting: [resources/DEMO.md](resources/DEMO.md)
 
 ---
 
 ## 🛠 For Developers
 
-Two separate concerns — infrastructure and application — run independently for maximum dev speed.
+Infrastructure and application run independently for fast development.
 
 ### Step 1 — Start infrastructure (DB + AI)
 ```bash
@@ -122,33 +111,6 @@ git push -u origin feat/your-feature-name
 **PR rules:** One thing per PR. Under 15 files / 500 LOC. Wait for CI ✅ before merging. Get one teammate approval.
 
 > **GitHub Classroom note:** Branch protection settings are unavailable in Classroom repos — we operate on a social contract. Never push directly to `main`. Never merge a red CI.
-
----
-
-## Frontend Features
-
-- React Router with dynamic routes (`/listings/:id`, `/profile`, `/requests`)
-- Protected routes — unauthenticated users redirected to login
-- Real-time search with debouncing and AI-powered fallback recommendations
-- AI auto-fill on listing and request creation (image → title, description, price, condition)
-- Image upload with server-side storage and static serving
-- Skeleton loading states for all async views
-- Toast notifications for user actions
-- Responsive layout (mobile and desktop)
-- Consistent NUS design system (blue `#003d7c`, orange `#ef7c00`, shared component classes)
-
-## Backend Features
-
-- GraphQL API — domain-driven modular schema (`listings/`, `requests/`, `profile/`)
-- Better Auth — email/password with `@u.nus.edu` domain enforcement, session-based auth
-- Session cookies verified on every GraphQL request via auth context injection
-- `requireAuth` centralized helper across all mutations
-- Multer image upload via dedicated REST endpoint (decoupled from GraphQL)
-- Ollama integration for vision-based AI features (`llava:7b`)
-- External Shopify storefront integration (IUIGA, Bookshop.sg, NUS Press) for augmented listings
-- Client-side `sessionStorage` caching for external product data (5-minute TTL)
-- PostgreSQL 16 via Prisma v6 ORM with shared singleton client
-- Docker Compose one-command setup for evaluators; split infra compose for developers
 
 ---
 
