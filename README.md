@@ -14,19 +14,26 @@
 
 ---
 
+## 🎥 Demo Video
+
+Watch our application in action:  
+➡️ **[CampusCart Demo Video](https://youtu.be/1jPtYttyQcQ)**
+
+---
+
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | React (Vite) + Tailwind CSS v4 |
-| API | GraphQL (`graphql` + `@graphql-tools/schema`) |
-| Backend | Node.js + Express |
-| Auth | Better Auth (NUS email enforcement) |
-| ORM | Prisma v6 |
-| Database | PostgreSQL 16 (Docker) |
-| AI | Ollama (`llava:7b`, runs locally) |
-| Infrastructure | Docker Compose |
-| Package Manager | pnpm |
+| Layer           | Technology                                    |
+| --------------- | --------------------------------------------- |
+| Frontend        | React (Vite) + Tailwind CSS v4                |
+| API             | GraphQL (`graphql` + `@graphql-tools/schema`) |
+| Backend         | Node.js + Express                             |
+| Auth            | Better Auth (NUS email enforcement)           |
+| ORM             | Prisma v6                                     |
+| Database        | PostgreSQL 16 (Docker)                        |
+| AI              | Ollama (`llava:7b`, runs locally)             |
+| Infrastructure  | Docker Compose                                |
+| Package Manager | pnpm                                          |
 
 ---
 
@@ -47,12 +54,12 @@ This single command builds the app, starts the database, pulls the AI model (~4.
 - **Open:** http://localhost:5173
 - **Demo login:** Use any account below (password: `Password123`)
 
-| Name | Email |
-|---|---|
-| Alice Tan | alice@u.nus.edu |
-| Bob Lim | bob@u.nus.edu |
+| Name         | Email             |
+| ------------ | ----------------- |
+| Alice Tan    | alice@u.nus.edu   |
+| Bob Lim      | bob@u.nus.edu     |
 | Charlie Wong | charlie@u.nus.edu |
-| Diana Chen | diana@u.nus.edu |
+| Diana Chen   | diana@u.nus.edu   |
 
 > **First run:** Takes 3–8 minutes (AI model download). Subsequent starts take ~20 seconds.
 
@@ -65,12 +72,14 @@ This single command builds the app, starts the database, pulls the AI model (~4.
 Infrastructure and application run independently for fast development.
 
 ### Step 1 — Start infrastructure (DB + AI)
+
 ```bash
 cp .env.example app/.env
 docker compose -f docker-compose.dev.yml up -d
 ```
 
 ### Step 2 — Install and run the app (hot-reload)
+
 ```bash
 cd app
 pnpm install        # installs deps, generates Prisma client, wires Git hooks
@@ -78,6 +87,7 @@ pnpm dev            # Vite (port 5173) + Express/nodemon (port 8000)
 ```
 
 ### Step 3 — Set up the database (first time only)
+
 ```bash
 # Still inside app/
 pnpm db:setup       # pushes schema + seeds demo data
@@ -119,6 +129,7 @@ git push -u origin feat/your-feature-name
 Parts of this project were developed with assistance from AI tools (Claude).
 
 Specific areas where AI was used:
+
 - Component scaffolding and boilerplate
 - Auth library integration (Better Auth + Express)
 - Dockerfile and Docker Compose configuration
@@ -129,5 +140,5 @@ All AI-generated suggestions were reviewed, understood, and modified to fit the 
 
 ---
 
-*Developed by IT5007 Finals — Group 14*
-*Ang Lee Chuan · Chou Han Xian Aaron · Liaw Jian Wei*
+_Developed by IT5007 Finals — Group 14_
+_Ang Lee Chuan · Chou Han Xian Aaron · Liaw Jian Wei_
