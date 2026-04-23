@@ -2,12 +2,14 @@
 
 **IT5007 Finals · Group 14 · NUS Campus Marketplace**
 
+> For full technical details and feature explanations, see the formal report: [grp8-report/IT5007_Grp8_Report.pdf](../grp8-report/IT5007_Grp8_Report.pdf)
+
 ---
 
 ## Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
-- That's it.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running (keep it open during the demo)
+- That's it. No other dependencies required.
 
 ---
 
@@ -28,12 +30,12 @@ docker compose up --build
 This single command:
 - Builds the application
 - Starts the PostgreSQL database
-- Starts the Ollama AI service and pulls the `llava:7b` vision model (~4.7 GB, first run only)
+- Starts the Ollama AI service and automatically pulls the `llava:7b` vision model (~4.7 GB, first run only)
 - Pushes the database schema
 - Seeds 20 demo users, 46 listings, and 20 want-to-buy requests
 - Starts the frontend and backend with hot-reload
 
-**First run takes 3–8 minutes** (model download). Subsequent runs start in ~20 seconds.
+**First run takes 3–8 minutes** (model download is automatic). Subsequent runs start in ~20 seconds.
 
 ---
 
@@ -74,12 +76,14 @@ All accounts use password: **`Password123`**
 
 ---
 
-## Stopping
+## Stopping & Resetting
 
 ```bash
 docker compose down          # stop containers (data preserved)
 docker compose down -v       # stop and wipe all data (clean slate)
 ```
+
+> Tip: Use `docker compose down -v` if you want to reset all demo data and start fresh.
 
 ---
 
