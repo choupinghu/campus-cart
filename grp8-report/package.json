@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:pdf": "md-to-pdf IT5007_Grp8_Report.md",
+    "build:pdf": "echo '\\n⏳ Compiling PDF... This process uses a headless browser and may take a moment to render all fonts and images...' && md-to-pdf IT5007_Grp8_Report.md && echo '\\n✅ SUCCESS! Your PDF is ready at: IT5007_Grp8_Report.pdf\\n'",
     "watch:pdf": "md-to-pdf -w IT5007_Grp8_Report.md"
   },
   "keywords": [],
