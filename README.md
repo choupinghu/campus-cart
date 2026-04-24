@@ -101,6 +101,10 @@ pnpm db:setup       # pushes schema + seeds demo data
 | `pnpm db:seed` | Wipe all data and reload fresh demo data |
 | `npx prisma studio` | Open a visual DB browser at http://localhost:5555 |
 
+### Step 4 Other Resources & Documentation
+
+Please observe our developer relations and guidelines location in /resources
+
 ---
 
 ## Git Workflow
