@@ -1,18 +1,4 @@
-# IT5007 Final Project Report
-
-**Course:** IT5007 Software Engineering on Application Architecture  
-**Project:** CampusCart — NUS Campus Marketplace  
-**Group:** 14
-
-Group number on Canvas: 14
-
-| Student ID (AxxxxxxxZ) | NUSNet ID (exxxxxxx) | Name (as it appears on Canvas) |
-| ---------------------- | -------------------- | ------------------------------ |
-| A0183438X              | e0310233             | Ang Lee Chuan                  |
-| A0183378R              | e0310173             | Chou Han Xian, Aaron           |
-| A0329448R              | e1553775             | Liaw Jian Wei                  |
-
----
+# CampusCart — Open Source Campus Marketplace  
 
 ## Table of Contents
 
@@ -30,27 +16,27 @@ Group number on Canvas: 14
 
 ## <a id="section-1"></a>1. Problem Statement, Motivation & Competition Analysis
 
-The National University of Singapore (NUS) has a large, dynamic student population with a constant need to buy and sell textbooks, electronics, furniture, and other essentials. However, there is no dedicated, trusted channel for peer-to-peer student commerce. Existing alternatives—Carousell and Telegram buy/sell groups—lack NUS verification, structured discovery, and efficient coordination, leading to trust and usability issues.
+Many universities and campus communities have a constant need to buy and sell textbooks, electronics, furniture, and other essentials. However, there is often no dedicated, trusted channel for peer-to-peer student commerce. Existing alternatives—such as Carousell and Telegram buy/sell groups—lack university verification, structured discovery, and efficient coordination, leading to trust and usability issues.
 
-**CampusCart** was conceived to address these gaps by providing:
+**CampusCart** was conceived to address these gaps by providing a modern, AI-powered campus marketplace platform. This project uses the National University of Singapore (NUS) as the pioneer example, but the solution is designed to be robust and extensible for any campus or university environment.
 
-- **Verified NUS-only access** (via email authentication)
+- **Verified campus-only access** (via university email authentication; NUS as example)
 - **Structured, searchable listings** (categories, filters, map)
 - **AI-powered listing creation and search**
 - **Integrated payments (Stripe test mode)**
 - **Modern, mobile-friendly UI**
 
-**Relevance:** With 40,000+ NUS students cycling through goods each semester, the need for a safe, efficient campus marketplace will persist for years. The solution is designed to be robust and extensible for future cohorts or real-world deployment.
+**Relevance:** With tens of thousands of students cycling through goods each semester, the need for a safe, efficient campus marketplace will persist for years. The architecture supports future cohorts, real-world deployment, or adaptation to other institutions.
 
 **Competition:**
 
-- **Carousell:** No NUS verification, generic UI, no campus-specific features.
+- **Carousell:** No university verification, generic UI, no campus-specific features.
 - **Telegram buy/sell groups:** Unstructured, no search/filter, trust issues.
-- **CampusCart** differentiates via NUS-only access, AI features, and spatial discovery (interactive map, demand heatmap).
+- **CampusCart** differentiates via campus-only access, AI features, and spatial discovery (interactive map, demand heatmap).
 
 **Legal/Business Model:**
 
-- All code is original or open source (see README for attributions). No proprietary dependencies. Project is open source and can be extended by future cohorts. No user data is collected beyond demo/test accounts. The architecture supports future commercialization or open-source community adoption.
+- All code is original or open source (see README for attributions). No proprietary dependencies. Project is open source and can be extended by future cohorts or other universities. No user data is collected beyond demo/test accounts. The architecture supports future commercialization or open-source community adoption.
 
 ---
 
@@ -99,7 +85,7 @@ This section details the major features, their technical implementation, and the
 
 ### 3.1 Verified Authentication & User Management
 
-- **NUS Email Exclusivity:** Registration is strictly restricted to `@u.nus.edu` email domains. Server-side regex validation (`server/auth.js`) ensures only NUS students can join. This builds trust and exclusivity.
+- **University Email Exclusivity:** Registration is strictly restricted to `@u.nus.edu` email domains. Server-side regex validation (`server/auth.js`) ensures only NUS students can join. This builds trust and exclusivity.
 - **Security:** Passwords must meet strict policies (min 8 chars, uppercase, number, special char). Sessions are managed via secure cookies. Both frontend and backend enforce authentication (see `src/components/ProtectedRoute.jsx`, `server/middleware/requireAuth.js`).
 - **Profile Management:** Users can edit their bio, phone, location, and upload a profile picture (`src/pages/ProfilePage.jsx`, `server/graphql/profile/`). Activity tracking (listings, requests) is shown on the profile page.
 
