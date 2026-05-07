@@ -2,7 +2,7 @@
 
 **NUS Campus Marketplace**
 
-> For full technical details and feature explanations, see the formal report: [grp8-report/IT5007_Grp8_Report.pdf](../grp8-report/IT5007_Grp8_Report.pdf)
+> For full technical details and feature explanations, see the formal report: [report/campus_cart.md](../report/campus_cart.md)
 
 ---
 
